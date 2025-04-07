@@ -208,7 +208,7 @@ export default function Home() {
       fontFamily: 'system-ui, -apple-system, sans-serif',
       background: 'linear-gradient(to bottom, #f8fafc, #f1f5f9)',
     }}>
-      <header style={{
+      {/* <header style={{
         padding: '1.5rem 2rem',
         borderBottom: '1px solid rgba(0,0,0,0.05)',
         display: 'flex',
@@ -226,7 +226,7 @@ export default function Home() {
         <div style={{ fontSize: '0.875rem', color: '#64748b' }}>
           Hover over a year to explore
         </div>
-      </header>
+      </header> */}
       
       <div style={{ 
         flex: 1,
