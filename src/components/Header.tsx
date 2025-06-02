@@ -9,7 +9,7 @@ export default async function Header() {
 
   return (
     <header style={{ height: '8rem', marginBottom: '8rem' }}>
-      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+      <nav style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
         <Link href="/" style={{ height: '100%' }}>
           <Image
             src={logoUrl}

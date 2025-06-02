@@ -13,7 +13,37 @@ body {
   margin: 8rem;
 }
 
+main {
+  position: absolute;
+  height: calc(100vh - 32rem);
+  width: calc(100vw - 16rem);
+}
+
 a {
   color: #000;
   text-decoration: none;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style: none;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.scrollable {
+  overflow: auto;
+  height: 100%;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Webkit */
+  }
 }
