@@ -6,7 +6,9 @@ import styles from '@/styles/ActList.module.css'
 export default function Actlist() {
   const [sortedActs, setSortedActs] = useState<{ id: string; name: string }[]>([])
   const [isDragging, setIsDragging] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const scrollRef = useRef<HTMLUListElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const isDraggingRef = useRef(false)
   const startYRef = useRef(0)
   const scrollTopRef = useRef(0)
@@ -54,7 +56,9 @@ export default function Actlist() {
         setIsDragging(true)
       }
 
-      if (!isClickAllowedRef.current) current.scrollTop = scrollTopRef.current - deltaY
+      if (!isClickAllowedRef.current) {
+        current.scrollTop = scrollTopRef.current - deltaY
+      }
     }
 
     function handleMouseUp() {
@@ -83,7 +87,7 @@ export default function Actlist() {
     }
   }, [])
 
-  // NAVIGATE WITH ARROWS
+  // NAVIGATE WITH ARROW KEYS
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const current = scrollRef.current
@@ -109,6 +113,15 @@ export default function Actlist() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // FORCE SCROLL TO TOP WHILE SEARCHING
+  useEffect(() => {
+    const currentInput = inputRef.current
+    const currentList = scrollRef.current
+    if (currentInput && currentList && document.activeElement === currentInput) {
+      currentList.scrollTo({ top: 0 })
+    }
+  }, [searchQuery])
+
   // JUMP TO ITEM ON CLICK
   function handleItemClick(e: React.MouseEvent<HTMLLIElement>) {
     if (!isClickAllowedRef.current) return
@@ -118,19 +131,50 @@ export default function Actlist() {
     current.scrollTo({ top: item.offsetTop, behavior: 'smooth' })
   }
 
+  // SORT BY SIMILARITY TO QUERY
+  const filteredActs = sortedActs
+    .map((act) => ({
+      ...act,
+      score: searchQuery ? similarityScore(searchQuery.toLowerCase(), act.name.toLowerCase()) : 0,
+    }))
+    .filter((act) => act.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => b.score - a.score)
+
   return (
     <div className={styles.container}>
+      <input
+        ref={inputRef}
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onBlur={() => setSearchQuery('')}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            ;(e.target as HTMLInputElement).blur()
+          }
+        }}
+        placeholder="Search..."
+        className={styles.search}
+      />
+
       <ul ref={scrollRef} className={`${styles.list} scrollable`}>
-        {sortedActs.map((act) => (
-          <li
-            key={act.id}
-            onClick={handleItemClick}
-            className={styles.item}
-            style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
-          >
-            {act.name}
+        {filteredActs.length === 0 ? (
+          <li className={styles.item} aria-live="polite" onMouseDown={(e) => e.preventDefault()}>
+            No results
           </li>
-        ))}
+        ) : (
+          filteredActs.map((act) => (
+            <li
+              key={act.id}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={handleItemClick}
+              className={styles.item}
+              style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
+            >
+              {act.name}
+            </li>
+          ))
+        )}
         <li className={styles.spacer} aria-hidden />
       </ul>
 
@@ -139,4 +183,20 @@ export default function Actlist() {
       <div className={styles.fade} />
     </div>
   )
+}
+
+// SIMILARITY SCORING FUNCTION
+function similarityScore(query: string, target: string) {
+  if (target.startsWith(query)) return 100
+  let score = 0
+  let i = 0
+  let j = 0
+  while (i < query.length && j < target.length) {
+    if (query[i] === target[j]) {
+      score++
+      i++
+    }
+    j++
+  }
+  return score
 }

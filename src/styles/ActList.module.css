@@ -14,6 +14,7 @@
   scroll-snap-type: y mandatory;
   user-select: none;
   cursor: grab;
+  top: 4rem;
 
   &:active {
     cursor: grabbing;
@@ -57,10 +58,10 @@
   position: absolute;
   background: var(--primary);
   height: 3rem;
-  top: 0.5rem;
   width: 40rem;
   mix-blend-mode: difference;
   pointer-events: none;
+  top: 4.5rem;
 }
 
 .barCropper {
@@ -68,4 +69,22 @@
   background: var(--primary);
   height: 0.5rem;
   width: 40rem;
+  top: 4rem;
+}
+
+.search {
+  margin: 0 0 0 8rem;
+  width: 32rem;
+  height: 4rem;
+  border: 0px;
+  background: transparent;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--secondary);
+    opacity: 0.4;
+  }
 }
