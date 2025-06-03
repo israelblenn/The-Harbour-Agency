@@ -1,5 +1,7 @@
 :root {
-  --font-mono: 'Roboto Mono', monospace;
+  --primary: #dfdfdf;
+  --secondary: #000;
+  --tertiary: #ff4338;
   font-size: 8px;
 }
 
@@ -9,7 +11,7 @@
 }
 
 body {
-  background-color: #dfdfdf;
+  background-color: var(--primary);
   margin: 8rem;
 }
 
@@ -20,7 +22,7 @@ main {
 }
 
 a {
-  color: #000;
+  color: var(--secondary);
   text-decoration: none;
 }
 
@@ -34,7 +36,6 @@ li {
   height: 32px;
   display: flex;
   align-items: center;
-  cursor: pointer;
 }
 
 .scrollable {
@@ -42,7 +43,6 @@ li {
   height: 100%;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
-
   &::-webkit-scrollbar {
     display: none; /* Chrome/Safari/Webkit */
   }

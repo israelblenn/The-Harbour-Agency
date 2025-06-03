@@ -12,6 +12,7 @@ export default async function Header() {
       <nav style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
         <Link href="/" style={{ height: '100%' }}>
           <Image
+            priority
             src={logoUrl}
             alt={logo?.alt || 'Logo'}
             width={0}
