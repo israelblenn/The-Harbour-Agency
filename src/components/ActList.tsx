@@ -157,7 +157,7 @@ export default function Actlist() {
         className={styles.search}
       />
 
-      <ul ref={scrollRef} className={`${styles.list} scrollable`}>
+      <ul ref={scrollRef} className={`scrollable ${styles.list}`}>
         {filteredActs.length === 0 ? (
           <li className={styles.item} aria-live="polite" onMouseDown={(e) => e.preventDefault()}>
             No results

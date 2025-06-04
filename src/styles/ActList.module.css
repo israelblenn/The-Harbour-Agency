@@ -8,6 +8,7 @@
 .list {
   position: absolute;
   width: 100%;
+  height: calc(100% - 4rem);
   padding-left: 8rem;
   list-style: none;
   overflow-y: auto;
@@ -78,6 +79,7 @@
   height: 4rem;
   border: 0px;
   background: transparent;
+  padding-left: 0.5rem;
 
   &:focus {
     outline: none;

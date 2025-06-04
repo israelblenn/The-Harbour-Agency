@@ -20,6 +20,7 @@
     "@payloadcms/payload-cloud": "3.39.1",
     "@payloadcms/richtext-lexical": "3.39.1",
     "@payloadcms/ui": "3.39.1",
+    "@tanstack/react-virtual": "^3.13.9",
     "cross-env": "^7.0.3",
     "graphql": "^16.8.1",
     "next": "15.3.0",
