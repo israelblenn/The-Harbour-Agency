@@ -39,6 +39,13 @@ li {
   align-items: center;
 }
 
+h1 {
+  font-size: 75px;
+  font-weight: 600;
+  line-height: 110%;
+  margin: 0 0 4rem 0;
+}
+
 .scrollable {
   overflow: auto;
   height: 100%;

@@ -1,10 +1,21 @@
+// components/ActList.tsx
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import styles from '@/styles/ActList.module.css'
 
-export default function Actlist() {
-  const [sortedActs, setSortedActs] = useState<{ id: string; name: string }[]>([])
+interface Act {
+  id: string
+  name: string
+}
+
+interface ActListProps {
+  selectedActId?: string
+  onSelectedActChange?: (actId: string) => void
+}
+
+export default function Actlist({ selectedActId = '', onSelectedActChange = () => {} }: ActListProps) {
+  const [sortedActs, setSortedActs] = useState<Act[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const scrollRef = useRef<HTMLUListElement>(null)
@@ -13,13 +24,25 @@ export default function Actlist() {
   const startYRef = useRef(0)
   const scrollTopRef = useRef(0)
   const isClickAllowedRef = useRef(true)
+  const scrollTimeoutRef = useRef<number | null>(null)
+
+  // Memoize filtered acts calculation
+  const filteredActs = useMemo(() => {
+    return sortedActs
+      .map((act) => ({
+        ...act,
+        score: searchQuery ? similarityScore(searchQuery.toLowerCase(), act.name.toLowerCase()) : 0,
+      }))
+      .filter((act) => act.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      .sort((a, b) => b.score - a.score)
+  }, [sortedActs, searchQuery])
 
   // FETCH & SORT ACTS
   useEffect(() => {
     async function fetchActs() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=9999`)
       const data = await res.json()
-      const acts: { id: string; name: string }[] = data.docs.map((act: { id: string; name: string }) => ({
+      const acts: Act[] = data.docs.map((act: Act) => ({
         id: act.id,
         name: act.name,
       }))
@@ -30,6 +53,13 @@ export default function Actlist() {
 
     fetchActs()
   }, [])
+
+  // Set initial selected act when acts load
+  useEffect(() => {
+    if (filteredActs.length > 0 && !selectedActId) {
+      onSelectedActChange(filteredActs[0].id)
+    }
+  }, [filteredActs, selectedActId, onSelectedActChange])
 
   // DRAG TO SCROLL
   useEffect(() => {
@@ -69,6 +99,7 @@ export default function Actlist() {
       isDraggingRef.current = false
       setIsDragging(false)
       current.style.scrollSnapType = 'y mandatory'
+      updateSelected()
     }
 
     const ul = scrollRef.current
@@ -106,6 +137,7 @@ export default function Actlist() {
       if (delta !== 0) {
         e.preventDefault()
         current.scrollBy({ top: delta, behavior: 'smooth' })
+        setTimeout(updateSelected, 200)
       }
     }
 
@@ -119,6 +151,7 @@ export default function Actlist() {
     const currentList = scrollRef.current
     if (currentInput && currentList && document.activeElement === currentInput) {
       currentList.scrollTo({ top: 0 })
+      updateSelected()
     }
   }, [searchQuery])
 
@@ -129,16 +162,33 @@ export default function Actlist() {
     if (!current) return
     const item = e.currentTarget
     current.scrollTo({ top: item.offsetTop, behavior: 'smooth' })
+    setTimeout(updateSelected, 200)
   }
 
-  // SORT BY SIMILARITY TO QUERY
-  const filteredActs = sortedActs
-    .map((act) => ({
-      ...act,
-      score: searchQuery ? similarityScore(searchQuery.toLowerCase(), act.name.toLowerCase()) : 0,
-    }))
-    .filter((act) => act.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => b.score - a.score)
+  // SCROLL HANDLER WITH DEBOUNCE
+  function handleScroll() {
+    if (scrollTimeoutRef.current !== null) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      updateSelected()
+    }, 100)
+  }
+
+  function updateSelected() {
+    const list = scrollRef.current
+    if (!list) return
+    const scrollTop = list.scrollTop
+    const firstItem = list.querySelector('li')
+    const itemHeight = firstItem?.clientHeight || 32
+    const index = Math.round(scrollTop / itemHeight)
+    const act = filteredActs[index]
+    if (act) onSelectedActChange(act.id)
+  }
+
+  // Get selected act name for display
+  const selectedAct =
+    filteredActs.find((act) => act.id === selectedActId) || sortedActs.find((act) => act.id === selectedActId)
 
   return (
     <div className={styles.container}>
@@ -157,7 +207,7 @@ export default function Actlist() {
         className={styles.search}
       />
 
-      <ul ref={scrollRef} className={`scrollable ${styles.list}`}>
+      <ul ref={scrollRef} className={`scrollable ${styles.list}`} onScroll={handleScroll}>
         {filteredActs.length === 0 ? (
           <li className={styles.item} aria-live="polite" onMouseDown={(e) => e.preventDefault()}>
             No results
@@ -181,6 +231,19 @@ export default function Actlist() {
       <div className={styles.barCropper} />
       <div className={styles.bar} />
       <div className={styles.fade} />
+
+      {/* Display the selected act */}
+      <span
+        style={{
+          display: 'block',
+          marginTop: '12px',
+          fontSize: '1rem',
+          fontWeight: '500',
+          color: '#333',
+        }}
+      >
+        {selectedAct ? `Selected act: ${selectedAct.name}` : 'No act selected'}
+      </span>
     </div>
   )
 }
