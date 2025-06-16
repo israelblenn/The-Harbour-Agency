@@ -1,20 +1,15 @@
-// components/ActList.tsx
 'use client'
 
 import { useEffect, useRef, useState, useMemo } from 'react'
 import styles from '@/styles/ActList.module.css'
+import { useSelectedAct } from '@/contexts/SelectedActContext'
 
 interface Act {
   id: string
   name: string
 }
 
-interface ActListProps {
-  selectedActId?: string
-  onSelectedActChange?: (actId: string) => void
-}
-
-export default function Actlist({ selectedActId = '', onSelectedActChange = () => {} }: ActListProps) {
+export default function Actlist() {
   const [sortedActs, setSortedActs] = useState<Act[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -25,8 +20,12 @@ export default function Actlist({ selectedActId = '', onSelectedActChange = () =
   const scrollTopRef = useRef(0)
   const isClickAllowedRef = useRef(true)
   const scrollTimeoutRef = useRef<number | null>(null)
+  const isProgrammaticScrollRef = useRef(false)
+  const lastInternalSelectedActIdRef = useRef<string | null>(null)
+  const spacerClassName = styles.spacer
 
-  // Memoize filtered acts calculation
+  const { selectedActId, setSelectedActId } = useSelectedAct()
+
   const filteredActs = useMemo(() => {
     return sortedActs
       .map((act) => ({
@@ -37,34 +36,61 @@ export default function Actlist({ selectedActId = '', onSelectedActChange = () =
       .sort((a, b) => b.score - a.score)
   }, [sortedActs, searchQuery])
 
-  // FETCH & SORT ACTS
   useEffect(() => {
     async function fetchActs() {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=9999`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=9999&sort=name&depth=0`)
       const data = await res.json()
       const acts: Act[] = data.docs.map((act: Act) => ({
         id: act.id,
         name: act.name,
       }))
-
-      acts.sort((a, b) => a.name.localeCompare(b.name))
       setSortedActs(acts)
     }
-
     fetchActs()
   }, [])
 
-  // Set initial selected act when acts load
   useEffect(() => {
     if (filteredActs.length > 0 && !selectedActId) {
-      onSelectedActChange(filteredActs[0].id)
+      const firstActId = filteredActs[0].id
+      setSelectedActId(firstActId)
+      lastInternalSelectedActIdRef.current = firstActId
     }
-  }, [filteredActs, selectedActId, onSelectedActChange])
+  }, [filteredActs, selectedActId, setSelectedActId])
 
-  // DRAG TO SCROLL
+  // Scroll to externally selected item
+  useEffect(() => {
+    if (selectedActId === lastInternalSelectedActIdRef.current) {
+      lastInternalSelectedActIdRef.current = null
+      return
+    }
+
+    const list = scrollRef.current
+    if (!list || !selectedActId) return
+
+    const index = filteredActs.findIndex((act) => act.id === selectedActId)
+    if (index === -1) return
+
+    const items = list.querySelectorAll(`li:not(.${spacerClassName})`)
+    if (items.length === 0) return
+    const itemHeight = items[0].clientHeight
+
+    isProgrammaticScrollRef.current = true
+    list.scrollTo({
+      top: index * itemHeight,
+      behavior: 'smooth',
+    })
+
+    const timeoutId = setTimeout(() => {
+      isProgrammaticScrollRef.current = false
+    }, 500)
+
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [selectedActId, filteredActs, spacerClassName])
+
   useEffect(() => {
     const CLICK_MOVE_THRESHOLD = 5
-
     function handleMouseDown(e: MouseEvent) {
       const current = scrollRef.current
       if (!current) return
@@ -108,36 +134,33 @@ export default function Actlist({ selectedActId = '', onSelectedActChange = () =
       window.addEventListener('mousemove', handleMouseMove)
       window.addEventListener('mouseup', handleMouseUp)
     }
-
     return () => {
-      if (ul) {
-        ul.removeEventListener('mousedown', handleMouseDown)
-        window.removeEventListener('mousemove', handleMouseMove)
-        window.removeEventListener('mouseup', handleMouseUp)
-      }
+      if (ul) ul.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
     }
   }, [])
 
-  // NAVIGATE WITH ARROW KEYS
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const current = scrollRef.current
       if (!current) return
 
-      let delta = 0
-      const deltaMap = {
+      const keyDelta: { [key in 'ArrowUp' | 'ArrowLeft' | 'ArrowDown' | 'ArrowRight']?: number } = {
         ArrowUp: -32,
         ArrowLeft: -32,
         ArrowDown: 32,
         ArrowRight: 32,
-      } as const
-      const key = e.key as keyof typeof deltaMap
-      delta = deltaMap[key] ?? delta
-
-      if (delta !== 0) {
+      }
+      const delta = keyDelta[e.key as keyof typeof keyDelta]
+      if (delta !== undefined) {
         e.preventDefault()
+        isProgrammaticScrollRef.current = true
         current.scrollBy({ top: delta, behavior: 'smooth' })
-        setTimeout(updateSelected, 200)
+        setTimeout(() => {
+          updateSelected()
+          isProgrammaticScrollRef.current = false
+        }, 0) // !! was 200
       }
     }
 
@@ -145,28 +168,33 @@ export default function Actlist({ selectedActId = '', onSelectedActChange = () =
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // FORCE SCROLL TO TOP WHILE SEARCHING
   useEffect(() => {
     const currentInput = inputRef.current
     const currentList = scrollRef.current
     if (currentInput && currentList && document.activeElement === currentInput) {
+      isProgrammaticScrollRef.current = true
       currentList.scrollTo({ top: 0 })
       updateSelected()
+      setTimeout(() => {
+        isProgrammaticScrollRef.current = false
+      }, 100)
     }
   }, [searchQuery])
 
-  // JUMP TO ITEM ON CLICK
-  function handleItemClick(e: React.MouseEvent<HTMLLIElement>) {
+  function handleItemClick(actId: string, e: React.MouseEvent<HTMLLIElement>) {
     if (!isClickAllowedRef.current) return
-    const current = scrollRef.current
-    if (!current) return
+    setSelectedActId(actId)
+    lastInternalSelectedActIdRef.current = actId
+    isProgrammaticScrollRef.current = true
     const item = e.currentTarget
-    current.scrollTo({ top: item.offsetTop, behavior: 'smooth' })
-    setTimeout(updateSelected, 200)
+    item.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    setTimeout(() => {
+      isProgrammaticScrollRef.current = false
+    }, 200)
   }
 
-  // SCROLL HANDLER WITH DEBOUNCE
   function handleScroll() {
+    if (isProgrammaticScrollRef.current) return
     if (scrollTimeoutRef.current !== null) {
       clearTimeout(scrollTimeoutRef.current)
     }
@@ -179,19 +207,22 @@ export default function Actlist({ selectedActId = '', onSelectedActChange = () =
     const list = scrollRef.current
     if (!list) return
     const scrollTop = list.scrollTop
-    const firstItem = list.querySelector('li')
-    const itemHeight = firstItem?.clientHeight || 32
+    const items = list.querySelectorAll(`li:not(.${spacerClassName})`)
+    if (items.length === 0) return
+    const itemHeight = items[0].clientHeight
     const index = Math.round(scrollTop / itemHeight)
     const act = filteredActs[index]
-    if (act) onSelectedActChange(act.id)
+    if (act) {
+      setSelectedActId(act.id)
+      lastInternalSelectedActIdRef.current = act.id
+    }
   }
-
-  // Get selected act name for display
-  const selectedAct =
-    filteredActs.find((act) => act.id === selectedActId) || sortedActs.find((act) => act.id === selectedActId)
 
   return (
     <div className={styles.container}>
+      <div className={styles.barCropper} />
+      <div className={styles.bar} />
+      <div className={styles.fade} />
       <input
         ref={inputRef}
         type="text"
@@ -217,7 +248,7 @@ export default function Actlist({ selectedActId = '', onSelectedActChange = () =
             <li
               key={act.id}
               onMouseDown={(e) => e.preventDefault()}
-              onClick={handleItemClick}
+              onClick={(e) => handleItemClick(act.id, e)}
               className={styles.item}
               style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
             >
@@ -227,28 +258,10 @@ export default function Actlist({ selectedActId = '', onSelectedActChange = () =
         )}
         <li className={styles.spacer} aria-hidden />
       </ul>
-
-      <div className={styles.barCropper} />
-      <div className={styles.bar} />
-      <div className={styles.fade} />
-
-      {/* Display the selected act */}
-      <span
-        style={{
-          display: 'block',
-          marginTop: '12px',
-          fontSize: '1rem',
-          fontWeight: '500',
-          color: '#333',
-        }}
-      >
-        {selectedAct ? `Selected act: ${selectedAct.name}` : 'No act selected'}
-      </span>
     </div>
   )
 }
 
-// SIMILARITY SCORING FUNCTION
 function similarityScore(query: string, target: string) {
   if (target.startsWith(query)) return 100
   let score = 0

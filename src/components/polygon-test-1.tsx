@@ -22,17 +22,59 @@ export default function ActImageGrid() {
 
   const { selectedActId, setSelectedActId } = useSelectedAct()
 
-  // Fetch acts with pagination and abort controller
-  useEffect(() => {
-    const abortController = new AbortController()
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const selectedActRef = useRef<HTMLDivElement | null>(null)
+  const [selectedActPos, setSelectedActPos] = useState({ x: 0, y: 0 })
 
+  // 1) Track mouse position globally
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  // 2) A callback to measure the selectedAct element
+  const updateSelectedActPos = useCallback(() => {
+    if (selectedActRef.current) {
+      const rect = selectedActRef.current.getBoundingClientRect()
+      setSelectedActPos({ x: rect.left, y: rect.top })
+    }
+  }, [])
+
+  // 3) Measure on resize
+  useLayoutEffect(() => {
+    updateSelectedActPos()
+    window.addEventListener('resize', updateSelectedActPos)
+    return () => window.removeEventListener('resize', updateSelectedActPos)
+  }, [updateSelectedActPos])
+
+  // 4) Measure on container scroll
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    container.addEventListener('scroll', updateSelectedActPos)
+    return () => container.removeEventListener('scroll', updateSelectedActPos)
+  }, [updateSelectedActPos])
+
+  // 5) — **NEW** — measure immediately after the selectedActId (or layout) changes
+  useLayoutEffect(() => {
+    updateSelectedActPos()
+  }, [selectedActId, acts, containerWidth, updateSelectedActPos])
+
+  // --- the rest of your data-fetching + grid logic unchanged ---
+
+  // Fetch acts
+  useEffect(() => {
+    const controller = new AbortController()
     const fetchData = async () => {
       setLoading(true)
       setError(null)
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=${PAGE_SIZE}&page=${pageNum}&sort=name`,
-          { signal: abortController.signal },
+          { signal: controller.signal },
         )
         if (!res.ok) throw new Error(res.statusText)
         const data = await res.json()
@@ -43,17 +85,14 @@ export default function ActImageGrid() {
           setError((e as Error).message)
         }
       } finally {
-        if (!abortController.signal.aborted) {
-          setLoading(false)
-        }
+        if (!controller.signal.aborted) setLoading(false)
       }
     }
-
     fetchData()
-    return () => abortController.abort()
+    return () => controller.abort()
   }, [pageNum])
 
-  // Resize observer for container width
+  // Track container width
   useLayoutEffect(() => {
     if (!containerRef.current) return
     const observer = new ResizeObserver(([entry]) => {
@@ -63,7 +102,6 @@ export default function ActImageGrid() {
     return () => observer.disconnect()
   }, [])
 
-  // Compute grid layout (memoized)
   const { numColumns, cellSize } = useMemo(() => {
     if (containerWidth === 0) return { numColumns: 0, cellSize: 0 }
     const numCols = Math.max(1, Math.floor((containerWidth + GAP) / (MIN_ITEM_WIDTH + GAP)))
@@ -71,7 +109,6 @@ export default function ActImageGrid() {
     return { numColumns: numCols, cellSize: size }
   }, [containerWidth])
 
-  // Build grid positions (memoized)
   const positions = useMemo(() => {
     if (numColumns === 0) return []
     const maxSpan = Math.min(3, numColumns)
@@ -122,7 +159,6 @@ export default function ActImageGrid() {
     return positions
   }, [acts, selectedActId, numColumns])
 
-  // Infinite scroll handler (memoized)
   const handleScroll = useCallback(() => {
     if (!containerRef.current || loading || !hasNextPage) return
     const { scrollTop, clientHeight, scrollHeight } = containerRef.current
@@ -131,7 +167,6 @@ export default function ActImageGrid() {
     }
   }, [loading, hasNextPage])
 
-  // Attach scroll listener
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -139,7 +174,6 @@ export default function ActImageGrid() {
     return () => container.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
 
-  // Always scroll selected act to top of viewport
   useEffect(() => {
     if (!selectedActId || !containerRef.current || cellSize === 0) return
     const index = acts.findIndex((a) => a.id === selectedActId)
@@ -160,7 +194,7 @@ export default function ActImageGrid() {
   }, [selectedActId, acts, positions, cellSize])
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <div
         ref={containerRef}
         className="scrollable"
@@ -169,6 +203,7 @@ export default function ActImageGrid() {
           padding: '24rem 0 8rem 0',
           marginTop: '-24rem',
           overflowY: 'auto',
+          position: 'relative',
         }}
       >
         <LayoutGroup>
@@ -182,10 +217,12 @@ export default function ActImageGrid() {
             {acts.map((act, i) => {
               const pos = positions[i]
               if (!pos) return null
+              const isSelected = act.id === selectedActId
 
               return (
                 <motion.div
                   key={act.id}
+                  ref={isSelected ? selectedActRef : undefined}
                   layout
                   transition={{ type: 'spring', stiffness: 200, damping: 30 }}
                   onClick={() => setSelectedActId(act.id)}
@@ -211,6 +248,31 @@ export default function ActImageGrid() {
           </div>
         </LayoutGroup>
       </div>
+
+      {/* only render when there is a selected act */}
+      {selectedActId && (
+        <svg
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            pointerEvents: 'none',
+            zIndex: 1000,
+          }}
+        >
+          <line
+            x1={mousePos.x}
+            y1={mousePos.y}
+            x2={selectedActPos.x}
+            y2={selectedActPos.y}
+            stroke="red"
+            strokeWidth={2}
+          />
+        </svg>
+      )}
+
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error}</div>}
     </div>

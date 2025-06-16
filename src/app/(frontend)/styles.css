@@ -17,9 +17,11 @@ body {
 }
 
 main {
-  position: absolute;
   height: calc(100vh - 32rem);
   width: calc(100vw - 16rem);
+  display: grid;
+  grid-template-columns: 32rem 1fr 64rem;
+  gap: 8rem;
 }
 
 a {

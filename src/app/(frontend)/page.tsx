@@ -1,19 +1,18 @@
 'use client'
 
-// pages/index.tsx (HomePage)
-import { useState } from 'react'
-import Actlist from '@/components/ActList'
+import ActList from '@/components/ActList'
 import ActGrid from '@/components/ActGrid'
 import ActProfile from '@/components/ActProfile'
+import { SelectedActProvider } from '@/contexts/SelectedActContext'
 
 export default function HomePage() {
-  const [selectedActId, setSelectedActId] = useState<string>('')
-
   return (
-    <main>
-      <Actlist selectedActId={selectedActId} onSelectedActChange={setSelectedActId} />
-      <ActGrid />
-      <ActProfile actId={selectedActId} />
-    </main>
+    <SelectedActProvider>
+      <main>
+        <ActList />
+        <ActGrid />
+        <ActProfile />
+      </main>
+    </SelectedActProvider>
   )
 }

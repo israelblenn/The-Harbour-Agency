@@ -22,11 +22,14 @@
     "@payloadcms/ui": "3.39.1",
     "@tanstack/react-virtual": "^3.13.9",
     "cross-env": "^7.0.3",
+    "framer-motion": "^12.17.0",
     "graphql": "^16.8.1",
     "next": "15.3.0",
     "payload": "3.39.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-grid-layout": "^1.5.1",
+    "react-virtualized": "^9.22.6",
     "sharp": "0.32.6"
   },
   "devDependencies": {
@@ -34,6 +37,7 @@
     "@types/node": "^22.5.4",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.2",
+    "@types/react-virtualized": "^9.22.2",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.3.0",
     "prettier": "^3.4.2",
