@@ -1,16 +1,17 @@
 'use client'
 
 import { useEffect, useState, useRef, useLayoutEffect, useMemo, useCallback } from 'react'
-import { motion, LayoutGroup, animate, useMotionValue, useTransform } from 'framer-motion'
+import { motion, LayoutGroup, animate } from 'framer-motion'
 import { useSelectedAct } from '@/contexts/SelectedActContext'
 import Image from 'next/image'
 import styles from '@/styles/ActGrid.module.css'
+import Polygon from './ActGridPolygon'
 
 type Act = { id: string; name: string; photo: { url: string } }
 
 const PAGE_SIZE = 20
 const GAP = 16
-const MIN_ITEM_WIDTH = 170
+const MIN_ITEM_WIDTH = 150
 const SPAN = 3
 const OVERSCAN = 300
 const SPRING = {
@@ -29,62 +30,15 @@ export default function ActImageGrid() {
   const { selectedActId, setSelectedActId } = useSelectedAct()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Motion values for the connection line
-  const lineX = useMotionValue(0)
-  const lineY = useMotionValue(0)
-
-  // Fixed position for the line start
-  const fixedX = 320
-  const fixedY = 228
-
-  // Transform to CSS values
-  const linePath = useTransform(() => `M${fixedX},${fixedY} L${lineX.get()},${lineY.get()}`)
-
-  // Effect for fetching data
-  useEffect(() => {
-    const abortController = new AbortController()
-
-    const fetchData = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=${PAGE_SIZE}&page=${pageNum}&sort=name`,
-          { signal: abortController.signal },
-        )
-        if (!res.ok) throw new Error(res.statusText)
-        const data = await res.json()
-        setActs((prev) => [...prev, ...data.docs])
-        setHasNextPage(data.hasNextPage)
-      } catch (e) {
-        if ((e as Error).name !== 'AbortError') setError((e as Error).message)
-      } finally {
-        if (!abortController.signal.aborted) setLoading(false)
-      }
-    }
-
-    fetchData()
-    return () => abortController.abort()
-  }, [pageNum])
-
-  // Effect for observing container resize
-  useLayoutEffect(() => {
-    if (!containerRef.current) return
-    const observer = new ResizeObserver(([entry]) => setContainerWidth(entry.contentRect.width))
-    observer.observe(containerRef.current)
-    return () => observer.disconnect()
-  }, [])
-
-  // Calculate number of columns and cell size based on container width
   const { numColumns, cellSize } = useMemo(() => {
     if (containerWidth === 0) return { numColumns: 0, cellSize: 0 }
     const numCols = Math.max(1, Math.floor((containerWidth + GAP) / (MIN_ITEM_WIDTH + GAP)))
     const size = (containerWidth - GAP * (numCols - 1)) / numCols
     return { numColumns: numCols, cellSize: size }
   }, [containerWidth])
+
   const layoutReady = numColumns > 0 && cellSize > 0
 
-  // Calculate positions for each act in the grid
   const positions = useMemo(() => {
     if (!layoutReady) return []
     const maxSpan = Math.min(SPAN, numColumns)
@@ -135,57 +89,43 @@ export default function ActImageGrid() {
     return positions
   }, [acts, selectedActId, numColumns, layoutReady])
 
-  // Update line position using Framer Motion's animation system
-  useLayoutEffect(() => {
-    if (!selectedActId) {
-      lineX.set(0)
-      lineY.set(0)
-      return
-    }
-
-    const updatePosition = () => {
-      // Find the currently selected cell in the DOM
-      const selectedCell = containerRef.current?.querySelector('[data-selected="true"]')
-      if (!selectedCell) return
-
-      const rect = selectedCell.getBoundingClientRect()
-      lineX.set(rect.right)
-      lineY.set(rect.top)
-    }
-
-    // Set initial position
-    updatePosition()
-
-    // Set up listeners
-    window.addEventListener('resize', updatePosition)
-    containerRef.current?.addEventListener('scroll', updatePosition)
-
-    // Create a mutation observer to track layout changes
-    const observer = new MutationObserver(updatePosition)
-    if (containerRef.current) {
-      observer.observe(containerRef.current, {
-        attributes: true,
-        childList: true,
-        subtree: true,
-        characterData: true,
-      })
-    }
-
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('resize', updatePosition)
-      containerRef.current?.removeEventListener('scroll', updatePosition)
-    }
-  }, [selectedActId, acts, positions, lineX, lineY])
-
-  // Scroll handler for infinite loading
   const handleScroll = useCallback(() => {
     if (!containerRef.current || loading || !hasNextPage) return
     const { scrollTop, clientHeight, scrollHeight } = containerRef.current
     if (scrollTop + clientHeight >= scrollHeight - OVERSCAN) setPageNum((prev) => prev + 1)
   }, [loading, hasNextPage])
 
-  // Effect to add/remove scroll listener
+  useEffect(() => {
+    const abortController = new AbortController()
+    const fetchData = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=${PAGE_SIZE}&page=${pageNum}&sort=name`,
+          { signal: abortController.signal },
+        )
+        if (!res.ok) throw new Error(res.statusText)
+        const data = await res.json()
+        setActs((prev) => [...prev, ...data.docs])
+        setHasNextPage(data.hasNextPage)
+      } catch (e) {
+        if ((e as Error).name !== 'AbortError') setError((e as Error).message)
+      } finally {
+        if (!abortController.signal.aborted) setLoading(false)
+      }
+    }
+    fetchData()
+    return () => abortController.abort()
+  }, [pageNum])
+
+  useLayoutEffect(() => {
+    if (!containerRef.current) return
+    const observer = new ResizeObserver(([entry]) => setContainerWidth(entry.contentRect.width))
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -193,9 +133,9 @@ export default function ActImageGrid() {
     return () => container.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
 
-  // Effect to scroll to selected act
   useEffect(() => {
     if (!selectedActId || !containerRef.current) return
+    const container = containerRef.current
     const index = acts.findIndex((a) => a.id === selectedActId)
     if (index === -1 || index >= positions.length) return
 
@@ -203,30 +143,34 @@ export default function ActImageGrid() {
     const rowHeight = cellSize + GAP
     const itemTop = y * rowHeight
 
-    animate(containerRef.current.scrollTop, itemTop, {
+    const animation = animate(container.scrollTop, itemTop, {
       ...SPRING,
-      onUpdate: (value) => (containerRef.current!.scrollTop = value),
+      onUpdate: (value) => {
+        if (container) {
+          container.scrollTop = value
+        }
+      },
     })
+
+    const handleUserScroll = () => {
+      animation.stop()
+      container.removeEventListener('wheel', handleUserScroll)
+      container.removeEventListener('touchstart', handleUserScroll)
+    }
+
+    container.addEventListener('wheel', handleUserScroll, { passive: true })
+    container.addEventListener('touchstart', handleUserScroll, { passive: true })
+
+    return () => {
+      animation.stop()
+      container.removeEventListener('wheel', handleUserScroll)
+      container.removeEventListener('touchstart', handleUserScroll)
+    }
   }, [selectedActId, acts, positions, cellSize])
 
   return (
     <div>
-      {/* Fixed SVG overlay for connecting line */}
-      {selectedActId && (
-        <svg
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            pointerEvents: 'none',
-            zIndex: 100,
-          }}
-        >
-          <motion.path d={linePath} fill="none" stroke="red" strokeWidth="2" />
-        </svg>
-      )}
+      <Polygon selectedActId={selectedActId} containerRef={containerRef} acts={acts} positions={positions} />
 
       <div ref={containerRef} className={`scrollable ${styles.container}`}>
         <LayoutGroup>
@@ -254,26 +198,7 @@ export default function ActImageGrid() {
                     }}
                     data-selected={isSelected}
                   >
-                    <Image
-                      src={act.photo.url}
-                      alt={act.name}
-                      fill
-                      sizes={`${Math.round(cellSize * pos.w)}px`}
-                      style={{ objectFit: 'cover' }}
-                    />
-                    {isSelected && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          width: '50px',
-                          height: '50px',
-                          backgroundColor: 'red',
-                          opacity: 1,
-                        }}
-                      />
-                    )}
+                    <Image src={act.photo.url} alt={act.name} fill sizes={`${Math.round(cellSize * pos.w)}px`} />
                   </motion.div>
                 )
               })}
