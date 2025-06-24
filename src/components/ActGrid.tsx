@@ -1,34 +1,30 @@
 'use client'
 
-import { useEffect, useState, useRef, useLayoutEffect, useMemo, useCallback } from 'react'
+import { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react'
 import { motion, LayoutGroup, animate } from 'framer-motion'
 import { useSelectedAct } from '@/contexts/SelectedActContext'
 import Image from 'next/image'
 import styles from '@/styles/ActGrid.module.css'
 import Polygon from './ActGridPolygon'
 
-type Act = { id: string; name: string; photo: { url: string } }
-
-const PAGE_SIZE = 20
 const GAP = 16
 const MIN_ITEM_WIDTH = 150
 const SPAN = 3
-const OVERSCAN = 300
 const SPRING = {
   type: 'spring' as const,
   stiffness: 150,
   damping: 25,
 }
 
-export default function ActImageGrid() {
-  const [acts, setActs] = useState<Act[]>([])
-  const [pageNum, setPageNum] = useState(1)
-  const [hasNextPage, setHasNextPage] = useState(true)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+interface ActGridProps {
+  initialActs: Array<{ id: string; name: string; photo: { url: string } }>
+}
+
+export default function ActGrid({ initialActs }: ActGridProps) {
   const [containerWidth, setContainerWidth] = useState(0)
   const { selectedActId, setSelectedActId } = useSelectedAct()
   const containerRef = useRef<HTMLDivElement>(null)
+  const acts = initialActs
 
   const { numColumns, cellSize } = useMemo(() => {
     if (containerWidth === 0) return { numColumns: 0, cellSize: 0 }
@@ -89,49 +85,12 @@ export default function ActImageGrid() {
     return positions
   }, [acts, selectedActId, numColumns, layoutReady])
 
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current || loading || !hasNextPage) return
-    const { scrollTop, clientHeight, scrollHeight } = containerRef.current
-    if (scrollTop + clientHeight >= scrollHeight - OVERSCAN) setPageNum((prev) => prev + 1)
-  }, [loading, hasNextPage])
-
-  useEffect(() => {
-    const abortController = new AbortController()
-    const fetchData = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=${PAGE_SIZE}&page=${pageNum}&sort=name`,
-          { signal: abortController.signal },
-        )
-        if (!res.ok) throw new Error(res.statusText)
-        const data = await res.json()
-        setActs((prev) => [...prev, ...data.docs])
-        setHasNextPage(data.hasNextPage)
-      } catch (e) {
-        if ((e as Error).name !== 'AbortError') setError((e as Error).message)
-      } finally {
-        if (!abortController.signal.aborted) setLoading(false)
-      }
-    }
-    fetchData()
-    return () => abortController.abort()
-  }, [pageNum])
-
   useLayoutEffect(() => {
     if (!containerRef.current) return
     const observer = new ResizeObserver(([entry]) => setContainerWidth(entry.contentRect.width))
     observer.observe(containerRef.current)
     return () => observer.disconnect()
   }, [])
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-    container.addEventListener('scroll', handleScroll)
-    return () => container.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
 
   useEffect(() => {
     if (!selectedActId || !containerRef.current) return
@@ -152,11 +111,7 @@ export default function ActImageGrid() {
       },
     })
 
-    const handleUserScroll = () => {
-      animation.stop()
-      container.removeEventListener('wheel', handleUserScroll)
-      container.removeEventListener('touchstart', handleUserScroll)
-    }
+    const handleUserScroll = () => animation.stop()
 
     container.addEventListener('wheel', handleUserScroll, { passive: true })
     container.addEventListener('touchstart', handleUserScroll, { passive: true })
@@ -198,7 +153,13 @@ export default function ActImageGrid() {
                     }}
                     data-selected={isSelected}
                   >
-                    <Image src={act.photo.url} alt={act.name} fill sizes={`${Math.round(cellSize * pos.w)}px`} />
+                    <Image
+                      src={act.photo.url}
+                      alt={act.name}
+                      fill
+                      sizes={`${Math.round(cellSize * pos.w)}px`}
+                      loading="lazy"
+                    />
                   </motion.div>
                 )
               })}
@@ -206,8 +167,6 @@ export default function ActImageGrid() {
           )}
         </LayoutGroup>
       </div>
-      {loading && <div>Loading...</div>}
-      {error && <div>Error: {error}</div>}
     </div>
   )
 }

@@ -21,8 +21,9 @@
 .item {
   position: relative;
   height: 4rem;
-  padding-left: 0.5rem;
   scroll-snap-align: start;
+  white-space: nowrap;
+  overflow: hidden;
 
   &:hover::before {
     content: '';
@@ -31,6 +32,26 @@
     height: 3rem;
     background: var(--secondary);
     opacity: 0.03;
+  }
+}
+
+.itemContent {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+:is(.itemContent.selected, .item:hover .itemContent)[data-overflowing='true'] {
+  animation: scrollText 4s infinite alternate linear;
+}
+
+@keyframes scrollText {
+  0%,
+  20% {
+    transform: translateX(0);
+  }
+  80%,
+  100% {
+    transform: translateX(calc(32rem - 100%));
   }
 }
 
@@ -77,7 +98,7 @@
   flex-shrink: 0;
   border: 0px;
   background: transparent;
-  padding-left: 0.5rem;
+  padding: 0;
 
   &:focus {
     outline: none;

@@ -16,7 +16,7 @@ const X = 320
 const T = 228
 const B = 252
 
-const lightness = 8
+const lightness = 10
 
 export default function Polygon({ selectedActId, containerRef, acts, positions }: PolygonProps) {
   const polygonLeft = useMotionValue('')
