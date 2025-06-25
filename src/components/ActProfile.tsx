@@ -93,7 +93,7 @@ export default function ActProfile() {
                 width: 'fit-content',
               }}
             >
-              {actDetails.link}
+              {actDetails.link.replace(/^https?:\/\//, '')}
               <Open />
             </a>
           )}
