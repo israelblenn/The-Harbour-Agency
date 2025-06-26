@@ -1,7 +1,8 @@
 import React from 'react'
-import './styles.css'
+import '@/app/(frontend)/styles.css'
 import { Inter } from 'next/font/google'
 import Header from '@/components/Header'
+import { SelectedActProvider } from '@/contexts/SelectedActContext'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,8 +20,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.className}>
       <body>
-        <Header />
-        <main>{children}</main>
+        <SelectedActProvider>
+          <Header />
+          {children}
+        </SelectedActProvider>
       </body>
     </html>
   )

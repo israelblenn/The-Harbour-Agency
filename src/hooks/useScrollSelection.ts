@@ -57,11 +57,11 @@ export function useScrollSelection(
   }
 
   // Initial selection effect
-  useEffect(() => {
-    if (filteredActs.length > 0 && !selectedActId) {
-      setSelectedActId(filteredActs[0].id)
-    }
-  }, [filteredActs, selectedActId, setSelectedActId])
+  // useEffect(() => {
+  //   if (filteredActs.length > 0 && !selectedActId) {
+  //     setSelectedActId(filteredActs[0].id)
+  //   }
+  // }, [filteredActs, selectedActId, setSelectedActId])
 
   // Scroll to selected effect
   useEffect(() => {
