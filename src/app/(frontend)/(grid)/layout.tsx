@@ -15,7 +15,9 @@ export default async function MainLayout({ children }: { children: React.ReactNo
           photo: act.photo ?? { url: '' },
         }))}
       />
-      {children}
+      <div className="scrollable" style={{ paddingBottom: '8rem' }}>
+        {children}
+      </div>
     </main>
   )
 }

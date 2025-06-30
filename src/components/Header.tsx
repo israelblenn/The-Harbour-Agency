@@ -3,17 +3,15 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useSelectedAct } from '@/contexts/SelectedActContext'
 
 export default function Header() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [altText, setAltText] = useState<string>('Logo')
-  const { setSelectedActId } = useSelectedAct()
 
   useEffect(() => {
     async function fetchLogo() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/about`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/aboot`)
         const data = await res.json()
         const logo = data.logo
         setLogoUrl(typeof logo === 'object' && logo.url ? logo.url : null)

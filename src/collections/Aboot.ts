@@ -5,8 +5,8 @@ type QueuedPayload = Payload & {
   queue?: (fn: () => void | Promise<void>) => void
 }
 
-export const About: GlobalConfig = {
-  slug: 'about',
+export const Aboot: GlobalConfig = {
+  slug: 'aboot',
   access: { read: () => true },
   hooks: {
     //!! we need to test that this revalidation hook actually works in production
@@ -22,7 +22,7 @@ export const About: GlobalConfig = {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                tag: 'about',
+                tag: 'aboot',
                 secret: process.env.REVALIDATE_SECRET,
               }),
             }).catch((err) => {
@@ -56,17 +56,28 @@ export const About: GlobalConfig = {
     },
     {
       name: 'headline',
-      type: 'text',
+      type: 'richText',
       required: true,
     },
     {
       name: 'profile',
-      type: 'textarea',
+      type: 'richText',
       required: true,
     },
     {
-      name: 'team',
-      type: 'textarea',
+      type: 'row',
+      fields: [
+        {
+          label: 'Team Column 1',
+          name: 'team1',
+          type: 'richText',
+        },
+        {
+          label: 'Team Column 2',
+          name: 'team2',
+          type: 'richText',
+        },
+      ],
     },
     {
       name: 'contacts',

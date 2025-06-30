@@ -48,6 +48,18 @@ h1 {
   margin: 0 0 4rem 0;
 }
 
+h2 {
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 110%;
+  margin: 0;
+
+  & strong {
+    font-size: 44px;
+    font-weight: 700;
+  }
+}
+
 .scrollable {
   overflow: auto;
   height: 100%;
@@ -56,4 +68,20 @@ h1 {
   &::-webkit-scrollbar {
     display: none; /* Chrome/Safari/Webkit */
   }
+}
+
+.list-bullet {
+  padding-left: 2rem;
+
+  & li {
+    display: list-item;
+    list-style: square;
+    padding-right: 2rem;
+  }
+}
+
+.headline {
+  height: 0;
+  margin-left: 18rem;
+  translate: 0 1rem;
 }

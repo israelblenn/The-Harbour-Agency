@@ -87,10 +87,10 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
-    about: About;
+    aboot: Aboot;
   };
   globalsSelect: {
-    about: AboutSelect<false> | AboutSelect<true>;
+    aboot: AbootSelect<false> | AbootSelect<true>;
   };
   locale: null;
   user: User & {
@@ -308,15 +308,72 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "about".
+ * via the `definition` "aboot".
  */
-export interface About {
+export interface Aboot {
   id: string;
   logo: string | Media;
   gallery: (string | Media)[];
-  headline: string;
-  profile: string;
-  team?: string | null;
+  headline: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  profile: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  team1?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  team2?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   contacts?:
     | {
         label: string;
@@ -336,14 +393,15 @@ export interface About {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "about_select".
+ * via the `definition` "aboot_select".
  */
-export interface AboutSelect<T extends boolean = true> {
+export interface AbootSelect<T extends boolean = true> {
   logo?: T;
   gallery?: T;
   headline?: T;
   profile?: T;
-  team?: T;
+  team1?: T;
+  team2?: T;
   contacts?:
     | T
     | {

@@ -17,7 +17,7 @@ export const SelectedActProvider = ({ children }: { children: React.ReactNode })
 
   const setSelectedActId = (id: string | null) => {
     setSelectedActIdState(id)
-    router.push(`${id}`)
+    if (id != null) router.push(`${id}`)
   }
 
   return (
