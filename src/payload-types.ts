@@ -87,10 +87,12 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
-    aboot: Aboot;
+    about: About;
+    contact: Contact;
   };
   globalsSelect: {
-    aboot: AbootSelect<false> | AbootSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
+    contact: ContactSelect<false> | ContactSelect<true>;
   };
   locale: null;
   user: User & {
@@ -308,9 +310,9 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "aboot".
+ * via the `definition` "about".
  */
-export interface Aboot {
+export interface About {
   id: string;
   logo: string | Media;
   gallery: (string | Media)[];
@@ -374,6 +376,15 @@ export interface Aboot {
     };
     [k: string]: unknown;
   } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact".
+ */
+export interface Contact {
+  id: string;
   contacts?:
     | {
         label: string;
@@ -393,15 +404,24 @@ export interface Aboot {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "aboot_select".
+ * via the `definition` "about_select".
  */
-export interface AbootSelect<T extends boolean = true> {
+export interface AboutSelect<T extends boolean = true> {
   logo?: T;
   gallery?: T;
   headline?: T;
   profile?: T;
   team1?: T;
   team2?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact_select".
+ */
+export interface ContactSelect<T extends boolean = true> {
   contacts?:
     | T
     | {

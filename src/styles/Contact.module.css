@@ -1,0 +1,19 @@
+.labels li {
+  text-transform: uppercase;
+  text-align: right;
+  display: block;
+}
+
+.methods {
+  display: flex;
+  gap: 4rem;
+
+  & ul {
+    display: grid;
+    gap: 2rem;
+  }
+
+  & li {
+    line-height: 1.5;
+  }
+}

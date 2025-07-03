@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import styles from '@/styles/Header.module.css'
 
 export default function Header() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
@@ -11,7 +12,7 @@ export default function Header() {
   useEffect(() => {
     async function fetchLogo() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/aboot`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/about`)
         const data = await res.json()
         const logo = data.logo
         setLogoUrl(typeof logo === 'object' && logo.url ? logo.url : null)
@@ -25,25 +26,12 @@ export default function Header() {
   }, [])
 
   return (
-    <header style={{ height: '8rem', marginBottom: '8rem' }}>
-      <nav style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
-        <Link href="/" style={{ height: '100%' }}>
-          {logoUrl && (
-            <Image
-              priority
-              src={logoUrl}
-              alt={altText}
-              width={0}
-              height={0}
-              style={{
-                width: 'auto',
-                height: '100%',
-                objectFit: 'contain',
-              }}
-            />
-          )}
+    <header>
+      <nav>
+        <Link href="/">
+          {logoUrl && <Image priority src={logoUrl} alt={altText} width={0} height={0} className={styles.logo} />}
         </Link>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className={styles.navLinks}>
           <Link href="/">About</Link>
           <Link href="/contact">Contact</Link>
         </div>
