@@ -5,6 +5,7 @@
 }
 
 .methods {
+  margin-top: 6rem;
   display: flex;
   gap: 4rem;
 
@@ -15,5 +16,126 @@
 
   & li {
     line-height: 1.5;
+  }
+}
+
+.send {
+  position: relative;
+  width: 10rem;
+  height: 4rem;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--secondary);
+  padding: 0.5rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  align-self: flex-end;
+}
+
+.send.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.textPrimary {
+  color: var(--secondary);
+  position: relative;
+  z-index: 1;
+  display: block;
+  text-align: center;
+  line-height: 3rem;
+}
+
+.textOverlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  color: white;
+  z-index: 2;
+  pointer-events: none;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 0.4s ease;
+}
+
+/* Pure fade animation for text only */
+.fadeContainer {
+  display: inline-block;
+  animation: textFade 0.6s ease;
+}
+
+@keyframes textFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.send:hover .textOverlay:not(.sentAnimation) {
+  clip-path: inset(0 0 0 0);
+}
+
+.send.active .textOverlay {
+  clip-path: inset(0 0 0 0);
+}
+
+.sentAnimation {
+  clip-path: inset(0 0 0 0);
+  animation: slideRight 0.4s forwards;
+}
+
+@keyframes slideRight {
+  to {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+/* Centered animated dots for loading state */
+.dotsContainer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  top: -0.1em; /* Fine-tune vertical alignment */
+}
+
+.dot {
+  animation: dotPulse 1.4s infinite ease-in-out;
+  display: inline-block;
+  position: relative;
+  top: -0.1em; /* Adjust baseline alignment */
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dotPulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
   }
 }

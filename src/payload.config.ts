@@ -1,4 +1,3 @@
-// storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -35,13 +34,10 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
   }),
   sharp,
-  plugins: [
-    payloadCloudPlugin(),
-    // storage-adapter-placeholder
-  ],
+  plugins: [payloadCloudPlugin()],
   email: resendAdapter({
-    defaultFromAddress: 'test@resend.dev',
-    defaultFromName: 'Payload CMS',
+    defaultFromAddress: 'no-reply@mail.israelblennerhassett.com', //!! Regsiter THA domain with Resend and replace this with registed domain
+    defaultFromName: 'Contact Form',
     apiKey: process.env.RESEND_API_KEY || '',
   }),
 })

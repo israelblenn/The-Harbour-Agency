@@ -20,6 +20,7 @@ export default async function Contact() {
   return (
     <>
       <ClearSelection />
+      <h2 style={{ fontWeight: 500, marginBottom: '5rem' }}>Get in touch</h2>
       <ContactForm />
       <div className={styles.methods}>
         <ul className={styles.labels}>

@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
   try {
     await payload.sendEmail({
-      to: 'israelblenn@gmail.com',
+      to: process.env.SEND_TO_ADRESS,
       subject: `New message from ${name}`,
       html: `
         <p><strong>Email:</strong> ${email}</p>

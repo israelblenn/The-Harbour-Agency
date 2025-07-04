@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import SendButton from './SendButton'
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -12,30 +14,39 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      body: JSON.stringify(formData),
-      headers: { 'Content-Type': 'application/json' },
-    })
+    setIsSubmitting(true)
+    setStatus('idle')
 
-    setStatus(res.ok ? 'success' : 'error')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (res.ok) {
+        setStatus('success')
+        setFormData({ name: '', email: '', message: '' })
+      } else {
+        setStatus('error')
+      }
+    } catch (_) {
+      setStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="name" placeholder="Your name" value={formData.name} onChange={handleChange} required />
-      <input
-        type="email"
-        name="email"
-        placeholder="Your email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
-      <textarea name="message" placeholder="Your message" value={formData.message} onChange={handleChange} required />
-      <button type="submit">Send</button>
-      {status === 'success' && <p>Message sent!</p>}
-      {status === 'error' && <p>Something went wrong.</p>}
+      <label>Name</label>
+      <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+      <label>Email Address</label>
+      <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+      <label>Message</label>
+      <textarea name="message" value={formData.message} onChange={handleChange} required />
+      <SendButton isSubmitting={isSubmitting} isSuccess={status === 'success'} />
+      {status === 'error' && <p>Something went wrong. Please try again.</p>}
     </form>
   )
 }
