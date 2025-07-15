@@ -7,7 +7,7 @@
 .cell {
   position: relative;
   cursor: pointer;
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .polygon {

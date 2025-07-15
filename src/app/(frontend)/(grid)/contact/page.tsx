@@ -2,20 +2,11 @@ import ClearSelection from '@/components/ClearSelection'
 import type { Contact } from '@/payload-types'
 import styles from '@/styles/Contact.module.css'
 import ContactForm from '@/components/ContactForm'
+import { fetchContact, safeFetch } from '@/lib/api/payload-cms'
 
 export default async function Contact() {
-  let contact: Contact | null = null
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/contact`)
-    if (!res.ok) throw new Error('Failed to fetch data')
-    contact = (await res.json()) as Contact
-  } catch (err) {
-    console.error('Failed to fetch data', err)
-    return <div>Failed to load content</div>
-  }
-
-  if (!contact) return <div>Loading...</div>
+  const contact = await safeFetch(fetchContact)
+  if (!contact) return <div>Sorry, something went wrong loading this data.</div>
 
   return (
     <>

@@ -37,22 +37,11 @@ export const About: GlobalConfig = {
   },
   fields: [
     {
-      type: 'row',
-      fields: [
-        {
-          name: 'logo',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
-        },
-        {
-          name: 'gallery',
-          type: 'upload',
-          relationTo: 'media',
-          hasMany: true,
-          required: true,
-        },
-      ],
+      name: 'gallery',
+      type: 'upload',
+      relationTo: 'media',
+      hasMany: true,
+      required: true,
     },
     {
       name: 'headline',

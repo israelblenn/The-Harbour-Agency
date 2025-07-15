@@ -2,13 +2,66 @@
   width: auto;
   height: 100%;
   object-fit: contain;
+  transform-origin: left;
+  scale: 1.15;
 }
 
 .navLinks {
   display: flex;
-  gap: 1rem;
+  position: relative;
+  gap: 0.5rem;
+  height: min-content;
+  background-color: var(--primary);
+}
 
-  & a {
-    text-decoration: none;
+.navLinks a {
+  padding-block: 1rem;
+  padding-inline: 6px;
+  mix-blend-mode: difference;
+  background: var(--primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+.highlight {
+  position: absolute;
+  top: 6px;
+  height: 3rem;
+  background: var(--secondary);
+}
+
+.wrapper {
+  width: 300px;
+  background: var(--tertiary);
+  height: 30px;
+  overflow: hidden;
+  transform-origin: bottom right;
+  transform: rotate(45deg);
+  position: absolute;
+  top: 80px;
+  right: 0;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  transition: 500ms;
+  z-index: 2;
+
+  /* view-transition-name: vault-ribbon;
+  z-index: 9999; Ensure it's on top during transition */
+
+  &:hover {
+    scale: 1.01;
+    box-shadow: 8px 8px 10px rgba(0, 0, 0, 0.15);
   }
+}
+
+.marqueeTextTrack {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  padding-left: 1rem;
+  gap: 1rem;
+  width: max-content;
+  will-change: transform;
 }

@@ -4,20 +4,11 @@ import Link from 'next/link'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { About, Media } from '@/payload-types'
 import styles from '@/styles/About.module.css'
+import { fetchAbout, safeFetch } from '@/lib/api/payload-cms'
 
 export default async function About() {
-  let about: About | null = null
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/about`)
-    if (!res.ok) throw new Error('Failed to fetch data')
-    about = (await res.json()) as About
-  } catch (err) {
-    console.error('Failed to fetch data', err)
-    return <div>Failed to load content</div>
-  }
-
-  if (!about) return <div>Loading...</div>
+  const about = await safeFetch(fetchAbout)
+  if (!about) return <div>Failed to load content</div>
 
   const validGalleryImages = (about.gallery || []).filter(
     (item): item is Media => typeof item !== 'string' && 'url' in item,

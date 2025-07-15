@@ -1,18 +1,38 @@
 // src/lib/api/payload-cms.ts
 'use server'
 
-interface ActBase {
-  id: string
-  name: string
-}
+import type { About, Contact, Branding, Act } from '@/payload-types'
 
-interface ActWithPhoto extends ActBase {
-  photo: { url: string }
-}
-
-export async function fetchAllActs(): Promise<ActWithPhoto[]> {
+export async function fetchAllActs(): Promise<Act[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=9999&sort=name`)
   if (!res.ok) throw new Error('Failed to fetch acts')
   const data = await res.json()
   return data.docs
+}
+
+export async function fetchAbout(): Promise<About> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/about`)
+  if (!res.ok) throw new Error('Failed to fetch About global')
+  return await res.json()
+}
+
+export async function fetchContact(): Promise<Contact> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/contact`)
+  if (!res.ok) throw new Error('Failed to fetch Contact global')
+  return await res.json()
+}
+
+export async function fetchBranding(): Promise<Branding> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/branding`)
+  if (!res.ok) throw new Error('Failed to fetch Branding global')
+  return await res.json()
+}
+
+export async function safeFetch<T>(fn: () => Promise<T>): Promise<T | null> {
+  try {
+    return await fn()
+  } catch (err) {
+    console.error('safeFetch error:', err)
+    return null
+  }
 }

@@ -7,11 +7,12 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import path from 'path'
 
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
-import { About } from './collections/About'
-import { Acts } from './collections/Acts'
-import { Contact } from './collections/Contact'
+import { Users } from '@/collections/Users'
+import { Media } from '@/collections/Media'
+import { About } from '@/collections/About'
+import { Acts } from '@/collections/Acts'
+import { Contact } from '@/collections/Contact'
+import { Branding } from '@/collections/Branding'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,16 +24,12 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  globals: [About, Contact],
-  collections: [Users, Media, Acts],
+  globals: [About, Contact, Branding],
+  collections: [Acts, Media, Users],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
-  typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
-  },
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
-  }),
+  typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
+  db: mongooseAdapter({ url: process.env.DATABASE_URI || '' }),
   sharp,
   plugins: [payloadCloudPlugin()],
   email: resendAdapter({

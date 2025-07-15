@@ -67,18 +67,18 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
-    media: Media;
     acts: Act;
+    media: Media;
+    users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
     acts: ActsSelect<false> | ActsSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -89,10 +89,12 @@ export interface Config {
   globals: {
     about: About;
     contact: Contact;
+    branding: Branding;
   };
   globalsSelect: {
     about: AboutSelect<false> | AboutSelect<true>;
     contact: ContactSelect<false> | ContactSelect<true>;
+    branding: BrandingSelect<false> | BrandingSelect<true>;
   };
   locale: null;
   user: User & {
@@ -123,20 +125,16 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "acts".
  */
-export interface User {
+export interface Act {
   id: string;
+  photo: string | Media;
+  name: string;
+  bio: string;
+  link: string;
   updatedAt: string;
   createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -159,16 +157,20 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "acts".
+ * via the `definition` "users".
  */
-export interface Act {
+export interface User {
   id: string;
-  photo: string | Media;
-  name: string;
-  bio: string;
-  link: string;
   updatedAt: string;
   createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -178,16 +180,16 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
-        relationTo: 'users';
-        value: string | User;
+        relationTo: 'acts';
+        value: string | Act;
       } | null)
     | ({
         relationTo: 'media';
         value: string | Media;
       } | null)
     | ({
-        relationTo: 'acts';
-        value: string | Act;
+        relationTo: 'users';
+        value: string | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -233,18 +235,15 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "acts_select".
  */
-export interface UsersSelect<T extends boolean = true> {
+export interface ActsSelect<T extends boolean = true> {
+  photo?: T;
+  name?: T;
+  bio?: T;
+  link?: T;
   updatedAt?: T;
   createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -266,15 +265,18 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "acts_select".
+ * via the `definition` "users_select".
  */
-export interface ActsSelect<T extends boolean = true> {
-  photo?: T;
-  name?: T;
-  bio?: T;
-  link?: T;
+export interface UsersSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,7 +316,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface About {
   id: string;
-  logo: string | Media;
   gallery: (string | Media)[];
   headline: {
     root: {
@@ -404,10 +405,22 @@ export interface Contact {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "branding".
+ */
+export interface Branding {
+  id: string;
+  logo: string | Media;
+  favicon: string | Media;
+  title: string;
+  description?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about_select".
  */
 export interface AboutSelect<T extends boolean = true> {
-  logo?: T;
   gallery?: T;
   headline?: T;
   profile?: T;
@@ -436,6 +449,19 @@ export interface ContactSelect<T extends boolean = true> {
         content?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "branding_select".
+ */
+export interface BrandingSelect<T extends boolean = true> {
+  logo?: T;
+  favicon?: T;
+  title?: T;
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

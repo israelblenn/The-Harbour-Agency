@@ -1,8 +1,8 @@
 import React from 'react'
 import '@/app/(frontend)/styles.css'
 import { Inter } from 'next/font/google'
-import Header from '@/components/Header'
 import { SelectedActProvider } from '@/contexts/SelectedActContext'
+import { ViewTransitions } from 'next-view-transitions'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,13 +18,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
   return (
-    <html lang="en" className={inter.className}>
-      <body>
-        <SelectedActProvider>
-          <Header />
-          {children}
-        </SelectedActProvider>
-      </body>
-    </html>
+    <ViewTransitions>
+      <SelectedActProvider>{children}</SelectedActProvider>
+    </ViewTransitions>
   )
 }
