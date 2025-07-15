@@ -1,7 +1,6 @@
-// src/lib/api/payload-cms.ts
 'use server'
 
-import type { About, Contact, Branding, Act } from '@/payload-types'
+import type { About, Contact, Branding, Act, Media } from '@/payload-types'
 
 export async function fetchAllActs(): Promise<Act[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=9999&sort=name`)
@@ -26,6 +25,13 @@ export async function fetchBranding(): Promise<Branding> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/branding`)
   if (!res.ok) throw new Error('Failed to fetch Branding global')
   return await res.json()
+}
+
+export async function fetchVaultMedia(): Promise<Media[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/media?limit=9999&where[vault][equals]=true`)
+  if (!res.ok) throw new Error('Failed to fetch vault media')
+  const data = await res.json()
+  return data.docs
 }
 
 export async function safeFetch<T>(fn: () => Promise<T>): Promise<T | null> {

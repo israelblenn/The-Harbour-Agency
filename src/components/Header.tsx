@@ -13,6 +13,7 @@ export default function Header() {
   const [altText, setAltText] = useState<string>('Logo')
   const [highlight, setHighlight] = useState({ left: 0, width: 0, visible: false })
   const [isPressed, setIsPressed] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   const navRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
@@ -90,10 +91,18 @@ export default function Header() {
     setIsPressed(false)
   }
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0) // adjust threshold as needed
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header>
+    <header className={`${scrolled ? 'shrunk' : ''}`}>
       <nav>
-        <Link href="/">
+        <Link href="/" style={{ height: '100%' }}>
           {logoUrl && <Image priority src={logoUrl} alt={altText} width={0} height={0} className={styles.logo} />}
         </Link>
 

@@ -11,6 +11,12 @@ export const Media: CollectionConfig = {
       type: 'text',
       // required: true,
     },
+    {
+      name: 'vault',
+      label: 'Feature in the vault?',
+      type: 'checkbox',
+      index: true,
+    },
   ],
   upload: true,
 }

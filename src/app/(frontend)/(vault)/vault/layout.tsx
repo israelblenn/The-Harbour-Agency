@@ -7,7 +7,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
 
   return (
     <html lang="en" className="redder">
-      <body>
+      <body className="scrollable" style={{ scrollbarWidth: 'auto' }}>
         <Header />
         {children}
       </body>
