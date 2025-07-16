@@ -3,7 +3,7 @@
   height: 100%;
   object-fit: contain;
   transform-origin: left;
-  /* scale: 1.15; */
+  scale: 1.15;
 }
 
 .navLinks {

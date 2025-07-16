@@ -27,7 +27,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
                     : { url: '' },
             }))}
           />
-          <div className="scrollable" style={{ paddingBottom: '8rem' }}>
+          <div className="scrollShadow scrollable" style={{ paddingBottom: '8rem' }}>
             {children}
           </div>
         </main>

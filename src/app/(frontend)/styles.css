@@ -70,12 +70,12 @@ h2 {
 
 header {
   height: 8rem;
-  margin-bottom: 6rem;
+  margin-bottom: 8rem;
 
   position: sticky;
   top: 0;
   background: var(--primary);
-  height: 80px;
+  height: 8rem;
   transition: 0.2s ease-in-out;
   width: 100vw;
   margin-left: -8rem;
@@ -148,6 +148,20 @@ label {
   &::-webkit-scrollbar {
     display: none; /* Chrome/Safari/Webkit */
   }
+}
+
+.scrollShadow {
+  background:
+    linear-gradient(var(--primary) 30%, rgba(255, 255, 255, 0)) center top,
+    linear-gradient(rgba(255, 255, 255, 0), var(--primary) 70%) center bottom,
+    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top;
+  background-size:
+    100% 40px,
+    100% 40px,
+    100% 14px,
+    100% 14px;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
 }
 
 /* LEXICAL */
