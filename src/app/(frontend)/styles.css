@@ -2,7 +2,7 @@
   --primary: #dfdfdf;
   --secondary: #000;
   --tertiary: #ff4338;
-  --shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+  --shadow: 4px 4px 10px rgba(0, 0, 0, 0); /* !! hmmm */
   font-size: 8px;
 }
 
