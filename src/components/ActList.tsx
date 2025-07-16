@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import styles from '@/styles/ActList.module.css'
 import { useSelectedAct } from '@/contexts/SelectedActContext'
 import { search } from 'fast-fuzzy'
@@ -14,6 +14,7 @@ export default function ActList({ Acts }: ActListProps) {
   const { selectedActId, setSelectedActId } = useSelectedAct()
   const [isDragging, setIsDragging] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const isUserInteractingWithSelection = useRef(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const contentRefs = useRef<Record<string, HTMLSpanElement | null>>({})
@@ -28,11 +29,27 @@ export default function ActList({ Acts }: ActListProps) {
 
   const {
     scrollRef,
-    updateSelected: debouncedUpdateSelected,
-    handleItemClick,
+    updateSelected: debouncedUpdateSelectedFromScroll,
+    handleItemClick: originalHandleItemClick,
     isProgrammaticScrollRef,
     isClickAllowedRef,
   } = useScrollSelection(filteredActs, selectedActId, setSelectedActId)
+
+  const handleItemClick = useCallback(
+    (id: string, e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      isUserInteractingWithSelection.current = true
+      originalHandleItemClick(id, e)
+    },
+    [originalHandleItemClick],
+  )
+
+  const debouncedUpdateSelected = useCallback(
+    (_event: React.UIEvent<HTMLUListElement>) => {
+      isUserInteractingWithSelection.current = true
+      debouncedUpdateSelectedFromScroll()
+    },
+    [debouncedUpdateSelectedFromScroll],
+  )
 
   useEffect(() => {
     const CLICK_MOVE_THRESHOLD = 5
@@ -101,6 +118,7 @@ export default function ActList({ Acts }: ActListProps) {
       if (delta !== undefined) {
         e.preventDefault()
         isProgrammaticScrollRef.current = true
+        isUserInteractingWithSelection.current = true
         current.scrollBy({ top: delta, behavior: 'smooth' })
         requestAnimationFrame(() => {
           isProgrammaticScrollRef.current = false
@@ -117,6 +135,7 @@ export default function ActList({ Acts }: ActListProps) {
     const currentList = scrollRef.current
     if (currentInput && currentList && document.activeElement === currentInput) {
       isProgrammaticScrollRef.current = true
+      isUserInteractingWithSelection.current = false
       currentList.scrollTo({ top: 0 })
       setTimeout(() => {
         isProgrammaticScrollRef.current = false
@@ -131,6 +150,19 @@ export default function ActList({ Acts }: ActListProps) {
       contentEl.dataset.overflowing = isOverflowing.toString()
     })
   }, [filteredActs, selectedActId])
+
+  useEffect(() => {
+    if (searchQuery && filteredActs.length > 0 && !isUserInteractingWithSelection.current) {
+      const firstResultId = filteredActs[0].id
+      if (firstResultId !== selectedActId) {
+        setSelectedActId(firstResultId)
+      }
+    }
+    const resetTimer = setTimeout(() => {
+      isUserInteractingWithSelection.current = false
+    }, 50)
+    return () => clearTimeout(resetTimer)
+  }, [filteredActs, searchQuery, selectedActId, setSelectedActId])
 
   return (
     <div className={styles.container}>
@@ -161,7 +193,7 @@ export default function ActList({ Acts }: ActListProps) {
               <li
                 key={act.id}
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={(e) => handleItemClick(act.id, e)}
+                onClick={(e: React.MouseEvent<HTMLLIElement, MouseEvent>) => handleItemClick(act.id, e)}
                 className={styles.item}
                 style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
               >
