@@ -16,7 +16,7 @@ const X = 320
 const T = 228
 const B = 252
 
-const lightness = 14
+const lightness = 0
 
 export default function Polygon({ selectedActId, containerRef, acts, positions }: PolygonProps) {
   const polygonLeft = useMotionValue('')
@@ -70,7 +70,7 @@ export default function Polygon({ selectedActId, containerRef, acts, positions }
     <svg className={styles.polygon}>
       <motion.polygon points={polygonTop} fill={`hsl(0, 0%, ${lightness}%)`} />
       <motion.polygon points={polygonBottom} fill={`hsl(0, 0%, ${lightness}%)`} />
-      <motion.polygon points={polygonLeft} fill="#000" />
+      <motion.polygon points={polygonLeft} fill="var(--secondary)" />
     </svg>
   )
 }

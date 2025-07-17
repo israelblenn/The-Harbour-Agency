@@ -1,29 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import styles from '@/styles/Header.module.css'
 import { useAnimationFrame, useMotionValue, useSpring } from 'framer-motion'
 import { useRef } from 'react'
-import { useTransitionRouter } from 'next-view-transitions'
-
-const pageAnimation = () => {
-  document.documentElement.animate(
-    [
-      {
-        clipPath: 'circle(0% at calc(100% - 55px) 55px)',
-      },
-      {
-        clipPath: 'circle(150% at calc(100% - 55px) 55px)',
-      },
-    ],
-    {
-      duration: 1000,
-      easing: 'ease-in-out',
-      fill: 'forwards',
-      pseudoElement: '::view-transition-new(root)',
-    },
-  )
-}
+import TransitionLink from '@/components/TransitionLink'
 
 export default function VaultRibbon() {
   const marqueeRef = useRef<HTMLDivElement>(null)
@@ -32,7 +12,6 @@ export default function VaultRibbon() {
   const rawVelocity = useMotionValue(-baseSpeed)
   const smoothVelocity = useSpring(rawVelocity, { damping: 50, stiffness: 50 })
   const pos = useRef(0)
-  const router = useTransitionRouter()
 
   const handleMouseEnter = () => rawVelocity.set(fastSpeed)
   const handleMouseLeave = () => rawVelocity.set(-baseSpeed)
@@ -52,17 +31,11 @@ export default function VaultRibbon() {
 
   return (
     <>
-      <Link
+      <TransitionLink
         href="/vault"
         className={styles.wrapper}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onClick={(e) => {
-          e.preventDefault()
-          router.push('/vault', {
-            onTransitionReady: pageAnimation,
-          })
-        }}
       >
         <div className={styles.marqueeTextTrack} ref={marqueeRef}>
           {[...Array(3)].flatMap(() => [
@@ -72,7 +45,7 @@ export default function VaultRibbon() {
             </span>,
           ])}
         </div>
-      </Link>
+      </TransitionLink>
     </>
   )
 }

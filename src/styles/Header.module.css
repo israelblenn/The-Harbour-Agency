@@ -6,6 +6,14 @@
   scale: 1.15;
 }
 
+.vault {
+  --primary: #ff4338;
+
+  & .logo {
+    filter: brightness(0);
+  }
+}
+
 .navLinks {
   display: flex;
   position: relative;

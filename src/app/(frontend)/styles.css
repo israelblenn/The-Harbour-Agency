@@ -6,15 +6,15 @@
   font-size: 8px;
 }
 
-.redder {
-  --primary: #ff4338;
-}
-
 * {
   box-sizing: border-box;
   font-size: 2rem;
   font-family: 'Inter';
 }
+
+/* html {
+  will-change: clip-path;
+} */
 
 body {
   background-color: var(--primary);

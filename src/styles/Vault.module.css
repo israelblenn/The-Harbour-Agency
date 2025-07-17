@@ -50,3 +50,21 @@
   padding: 0 0.5rem;
   line-height: 1;
 }
+
+/* Vault.module.css */
+
+.imageContainer {
+  position: relative;
+}
+
+.modalImage {
+  transition: opacity 0.4s ease-in-out;
+}
+
+.fadeIn {
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+}

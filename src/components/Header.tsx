@@ -1,4 +1,5 @@
-'use client'
+// src/components/Header.tsx
+'use client' // This is crucial to keep it a client component
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
@@ -6,12 +7,21 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from '@/styles/Header.module.css'
-import { fetchBranding, safeFetch } from '@/lib/api/payload-cms'
 
-export default function Header() {
-  const [logoUrl, setLogoUrl] = useState<string | null | undefined>(null)
-  const [altText, setAltText] = useState<string>('Logo')
-  const [highlight, setHighlight] = useState({ left: 0, width: 0, visible: false })
+// Define the type for the props your Header will receive
+interface HeaderProps {
+  brandingData: { logoUrl: string | null }
+}
+
+// Accept brandingData as a prop
+export default function Header({ brandingData }: HeaderProps) {
+  // Initialize state directly from props, or use default if props are null/undefined
+  const [logoUrl, setLogoUrl] = useState<string | null>(brandingData?.logoUrl || null)
+  const [highlight, setHighlight] = useState({
+    left: 0,
+    width: 0,
+    visible: false,
+  })
   const [isPressed, setIsPressed] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -24,21 +34,16 @@ export default function Header() {
   ]
   const isNavPath = navLinks.some((l) => l.href === pathname)
 
-  useEffect(() => {
-    ;(async () => {
-      const branding = await safeFetch(fetchBranding)
-      const logo = branding?.logo
+  // You can now REMOVE the useEffect that fetches branding data:
+  // useEffect(() => {
+  //   ;(async () => {
+  //     const branding = await safeFetch(fetchBranding)
+  //     const logo = branding?.logo
+  //     // ... and so on
+  //   })()
+  // }, [])
 
-      if (logo && typeof logo !== 'string') {
-        setLogoUrl(logo.url)
-      } else if (typeof logo === 'string') {
-        setLogoUrl(logo)
-      }
-
-      setAltText('The Harbour Agency Logo')
-    })()
-  }, [])
-
+  // Keep other useEffects and logic as they are
   useEffect(() => {
     if (!isNavPath) {
       setHighlight({ left: 0, width: 0, visible: false })
@@ -92,9 +97,7 @@ export default function Header() {
   }
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0) // adjust threshold as needed
-    }
+    const handleScroll = () => setScrolled(window.scrollY > 0)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -103,7 +106,9 @@ export default function Header() {
     <header className={`${scrolled ? 'shrunk' : ''}`}>
       <nav>
         <Link href="/" style={{ height: '100%' }}>
-          {logoUrl && <Image priority src={logoUrl} alt={altText} width={0} height={0} className={styles.logo} />}
+          {logoUrl && (
+            <Image priority src={logoUrl} alt="The Harbour Agency Logo" width={0} height={0} className={styles.logo} />
+          )}
         </Link>
 
         <div className={styles.navLinks} ref={navRef} onMouseLeave={onLeave}>
