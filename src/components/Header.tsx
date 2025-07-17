@@ -1,5 +1,4 @@
-// src/components/Header.tsx
-'use client' // This is crucial to keep it a client component
+'use client'
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
@@ -7,15 +6,13 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from '@/styles/Header.module.css'
+import TransitionLink from '@/components/TransitionLink'
 
-// Define the type for the props your Header will receive
 interface HeaderProps {
   brandingData: { logoUrl: string | null }
 }
 
-// Accept brandingData as a prop
 export default function Header({ brandingData }: HeaderProps) {
-  // Initialize state directly from props, or use default if props are null/undefined
   const [logoUrl, setLogoUrl] = useState<string | null>(brandingData?.logoUrl || null)
   const [highlight, setHighlight] = useState({
     left: 0,
@@ -24,26 +21,20 @@ export default function Header({ brandingData }: HeaderProps) {
   })
   const [isPressed, setIsPressed] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [prevPathname, setPrevPathname] = useState<string | null>(null)
 
   const navRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+
+  useEffect(() => {
+    if (pathname !== prevPathname) setPrevPathname(pathname)
+  }, [pathname, prevPathname])
 
   const navLinks = [
     { href: '/', label: 'About' },
     { href: '/contact', label: 'Contact' },
   ]
   const isNavPath = navLinks.some((l) => l.href === pathname)
-
-  // You can now REMOVE the useEffect that fetches branding data:
-  // useEffect(() => {
-  //   ;(async () => {
-  //     const branding = await safeFetch(fetchBranding)
-  //     const logo = branding?.logo
-  //     // ... and so on
-  //   })()
-  // }, [])
-
-  // Keep other useEffects and logic as they are
   useEffect(() => {
     if (!isNavPath) {
       setHighlight({ left: 0, width: 0, visible: false })
@@ -102,14 +93,16 @@ export default function Header({ brandingData }: HeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const TransLink = prevPathname === '/vault' ? TransitionLink : Link
+
   return (
     <header className={`${scrolled ? 'shrunk' : ''}`}>
       <nav>
-        <Link href="/" style={{ height: '100%' }}>
+        <TransLink href="/" style={{ height: '100%' }}>
           {logoUrl && (
             <Image priority src={logoUrl} alt="The Harbour Agency Logo" width={0} height={0} className={styles.logo} />
           )}
-        </Link>
+        </TransLink>
 
         <div className={styles.navLinks} ref={navRef} onMouseLeave={onLeave}>
           <AnimatePresence>
@@ -136,18 +129,20 @@ export default function Header({ brandingData }: HeaderProps) {
             )}
           </AnimatePresence>
 
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              data-path={link.href}
-              onMouseEnter={onEnter}
-              onMouseDown={onMouseDown}
-              onMouseUp={onMouseUp}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            return (
+              <TransLink
+                key={link.href}
+                href={link.href}
+                data-path={link.href}
+                onMouseEnter={onEnter}
+                onMouseDown={onMouseDown}
+                onMouseUp={onMouseUp}
+              >
+                {link.label}
+              </TransLink>
+            )
+          })}
         </div>
       </nav>
     </header>

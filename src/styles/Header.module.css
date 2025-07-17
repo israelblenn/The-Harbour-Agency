@@ -9,6 +9,10 @@
 .vault {
   --primary: #ff4338;
 
+  & header {
+    z-index: 1;
+  }
+
   & .logo {
     filter: brightness(0);
   }
