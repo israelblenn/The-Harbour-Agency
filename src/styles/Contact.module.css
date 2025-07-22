@@ -1,22 +1,6 @@
-.labels li {
-  text-transform: uppercase;
-  text-align: right;
-  display: block;
-}
-
-.methods {
-  margin-top: 6rem;
-  display: flex;
-  gap: 4rem;
-
-  & ul {
-    display: grid;
-    gap: 2rem;
-  }
-
-  & li {
-    line-height: 1.5;
-  }
+.heading {
+  font-weight: 500;
+  margin-bottom: 5rem;
 }
 
 .send {
@@ -137,5 +121,19 @@
   30% {
     opacity: 1;
     transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 767px) {
+  .heading {
+    display: none;
+  }
+
+  .send {
+    background: var(--secondary);
+  }
+
+  .textPrimary {
+    color: white;
   }
 }

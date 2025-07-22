@@ -11,17 +11,27 @@ export default async function Contact() {
   return (
     <>
       <ClearSelection />
-      <h2 style={{ fontWeight: 500, marginBottom: '5rem' }}>Get in touch</h2>
+      <h2 className={styles.heading}> Get in touch</h2>
       <ContactForm />
-      <div className={styles.methods}>
-        <ul className={styles.labels}>
-          <div>{contact.contacts?.map(({ id, label }) => <li key={id}>{label}</li>)}</div>
-          <div>{contact.adresses?.map(({ id, label }) => <li key={id}>{label}</li>)}</div>
-        </ul>
-        <ul>
-          <div>{contact.contacts?.map(({ id, content }) => <li key={id}>{content}</li>)}</div>
-          <div>{contact.adresses?.map(({ id, content }) => <li key={id}>{content}</li>)}</div>
-        </ul>
+      <div>
+        <table>
+          <tbody>
+            {contact.contacts?.map(({ id, label, content }) => (
+              <tr key={id}>
+                <td>{label}</td>
+                <td>{content}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tbody>
+            {contact.adresses?.map(({ id, label, content }) => (
+              <tr key={id}>
+                <td>{label}</td>
+                <td>{content}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   )

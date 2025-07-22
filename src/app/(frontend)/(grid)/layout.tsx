@@ -20,23 +20,25 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       <body>
         <Header brandingData={{ logoUrl }} />
         <main>
-          <VaultRibbon />
-          <ActList Acts={acts} />
-          <ActGrid
-            initialActs={acts.map((act) => ({
-              id: act.id,
-              name: act.name,
-              photo:
-                typeof act.photo === 'string'
-                  ? { url: act.photo }
-                  : act.photo && typeof act.photo === 'object' && 'url' in act.photo
-                    ? { url: act.photo.url ?? '' }
-                    : { url: '' },
-            }))}
-          />
-          <div className="scrollShadow scrollable" style={{ paddingBottom: '8rem' }}>
-            {children}
+          <div className="desktop-only">
+            <VaultRibbon />
+            <ActList Acts={acts} />
           </div>
+          <div className="desktop-only">
+            <ActGrid
+              initialActs={acts.map((act) => ({
+                id: act.id,
+                name: act.name,
+                photo:
+                  typeof act.photo === 'string'
+                    ? { url: act.photo }
+                    : act.photo && typeof act.photo === 'object' && 'url' in act.photo
+                      ? { url: act.photo.url ?? '' }
+                      : { url: '' },
+              }))}
+            />
+          </div>
+          <div className="scrollShadow scrollable pageSegment">{children}</div>
         </main>
       </body>
     </html>

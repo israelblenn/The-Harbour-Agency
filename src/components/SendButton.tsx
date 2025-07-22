@@ -54,7 +54,7 @@ export default function SendButton({ isSubmitting, isSuccess }: SendButtonProps)
         </span>
       )
     }
-    return status === 'sent' ? 'Sent' : 'Send'
+    return status === 'sent' ? 'sent' : 'send'
   }
 
   return (

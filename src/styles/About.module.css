@@ -2,6 +2,7 @@
   position: relative;
   width: 256px;
   height: 320px;
+  max-width: 100%;
   /* z-index: -1; */
 }
 
@@ -52,6 +53,10 @@
   translate: 0 1rem;
 }
 
+.imageWrapper {
+  margin-bottom: 4rem;
+}
+
 .spaceBetween {
   display: flex;
   justify-content: space-between;
@@ -59,4 +64,24 @@
 
 .footer {
   line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  .headline {
+    margin-left: unset;
+    translate: 0 3rem;
+  }
+
+  .imageWrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .credits {
+    margin-top: 1rem;
+  }
+
+  .team {
+    margin: 3rem 0 6rem 0;
+  }
 }

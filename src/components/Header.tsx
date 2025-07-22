@@ -32,6 +32,7 @@ export default function Header({ brandingData }: HeaderProps) {
 
   const navLinks = [
     { href: '/', label: 'About' },
+    { href: '/artists', label: 'Artists' },
     { href: '/contact', label: 'Contact' },
   ]
   const isNavPath = navLinks.some((l) => l.href === pathname)
@@ -98,10 +99,8 @@ export default function Header({ brandingData }: HeaderProps) {
   return (
     <header className={`${scrolled ? 'shrunk' : ''}`}>
       <nav>
-        <TransLink href="/" style={{ height: '100%' }}>
-          {logoUrl && (
-            <Image priority src={logoUrl} alt="The Harbour Agency Logo" width={0} height={0} className={styles.logo} />
-          )}
+        <TransLink href="/" className={styles.logo}>
+          {logoUrl && <Image priority src={logoUrl} alt="The Harbour Agency Logo" width={0} height={0} />}
         </TransLink>
 
         <div className={styles.navLinks} ref={navRef} onMouseLeave={onLeave}>
@@ -138,12 +137,17 @@ export default function Header({ brandingData }: HeaderProps) {
                 onMouseEnter={onEnter}
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
+                className={link.href === '/artists' ? 'mobile-only' : ''}
               >
                 {link.label}
               </TransLink>
             )
           })}
         </div>
+
+        <TransitionLink className={`mobile-only ${styles.vaultLink}`} href="/vault">
+          <span>Vault</span>
+        </TransitionLink>
       </nav>
     </header>
   )

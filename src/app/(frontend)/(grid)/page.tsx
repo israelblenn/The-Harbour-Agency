@@ -22,35 +22,37 @@ export default async function About() {
       <ClearSelection />
       <RichText className={styles.headline} data={about.headline} />
 
-      {validGalleryImages.length > 0 && (
-        <div className={styles.imageContainer}>
-          <Image
-            src={validGalleryImages[0]?.url || ''}
-            alt={validGalleryImages[0]?.alt || 'Gallery image'}
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-          {validGalleryImages.map((image, index) => (
-            <div
-              key={image.id}
-              className={styles.crossfadeSlide}
-              style={{
-                animationDelay: `${index * slideDuration}s`,
-                animationDuration: `${totalDuration}s`,
-              }}
-            >
-              <Image
-                src={image.url || ''}
-                alt={image.alt || 'Gallery image'}
-                fill
-                style={{ objectFit: 'cover' }}
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      <div className={styles.imageWrapper}>
+        {validGalleryImages.length > 0 && (
+          <div className={styles.imageContainer}>
+            <Image
+              src={validGalleryImages[0]?.url || ''}
+              alt={validGalleryImages[0]?.alt || 'Gallery image'}
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            {validGalleryImages.map((image, index) => (
+              <div
+                key={image.id}
+                className={styles.crossfadeSlide}
+                style={{
+                  animationDelay: `${index * slideDuration}s`,
+                  animationDuration: `${totalDuration}s`,
+                }}
+              >
+                <Image
+                  src={image.url || ''}
+                  alt={image.alt || 'Gallery image'}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <RichText data={about.profile} />
 
@@ -60,15 +62,20 @@ export default async function About() {
       </div>
 
       <span className={styles.footer}>
-        © The Harbour Agency Pty Ltd. All rights reserved.
-        <div className={styles.spaceBetween}>
+        © The Harbour Agency Pty Ltd. All rights reserved.&nbsp;
+        <Link href={'/legal'} className="mobile-only">
+          Privacy Policy
+        </Link>
+        <div className={`${styles.spaceBetween} ${styles.credits}`}>
           <span>
             Website by{' '}
             <a target="_blank" href="https://israelblennerhassett.com/">
               Israel Blennerhassett
             </a>
           </span>
-          <Link href={'/legal'}>Privacy Policy</Link>
+          <Link href={'/legal'} className="desktop-only">
+            Privacy Policy
+          </Link>
         </div>
       </span>
     </>

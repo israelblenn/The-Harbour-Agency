@@ -1,9 +1,13 @@
 .logo {
-  width: auto;
   height: 100%;
-  object-fit: contain;
-  transform-origin: left;
-  scale: 1.15;
+
+  & img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    transform-origin: left;
+    scale: 1.15;
+  }
 }
 
 .vault {
@@ -34,7 +38,6 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-decoration: none;
 }
 
 .highlight {
@@ -76,4 +79,65 @@
   gap: 1rem;
   width: max-content;
   will-change: transform;
+}
+
+@media (max-width: 767px) {
+  .logo {
+    display: none;
+  }
+
+  .navLinks {
+    margin-top: -6px;
+
+    & a {
+      padding-bottom: 26px;
+    }
+  }
+
+  .vaultLink {
+    /* mix-blend-mode: difference;
+    background: var(--primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none; */
+    /* margin-top: -6px; */
+
+    text-decoration: none;
+
+    & span {
+      height: 3rem;
+      background-color: var(--tertiary);
+      color: var(--primary);
+      padding: 2px 6px 1rem 6px;
+      display: flex;
+    }
+
+    & a {
+      text-decoration: none;
+    }
+  }
+
+  .vault span {
+    background-color: var(--secondary);
+  }
+
+  /* .navLinks {
+    display: flex;
+    position: relative;
+    gap: 0.5rem;
+    height: min-content;
+    background-color: var(--primary);
+  }
+
+  .navLinks a {
+    padding-block: 1rem;
+    padding-inline: 6px;
+    mix-blend-mode: difference;
+    background: var(--primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+  } */
 }
