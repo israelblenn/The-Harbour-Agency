@@ -1,7 +1,6 @@
-// SelectedActContext.tsx
 'use client'
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 type SelectedActContextType = {
@@ -13,11 +12,19 @@ const SelectedActContext = createContext<SelectedActContextType | undefined>(und
 
 export const SelectedActProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedActId, setSelectedActIdState] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    const checkIsMobile = () => setIsMobile(window.innerWidth < 767)
+    checkIsMobile()
+    window.addEventListener('resize', checkIsMobile)
+    return () => window.removeEventListener('resize', checkIsMobile)
+  }, [])
 
   const setSelectedActId = (id: string | null) => {
     setSelectedActIdState(id)
-    if (id != null) router.push(`${id}`)
+    if (id != null && !isMobile) router.push(`${id}`)
   }
 
   return (

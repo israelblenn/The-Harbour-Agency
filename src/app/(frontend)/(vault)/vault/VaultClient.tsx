@@ -85,7 +85,7 @@ export default function VaultClient({ initialVault }: VaultClientProps) {
               alt={media.filename || 'Vault image'}
               width={media.width!}
               height={media.height!}
-              className={`${styles.modalImage} ${loadedImages.includes(media.id) ? styles.fadeIn : styles.hidden}`}
+              className={`${styles.gridImage} ${loadedImages.includes(media.id) ? styles.fadeIn : styles.hidden}`}
               priority={true}
               sizes="(max-width: 768px) 90vw, (max-width: 1200px) 70vw, 50vw"
               onLoadingComplete={() => handleImageLoad(media.id)}

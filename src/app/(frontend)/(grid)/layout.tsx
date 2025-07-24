@@ -1,10 +1,12 @@
+// app/(frontend)/layout.tsx
 import '@/app/(frontend)/styles.css'
 import { fetchAllActs, fetchBranding } from '@/lib/api/payload-cms'
-import ActList from '@/components/ActList'
+import ActList from '@/components/ActList' // Assuming this ActList is for desktop display
 import ActGrid from '@/components/ActGrid'
 import VaultRibbon from '@/components/VaultRibbon'
 import Header from '@/components/Header'
 import type { Media } from '@/payload-types'
+import React from 'react' // <--- Make sure React is imported!
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const acts = await fetchAllActs()
@@ -15,6 +17,15 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     logoUrl = logoMedia.url ?? null
   }
 
+  // Ensure acts is passed as a prop to children
+  const childrenWithProps = React.Children.map(children, (child) => {
+    if (React.isValidElement(child)) {
+      // IMPORTANT: Type assertion here to ensure 'acts' prop is expected by the child
+      return React.cloneElement(child, { acts } as { acts: typeof acts })
+    }
+    return child
+  })
+
   return (
     <html lang="en">
       <body>
@@ -22,7 +33,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <main>
           <div className="desktop-only">
             <VaultRibbon />
-            <ActList Acts={acts} />
+            <ActList Acts={acts} /> {/* This ActList gets acts directly */}
           </div>
           <div className="desktop-only">
             <ActGrid
@@ -38,7 +49,8 @@ export default async function MainLayout({ children }: { children: React.ReactNo
               }))}
             />
           </div>
-          <div className="scrollShadow scrollable pageSegment">{children}</div>
+          <div className="scrollShadow scrollable pageSegment">{childrenWithProps}</div>{' '}
+          {/* Render children with props */}
         </main>
       </body>
     </html>

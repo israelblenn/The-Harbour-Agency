@@ -7,7 +7,7 @@ import { search } from 'fast-fuzzy'
 import { useScrollSelection } from '@/hooks/useScrollSelection'
 
 interface ActListProps {
-  Acts: Array<{ id: string; name: string }>
+  Acts: Array<{ id: string; name: string }> | undefined
 }
 
 export default function ActList({ Acts }: ActListProps) {
@@ -23,6 +23,7 @@ export default function ActList({ Acts }: ActListProps) {
   const scrollTopRef = useRef(0)
 
   const filteredActs = useMemo(() => {
+    if (!Acts) return []
     if (!searchQuery) return Acts
     return search(searchQuery, Acts, { keySelector: (act) => act.name })
   }, [Acts, searchQuery])
@@ -168,7 +169,7 @@ export default function ActList({ Acts }: ActListProps) {
     <div className={styles.container}>
       <div className={styles.barCropper} />
       <div className={styles.bar} />
-      <div className={styles.fade} />
+      <div className={`${styles.fade} desktop-only`} />
 
       <input
         ref={inputRef}
