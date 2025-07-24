@@ -117,6 +117,10 @@
     margin-bottom: -2rem;
   }
 
+  .item:hover::before {
+    content: none;
+  }
+
   .bar,
   .barCropper {
     width: 100%;

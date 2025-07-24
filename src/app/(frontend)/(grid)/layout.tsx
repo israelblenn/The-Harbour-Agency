@@ -1,7 +1,7 @@
 // app/(frontend)/layout.tsx
 import '@/app/(frontend)/styles.css'
 import { fetchAllActs, fetchBranding } from '@/lib/api/payload-cms'
-import ActList from '@/components/ActList' // Assuming this ActList is for desktop display
+import ActList from '@/components/ActList/ActList' // Assuming this ActList is for desktop display
 import ActGrid from '@/components/ActGrid'
 import VaultRibbon from '@/components/VaultRibbon'
 import Header from '@/components/Header'

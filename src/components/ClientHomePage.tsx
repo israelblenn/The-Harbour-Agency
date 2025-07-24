@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import ActList from '@/components/ActList'
+import ActList from '@/components/ActList/ActList'
 import ActGrid from '@/components/ActGrid'
 import ActProfile from '@/components/ActProfile'
 

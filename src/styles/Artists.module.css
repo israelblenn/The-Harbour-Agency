@@ -1,0 +1,54 @@
+.thumbnailContainer {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: calc(50vw - 2rem);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.thumbnailImage {
+  object-fit: cover;
+  border: 1px solid var(--secondary);
+}
+
+.expand {
+  position: absolute;
+  width: calc(100% + 1rem);
+  height: calc(100% + 1rem);
+  margin: -1rem;
+  box-sizing: border-box;
+  border-right: 1px solid var(--secondary);
+  border-bottom: 1px solid var(--secondary);
+}
+
+.expand::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid var(--secondary);
+  border-left: 1px solid var(--secondary);
+}
+
+.expand::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(
+    to bottom left,
+    transparent calc(50% - 0.5px),
+    var(--secondary) calc(50% - 0.5px),
+    var(--secondary) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}

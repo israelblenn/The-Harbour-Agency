@@ -1,5 +1,6 @@
-import ClearSelection from '@/components/ClearSelection'
-import ActList from '@/components/ActList'
+// app/artists/page.tsx
+import ActList from '@/components/ActList/ActList'
+import SelectedActThumbnail from '@/components/SelectedActThumbnail' // New component
 import { fetchAllActs } from '@/lib/api/payload-cms'
 import type { Act } from '@/payload-types'
 
@@ -11,8 +12,8 @@ export default async function Artists() {
 
   return (
     <>
-      <ClearSelection />
       <ActList Acts={acts} />
+      <SelectedActThumbnail acts={acts} />
     </>
   )
 }
