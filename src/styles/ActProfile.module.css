@@ -58,3 +58,10 @@
     margin-top: 2rem;
   }
 }
+
+@media screen and (min-width: 700px) and (max-width: 1400px) {
+  .imageWrapper {
+    max-height: calc(100vh - 32rem);
+    max-width: calc(100vh - 32rem);
+  }
+}

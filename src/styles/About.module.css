@@ -88,3 +88,30 @@
     margin: 3rem 0 6rem 0;
   }
 }
+
+@media screen and (min-width: 700px) and (max-width: 1400px) {
+  .headline {
+    height: auto;
+    margin-bottom: 8rem;
+  }
+
+  .mainWrapper {
+    width: 50%;
+    aspect-ratio: 0.8;
+    padding-right: 2rem;
+  }
+
+  .imageWrapper {
+    position: absolute;
+    right: 2rem;
+    top: 8rem;
+    width: calc(50vw - 4rem);
+    padding: 3px;
+  }
+
+  .imageContainer {
+    width: 100%;
+    aspect-ratio: 0.8;
+    height: auto;
+  }
+}

@@ -3,11 +3,10 @@
 import { useSelectedAct } from '@/contexts/SelectedActContext'
 import type { Act } from '@/payload-types'
 import Image from 'next/image'
-// Make sure you are using the Link from next-view-transitions
 import { Link } from 'next-view-transitions'
 import styles from '@/styles/Artists.module.css'
 import Marquee from './Marquee'
-import { useIsMobile } from '@/hooks/useIsMobile' // 1. Import the hook
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface SelectedActThumbnailProps {
   acts: Act[]
@@ -15,7 +14,7 @@ interface SelectedActThumbnailProps {
 
 export default function SelectedActThumbnail({ acts }: SelectedActThumbnailProps) {
   const { selectedActId } = useSelectedAct()
-  const isMobile = useIsMobile() // 2. Use the hook
+  const isMobile = useIsMobile()
   const selectedAct = acts.find((act) => act.id === selectedActId)
 
   if (!selectedAct || !selectedAct.photo) return null
@@ -33,12 +32,11 @@ export default function SelectedActThumbnail({ acts }: SelectedActThumbnailProps
 
   if (!imageUrl) return null
 
-  // 3. Create a unique transition name for the act's image
   const transitionName = `act-image-${selectedAct.id}`
 
   return (
     <div className={styles.thumbnailContainer}>
-      <Marquee repeat={4} speed={20} className={styles.marquee}>
+      <Marquee repeat={10} speed={20} className={styles.marquee}>
         <span>TAP TO EXPAND - </span>
       </Marquee>
       <div className={styles.expand} />
@@ -49,7 +47,6 @@ export default function SelectedActThumbnail({ acts }: SelectedActThumbnailProps
           fill
           sizes="64px"
           className={styles.thumbnailImage}
-          // 4. Apply the view-transition-name conditionally via the style prop
           style={isMobile ? { viewTransitionName: transitionName } : {}}
         />
       </Link>
