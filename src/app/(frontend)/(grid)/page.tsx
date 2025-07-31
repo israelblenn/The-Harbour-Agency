@@ -62,21 +62,19 @@ export default async function About() {
       </div>
 
       <span className={styles.footer}>
-        © The Harbour Agency Pty Ltd. All rights reserved.&nbsp;
-        <Link href={'/legal'} className="mobile-only">
-          Privacy Policy
-        </Link>
-        <div className={`${styles.spaceBetween} ${styles.credits}`}>
-          <span>
-            Website by{' '}
-            <a target="_blank" href="https://israelblennerhassett.com/">
-              Israel Blennerhassett
-            </a>
-          </span>
-          <Link href={'/legal'} className="desktop-only">
+        <div className={styles.credits}>
+          © The Harbour Agency Pty Ltd. All rights reserved.&nbsp;
+          <Link href={'/legal'} style={{ display: 'inline-block' }}>
             Privacy Policy
           </Link>
         </div>
+
+        <span>
+          Website by{' '}
+          <a target="_blank" href="https://israelblennerhassett.com/">
+            Israel Blennerhassett
+          </a>
+        </span>
       </span>
     </>
   )

@@ -1,3 +1,4 @@
+// hooks/useScrollSelection.ts
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 export function useScrollSelection(
@@ -8,6 +9,11 @@ export function useScrollSelection(
   const scrollRef = useRef<HTMLUListElement>(null)
   const isProgrammaticScrollRef = useRef(false)
   const isClickAllowedRef = useRef(true)
+
+  // Ref to store the selectedActId from the very first render
+  const initialSelectedIdRef = useRef(selectedActId)
+  // Ref to track if we've performed the first positioning action
+  const hasPerformedInitialPositioningRef = useRef(false)
 
   const updateSelected = useCallback(() => {
     const list = scrollRef.current
@@ -56,13 +62,6 @@ export function useScrollSelection(
     }, 200)
   }
 
-  // Initial selection effect
-  // useEffect(() => {
-  //   if (filteredActs.length > 0 && !selectedActId) {
-  //     setSelectedActId(filteredActs[0].id)
-  //   }
-  // }, [filteredActs, selectedActId, setSelectedActId])
-
   // Scroll to selected effect
   useEffect(() => {
     const list = scrollRef.current
@@ -77,16 +76,39 @@ export function useScrollSelection(
     const itemHeight = items[0].clientHeight
     const expectedScrollTop = index * itemHeight
 
-    if (Math.abs(list.scrollTop - expectedScrollTop) < 4) return
+    if (Math.abs(list.scrollTop - expectedScrollTop) < 4) {
+      return
+    }
 
+    let scrollBehavior: ScrollBehavior = 'smooth' // Default to smooth
+
+    // This logic now correctly checks for an initial ID on mount
+    if (
+      !hasPerformedInitialPositioningRef.current &&
+      initialSelectedIdRef.current &&
+      initialSelectedIdRef.current === selectedActId
+    ) {
+      scrollBehavior = 'auto' // Override to 'auto' only for the initial mount selection
+    }
+
+    // Any programmatic scroll means the initial positioning is now complete.
+    hasPerformedInitialPositioningRef.current = true
     isProgrammaticScrollRef.current = true
-    list.scrollTo({ top: expectedScrollTop, behavior: 'smooth' })
 
-    const timeoutId = setTimeout(() => {
-      isProgrammaticScrollRef.current = false
-    }, 300)
+    list.scrollTo({ top: expectedScrollTop, behavior: scrollBehavior })
 
-    return () => clearTimeout(timeoutId)
+    if (scrollBehavior === 'auto') {
+      // For an instant scroll, reset the flag immediately.
+      queueMicrotask(() => {
+        isProgrammaticScrollRef.current = false
+      })
+    } else {
+      // For a smooth scroll, wait for the animation.
+      const timeoutId = setTimeout(() => {
+        isProgrammaticScrollRef.current = false
+      }, 300)
+      return () => clearTimeout(timeoutId)
+    }
   }, [selectedActId, filteredActs])
 
   return {

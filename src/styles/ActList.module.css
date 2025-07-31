@@ -111,7 +111,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1400px) {
   .container {
     height: calc(100vh - 8rem);
     margin-bottom: -2rem;

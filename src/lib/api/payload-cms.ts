@@ -1,6 +1,14 @@
+// lib/api/payload-cms.ts
+
 'use server'
 
 import type { About, Contact, Branding, Act, Media } from '@/payload-types'
+
+export async function fetchActById(id: string): Promise<Act> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts/${id}`)
+  if (!res.ok) throw new Error(`Failed to fetch act with id ${id}`)
+  return await res.json()
+}
 
 export async function fetchAllActs(): Promise<Act[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=9999&sort=name`)

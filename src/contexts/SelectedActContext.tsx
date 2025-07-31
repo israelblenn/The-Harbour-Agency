@@ -16,7 +16,7 @@ export const SelectedActProvider = ({ children }: { children: React.ReactNode })
   const router = useRouter()
 
   useEffect(() => {
-    const checkIsMobile = () => setIsMobile(window.innerWidth < 767)
+    const checkIsMobile = () => setIsMobile(window.innerWidth < 1400)
     checkIsMobile()
     window.addEventListener('resize', checkIsMobile)
     return () => window.removeEventListener('resize', checkIsMobile)

@@ -1,6 +1,5 @@
-// app/artists/page.tsx
 import ActList from '@/components/ActList/ActList'
-import SelectedActThumbnail from '@/components/SelectedActThumbnail' // New component
+import SelectedActThumbnail from '@/components/SelectedActThumbnail'
 import { fetchAllActs } from '@/lib/api/payload-cms'
 import type { Act } from '@/payload-types'
 

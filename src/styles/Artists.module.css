@@ -6,6 +6,7 @@
 }
 
 .imageWrapper {
+  display: block;
   position: relative;
   width: 100%;
   aspect-ratio: 1;
@@ -51,4 +52,22 @@
     var(--secondary) calc(50% + 0.5px),
     transparent calc(50% + 0.5px)
   );
+}
+
+.marquee {
+  overflow: hidden;
+  position: absolute;
+  translate: -1rem -100%;
+  width: calc(100% + 1rem);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 1rem 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 1rem 100%);
+
+  & span {
+    font-size: 1rem;
+    translate: 0 3px;
+    font-size: 11px;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 }
