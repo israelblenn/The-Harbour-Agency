@@ -92,6 +92,7 @@ export default function ActGrid({ initialActs }: ActGridProps) {
     return () => observer.disconnect()
   }, [])
 
+  // Effect to scroll to the selected item
   useEffect(() => {
     if (!selectedActId || !containerRef.current) return
     const container = containerRef.current
@@ -122,6 +123,31 @@ export default function ActGrid({ initialActs }: ActGridProps) {
       container.removeEventListener('touchstart', handleUserScroll)
     }
   }, [selectedActId, acts, positions, cellSize])
+
+  useEffect(() => {
+    if (selectedActId === null && containerRef.current) {
+      const container = containerRef.current
+      const animation = animate(container.scrollTop, 0, {
+        ...SPRING,
+        onUpdate: (value) => {
+          if (container) {
+            container.scrollTop = value
+          }
+        },
+      })
+
+      const handleUserScroll = () => animation.stop()
+
+      container.addEventListener('wheel', handleUserScroll, { passive: true })
+      container.addEventListener('touchstart', handleUserScroll, { passive: true })
+
+      return () => {
+        animation.stop()
+        container.removeEventListener('wheel', handleUserScroll)
+        container.removeEventListener('touchstart', handleUserScroll)
+      }
+    }
+  }, [selectedActId])
 
   return (
     <div>
