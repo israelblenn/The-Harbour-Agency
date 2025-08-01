@@ -52,10 +52,12 @@ export default function ActList({ Acts }: ActListProps) {
 
   const debouncedUpdateSelected = useCallback(
     (_event: React.UIEvent<HTMLUListElement>) => {
+      if (isProgrammaticScrollRef.current) return
+
       isUserInteractingWithSelection.current = true
       debouncedUpdateSelectedFromScroll()
     },
-    [debouncedUpdateSelectedFromScroll],
+    [debouncedUpdateSelectedFromScroll, isProgrammaticScrollRef],
   )
 
   useEffect(() => {
@@ -74,9 +76,7 @@ export default function ActList({ Acts }: ActListProps) {
   useEffect(() => {
     if (searchQuery && filteredActs.length > 0 && !isUserInteractingWithSelection.current) {
       const firstResultId = filteredActs[0].id
-      if (firstResultId !== selectedActId) {
-        setSelectedActId(firstResultId)
-      }
+      if (firstResultId !== selectedActId) setSelectedActId(firstResultId)
     }
     const resetTimer = setTimeout(() => {
       isUserInteractingWithSelection.current = false
