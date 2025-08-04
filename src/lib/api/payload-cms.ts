@@ -2,7 +2,7 @@
 
 'use server'
 
-import type { About, Contact, Branding, Act, Media } from '@/payload-types'
+import type { About, Contact, Branding, Act, Media, Legal } from '@/payload-types'
 
 export async function fetchActById(id: string): Promise<Act> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts/${id}`)
@@ -32,6 +32,12 @@ export async function fetchContact(): Promise<Contact> {
 export async function fetchBranding(): Promise<Branding> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/branding`)
   if (!res.ok) throw new Error('Failed to fetch Branding global')
+  return await res.json()
+}
+
+export async function fetchLegal(): Promise<Legal> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/legal`)
+  if (!res.ok) throw new Error('Failed to fetch Legal global')
   return await res.json()
 }
 

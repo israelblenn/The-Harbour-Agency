@@ -1,0 +1,32 @@
+# Summary
+
+Date : 2025-08-01 15:46:41
+
+Directory c:\\Users\\Israel\\Web\\The Harbour Agency\\_\\the-harbour-agency\\src\\app\\(payload)
+
+Total : 8 files,  130 codes, 12 comments, 28 blanks, all 170 lines
+
+Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
+
+## Languages
+| language | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| TypeScript JSX | 3 | 58 | 6 | 18 | 82 |
+| JavaScript | 1 | 48 | 0 | 2 | 50 |
+| TypeScript | 3 | 24 | 6 | 7 | 37 |
+| SCSS | 1 | 0 | 0 | 1 | 1 |
+
+## Directories
+| path | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| . | 8 | 130 | 12 | 28 | 170 |
+| . (Files) | 2 | 24 | 2 | 7 | 33 |
+| admin | 3 | 82 | 4 | 14 | 100 |
+| admin (Files) | 1 | 48 | 0 | 2 | 50 |
+| admin\\[[...segments]] | 2 | 34 | 4 | 12 | 50 |
+| api | 3 | 24 | 6 | 7 | 37 |
+| api\\[...slug] | 1 | 16 | 2 | 2 | 20 |
+| api\\graphql | 1 | 4 | 2 | 3 | 9 |
+| api\\graphql-playground | 1 | 4 | 2 | 2 | 8 |
+
+Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-details.md)

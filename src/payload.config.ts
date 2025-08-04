@@ -13,6 +13,7 @@ import { About } from '@/collections/About'
 import { Acts } from '@/collections/Acts'
 import { Contact } from '@/collections/Contact'
 import { Branding } from '@/collections/Branding'
+import { Legal } from '@/collections/Legal'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -24,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  globals: [About, Contact, Branding],
+  globals: [About, Contact, Branding, Legal],
   collections: [Acts, Media, Users],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

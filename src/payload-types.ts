@@ -90,11 +90,13 @@ export interface Config {
     about: About;
     contact: Contact;
     branding: Branding;
+    legal: Legal;
   };
   globalsSelect: {
     about: AboutSelect<false> | AboutSelect<true>;
     contact: ContactSelect<false> | ContactSelect<true>;
     branding: BrandingSelect<false> | BrandingSelect<true>;
+    legal: LegalSelect<false> | LegalSelect<true>;
   };
   locale: null;
   user: User & {
@@ -420,6 +422,30 @@ export interface Branding {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal".
+ */
+export interface Legal {
+  id: string;
+  PrivacyPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about_select".
  */
 export interface AboutSelect<T extends boolean = true> {
@@ -464,6 +490,16 @@ export interface BrandingSelect<T extends boolean = true> {
   favicon?: T;
   title?: T;
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal_select".
+ */
+export interface LegalSelect<T extends boolean = true> {
+  PrivacyPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -1,0 +1,62 @@
+"filename", "language", "PostCSS", "TypeScript", "TypeScript JSX", "SCSS", "JavaScript", "comment", "blank", "total"
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\[id]\page.tsx", "TypeScript JSX", 0, 0, 31, 0, 0, 0, 8, 39
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\artists\page.tsx", "TypeScript JSX", 0, 0, 16, 0, 0, 0, 3, 19
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\contact\page.tsx", "TypeScript JSX", 0, 0, 36, 0, 0, 0, 3, 39
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\layout.tsx", "TypeScript JSX", 0, 0, 51, 0, 0, 4, 4, 59
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\page.tsx", "TypeScript JSX", 0, 0, 74, 0, 0, 0, 10, 84
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(vault)\vault\VaultClient.tsx", "TypeScript JSX", 0, 0, 85, 0, 0, 0, 16, 101
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(vault)\vault\layout.tsx", "TypeScript JSX", 0, 0, 22, 0, 0, 0, 3, 25
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(vault)\vault\page.tsx", "TypeScript JSX", 0, 0, 6, 0, 0, 2, 3, 11
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\layout.tsx", "TypeScript JSX", 0, 0, 17, 0, 0, 0, 4, 21
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\styles.css", "PostCSS", 238, 0, 0, 0, 0, 7, 49, 294
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\admin\[[...segments]]\not-found.tsx", "TypeScript JSX", 0, 0, 17, 0, 0, 2, 6, 25
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\admin\[[...segments]]\page.tsx", "TypeScript JSX", 0, 0, 17, 0, 0, 2, 6, 25
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\admin\importMap.js", "JavaScript", 0, 0, 0, 0, 48, 0, 2, 50
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\api\[...slug]\route.ts", "TypeScript", 0, 16, 0, 0, 0, 2, 2, 20
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\api\graphql-playground\route.ts", "TypeScript", 0, 4, 0, 0, 0, 2, 2, 8
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\api\graphql\route.ts", "TypeScript", 0, 4, 0, 0, 0, 2, 3, 9
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\custom.scss", "SCSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\layout.tsx", "TypeScript JSX", 0, 0, 24, 0, 0, 2, 6, 32
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\api\contact\route.ts", "TypeScript", 0, 22, 0, 0, 0, 0, 4, 26
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\api\revalidate\route.ts", "TypeScript", 0, 16, 0, 0, 0, 0, 6, 22
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\my-route\route.ts", "TypeScript", 0, 11, 0, 0, 0, 0, 4, 15
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\assets\Open.tsx", "TypeScript JSX", 0, 0, 12, 0, 0, 0, 1, 13
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\About.ts", "TypeScript", 0, 68, 0, 0, 0, 1, 4, 73
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Acts.ts", "TypeScript", 0, 30, 0, 0, 0, 0, 2, 32
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Branding.ts", "TypeScript", 0, 28, 0, 0, 0, 0, 2, 30
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Contact.ts", "TypeScript", 0, 51, 0, 0, 0, 0, 2, 53
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Media.ts", "TypeScript", 0, 20, 0, 0, 0, 1, 2, 23
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Users.ts", "TypeScript", 0, 10, 0, 0, 0, 2, 2, 14
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActGrid.tsx", "TypeScript JSX", 0, 0, 169, 0, 0, 1, 29, 199
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActGridPolygon.tsx", "TypeScript JSX", 0, 0, 61, 0, 0, 1, 15, 77
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActList.tsx", "TypeScript JSX", 0, 0, 99, 0, 0, 0, 17, 116
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListDisplay.tsx", "TypeScript JSX", 0, 0, 53, 0, 0, 0, 5, 58
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListOverflowEffect.tsx", "TypeScript JSX", 0, 0, 25, 0, 0, 0, 6, 31
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListScroll.tsx", "TypeScript JSX", 0, 0, 100, 0, 0, 0, 16, 116
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListSearch.tsx", "TypeScript JSX", 0, 0, 24, 0, 0, 0, 4, 28
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActProfileClient.tsx", "TypeScript JSX", 0, 0, 63, 0, 0, 0, 11, 74
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ClearSelection.tsx", "TypeScript JSX", 0, 0, 10, 0, 0, 0, 5, 15
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ContactForm.tsx", "TypeScript JSX", 0, 0, 45, 0, 0, 0, 8, 53
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\Header.tsx", "TypeScript JSX", 0, 0, 138, 0, 0, 0, 17, 155
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\Marquee.tsx", "TypeScript JSX", 0, 0, 46, 0, 0, 0, 10, 56
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\SelectedActThumbnail.tsx", "TypeScript JSX", 0, 0, 46, 0, 0, 0, 10, 56
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\SendButton.tsx", "TypeScript JSX", 0, 0, 74, 0, 0, 0, 9, 83
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\TransitionLink.tsx", "TypeScript JSX", 0, 0, 43, 0, 0, 0, 7, 50
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\TypewriterText.tsx", "TypeScript JSX", 0, 0, 69, 0, 0, 1, 9, 79
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\VaultRibbon.tsx", "TypeScript JSX", 0, 0, 19, 0, 0, 0, 5, 24
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\_DeviceDetector.tsx", "TypeScript JSX", 0, 0, 26, 0, 0, 1, 5, 32
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\contexts\SelectedActContext.tsx", "TypeScript JSX", 0, 0, 31, 0, 0, 0, 9, 40
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\hooks\useIsMobile.ts", "TypeScript", 0, 17, 0, 0, 0, 0, 7, 24
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\hooks\useScrollSelection.ts", "TypeScript", 0, 93, 0, 0, 0, 8, 21, 122
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\lib\api\payload-cms.ts", "TypeScript", 0, 42, 0, 0, 0, 1, 10, 53
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\payload-types.ts", "TypeScript", 0, 389, 0, 0, 0, 89, 4, 482
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\payload.config.ts", "TypeScript", 0, 37, 0, 0, 0, 0, 4, 41
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\About.module.css", "PostCSS", 101, 0, 0, 0, 0, 1, 16, 118
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\ActGrid.module.css", "PostCSS", 20, 0, 0, 0, 0, 0, 3, 23
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\ActList.module.css", "PostCSS", 115, 0, 0, 0, 0, 0, 19, 134
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\ActProfile.module.css", "PostCSS", 58, 0, 0, 0, 0, 0, 10, 68
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Artists.module.css", "PostCSS", 68, 0, 0, 0, 0, 1, 8, 77
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Contact.module.css", "PostCSS", 120, 0, 0, 0, 0, 2, 18, 140
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Header.module.css", "PostCSS", 87, 0, 0, 0, 0, 0, 17, 104
+"c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Vault.module.css", "PostCSS", 73, 0, 0, 0, 0, 0, 10, 83
+"Total", "-", 880, 858, 1549, 0, 48, 135, 504, 3974

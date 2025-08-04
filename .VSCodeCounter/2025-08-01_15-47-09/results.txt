@@ -1,0 +1,122 @@
+Date : 2025-08-01 15:47:09
+Directory : c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src
+Total : 60 files,  3335 codes, 135 comments, 504 blanks, all 3974 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| TypeScript JSX |         32 |      1,549 |         16 |        270 |      1,835 |
+| PostCSS        |          9 |        880 |         11 |        150 |      1,041 |
+| TypeScript     |         17 |        858 |        108 |         81 |      1,047 |
+| JavaScript     |          1 |         48 |          0 |          2 |         50 |
+| SCSS           |          1 |          0 |          0 |          1 |          1 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                              | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                 |         60 |      3,335 |        135 |        504 |      3,974 |
+| . (Files)                                                                                                         |          2 |        426 |         89 |          8 |        523 |
+| app                                                                                                               |         21 |        755 |         25 |        145 |        925 |
+| app\(frontend)                                                                                                    |         10 |        576 |         13 |        103 |        692 |
+| app\(frontend) (Files)                                                                                            |          2 |        255 |          7 |         53 |        315 |
+| app\(frontend)\(grid)                                                                                             |          5 |        208 |          4 |         28 |        240 |
+| app\(frontend)\(grid) (Files)                                                                                     |          2 |        125 |          4 |         14 |        143 |
+| app\(frontend)\(grid)\[id]                                                                                        |          1 |         31 |          0 |          8 |         39 |
+| app\(frontend)\(grid)\artists                                                                                     |          1 |         16 |          0 |          3 |         19 |
+| app\(frontend)\(grid)\contact                                                                                     |          1 |         36 |          0 |          3 |         39 |
+| app\(frontend)\(vault)                                                                                            |          3 |        113 |          2 |         22 |        137 |
+| app\(frontend)\(vault)\vault                                                                                      |          3 |        113 |          2 |         22 |        137 |
+| app\(payload)                                                                                                     |          8 |        130 |         12 |         28 |        170 |
+| app\(payload) (Files)                                                                                             |          2 |         24 |          2 |          7 |         33 |
+| app\(payload)\admin                                                                                               |          3 |         82 |          4 |         14 |        100 |
+| app\(payload)\admin (Files)                                                                                       |          1 |         48 |          0 |          2 |         50 |
+| app\(payload)\admin\[[...segments]]                                                                               |          2 |         34 |          4 |         12 |         50 |
+| app\(payload)\api                                                                                                 |          3 |         24 |          6 |          7 |         37 |
+| app\(payload)\api\[...slug]                                                                                       |          1 |         16 |          2 |          2 |         20 |
+| app\(payload)\api\graphql                                                                                         |          1 |          4 |          2 |          3 |          9 |
+| app\(payload)\api\graphql-playground                                                                              |          1 |          4 |          2 |          2 |          8 |
+| app\api                                                                                                           |          2 |         38 |          0 |         10 |         48 |
+| app\api\contact                                                                                                   |          1 |         22 |          0 |          4 |         26 |
+| app\api\revalidate                                                                                                |          1 |         16 |          0 |          6 |         22 |
+| app\my-route                                                                                                      |          1 |         11 |          0 |          4 |         15 |
+| assets                                                                                                            |          1 |         12 |          0 |          1 |         13 |
+| collections                                                                                                       |          6 |        207 |          4 |         14 |        225 |
+| components                                                                                                        |         18 |      1,110 |          4 |        188 |      1,302 |
+| components (Files)                                                                                                |         13 |        809 |          4 |        140 |        953 |
+| components\ActList                                                                                                |          5 |        301 |          0 |         48 |        349 |
+| contexts                                                                                                          |          1 |         31 |          0 |          9 |         40 |
+| hooks                                                                                                             |          2 |        110 |          8 |         28 |        146 |
+| lib                                                                                                               |          1 |         42 |          1 |         10 |         53 |
+| lib\api                                                                                                           |          1 |         42 |          1 |         10 |         53 |
+| styles                                                                                                            |          8 |        642 |          4 |        101 |        747 |
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                          | language       | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\[id]\page.tsx               | TypeScript JSX |         31 |          0 |          8 |         39 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\artists\page.tsx            | TypeScript JSX |         16 |          0 |          3 |         19 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\contact\page.tsx            | TypeScript JSX |         36 |          0 |          3 |         39 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\layout.tsx                  | TypeScript JSX |         51 |          4 |          4 |         59 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(grid)\page.tsx                    | TypeScript JSX |         74 |          0 |         10 |         84 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(vault)\vault\VaultClient.tsx      | TypeScript JSX |         85 |          0 |         16 |        101 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(vault)\vault\layout.tsx           | TypeScript JSX |         22 |          0 |          3 |         25 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\(vault)\vault\page.tsx             | TypeScript JSX |          6 |          2 |          3 |         11 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\layout.tsx                         | TypeScript JSX |         17 |          0 |          4 |         21 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(frontend)\styles.css                         | PostCSS        |        238 |          7 |         49 |        294 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\admin\[[...segments]]\not-found.tsx | TypeScript JSX |         17 |          2 |          6 |         25 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\admin\[[...segments]]\page.tsx      | TypeScript JSX |         17 |          2 |          6 |         25 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\admin\importMap.js                  | JavaScript     |         48 |          0 |          2 |         50 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\api\[...slug]\route.ts              | TypeScript     |         16 |          2 |          2 |         20 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\api\graphql-playground\route.ts     | TypeScript     |          4 |          2 |          2 |          8 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\api\graphql\route.ts                | TypeScript     |          4 |          2 |          3 |          9 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\custom.scss                         | SCSS           |          0 |          0 |          1 |          1 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\(payload)\layout.tsx                          | TypeScript JSX |         24 |          2 |          6 |         32 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\api\contact\route.ts                          | TypeScript     |         22 |          0 |          4 |         26 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\api\revalidate\route.ts                       | TypeScript     |         16 |          0 |          6 |         22 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\app\my-route\route.ts                             | TypeScript     |         11 |          0 |          4 |         15 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\assets\Open.tsx                                   | TypeScript JSX |         12 |          0 |          1 |         13 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\About.ts                              | TypeScript     |         68 |          1 |          4 |         73 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Acts.ts                               | TypeScript     |         30 |          0 |          2 |         32 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Branding.ts                           | TypeScript     |         28 |          0 |          2 |         30 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Contact.ts                            | TypeScript     |         51 |          0 |          2 |         53 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Media.ts                              | TypeScript     |         20 |          1 |          2 |         23 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\collections\Users.ts                              | TypeScript     |         10 |          2 |          2 |         14 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActGrid.tsx                            | TypeScript JSX |        169 |          1 |         29 |        199 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActGridPolygon.tsx                     | TypeScript JSX |         61 |          1 |         15 |         77 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActList.tsx                    | TypeScript JSX |         99 |          0 |         17 |        116 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListDisplay.tsx             | TypeScript JSX |         53 |          0 |          5 |         58 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListOverflowEffect.tsx      | TypeScript JSX |         25 |          0 |          6 |         31 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListScroll.tsx              | TypeScript JSX |        100 |          0 |         16 |        116 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActList\ActListSearch.tsx              | TypeScript JSX |         24 |          0 |          4 |         28 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ActProfileClient.tsx                   | TypeScript JSX |         63 |          0 |         11 |         74 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ClearSelection.tsx                     | TypeScript JSX |         10 |          0 |          5 |         15 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\ContactForm.tsx                        | TypeScript JSX |         45 |          0 |          8 |         53 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\Header.tsx                             | TypeScript JSX |        138 |          0 |         17 |        155 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\Marquee.tsx                            | TypeScript JSX |         46 |          0 |         10 |         56 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\SelectedActThumbnail.tsx               | TypeScript JSX |         46 |          0 |         10 |         56 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\SendButton.tsx                         | TypeScript JSX |         74 |          0 |          9 |         83 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\TransitionLink.tsx                     | TypeScript JSX |         43 |          0 |          7 |         50 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\TypewriterText.tsx                     | TypeScript JSX |         69 |          1 |          9 |         79 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\VaultRibbon.tsx                        | TypeScript JSX |         19 |          0 |          5 |         24 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\components\_DeviceDetector.tsx                    | TypeScript JSX |         26 |          1 |          5 |         32 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\contexts\SelectedActContext.tsx                   | TypeScript JSX |         31 |          0 |          9 |         40 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\hooks\useIsMobile.ts                              | TypeScript     |         17 |          0 |          7 |         24 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\hooks\useScrollSelection.ts                       | TypeScript     |         93 |          8 |         21 |        122 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\lib\api\payload-cms.ts                            | TypeScript     |         42 |          1 |         10 |         53 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\payload-types.ts                                  | TypeScript     |        389 |         89 |          4 |        482 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\payload.config.ts                                 | TypeScript     |         37 |          0 |          4 |         41 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\About.module.css                           | PostCSS        |        101 |          1 |         16 |        118 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\ActGrid.module.css                         | PostCSS        |         20 |          0 |          3 |         23 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\ActList.module.css                         | PostCSS        |        115 |          0 |         19 |        134 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\ActProfile.module.css                      | PostCSS        |         58 |          0 |         10 |         68 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Artists.module.css                         | PostCSS        |         68 |          1 |          8 |         77 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Contact.module.css                         | PostCSS        |        120 |          2 |         18 |        140 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Header.module.css                          | PostCSS        |         87 |          0 |         17 |        104 |
+| c:\Users\Israel\Web\The Harbour Agency\_\the-harbour-agency\src\styles\Vault.module.css                           | PostCSS        |         73 |          0 |         10 |         83 |
+| Total                                                                                                             |                |      3,335 |        135 |        504 |      3,974 |
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
