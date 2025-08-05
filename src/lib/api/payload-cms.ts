@@ -1,7 +1,3 @@
-// lib/api/payload-cms.ts
-
-'use server'
-
 import type { About, Contact, Branding, Act, Media, Legal } from '@/payload-types'
 
 export async function fetchActById(id: string): Promise<Act> {

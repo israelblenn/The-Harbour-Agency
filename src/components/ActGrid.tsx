@@ -92,7 +92,6 @@ export default function ActGrid({ initialActs }: ActGridProps) {
     return () => observer.disconnect()
   }, [])
 
-  // Effect to scroll to the selected item
   useEffect(() => {
     if (!selectedActId || !containerRef.current) return
     const container = containerRef.current

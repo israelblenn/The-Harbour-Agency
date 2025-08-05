@@ -25,8 +25,8 @@ export default function TypewriterText({
 
   useEffect(() => {
     if (totalItems === 0) return
-
     let currentItemIndex = 0
+
     const interval = setInterval(() => {
       setDisplayedItemCount((prevCount) => {
         currentItemIndex = prevCount + 1
@@ -49,10 +49,7 @@ export default function TypewriterText({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.1 }}
-          style={{
-            display: 'inline-block',
-            marginRight: '0.25em',
-          }}
+          style={{ display: 'inline-block', marginRight: '0.25em' }}
         >
           {word}
         </motion.span>
@@ -64,11 +61,7 @@ export default function TypewriterText({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
-          // --- CHANGE HERE ---
-          style={{
-            display: 'block', // Changed from 'inline-block' to 'block'
-            marginTop: '1em', // Optional: Add some space above the link
-          }}
+          style={{ display: 'block', marginTop: '1em' }}
         >
           {linkElement}
         </motion.div>
