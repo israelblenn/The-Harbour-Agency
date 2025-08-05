@@ -1,0 +1,54 @@
+/* file: app/(frontend)/NotFound.module.css */
+
+.mainContent {
+  height: calc(100vh - 16rem); /* Adjust as needed based on your header/body margins */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem;
+}
+
+.heading {
+  font-size: 60px; /* Adjust to match your h1 styles */
+  margin-bottom: 2rem;
+}
+
+.message {
+  font-size: 2.2rem;
+  margin-bottom: 3rem;
+  max-width: 600px;
+}
+
+.code {
+  background-color: #eee;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.link {
+  font-size: 2.2rem;
+  text-decoration: underline;
+  color: var(--secondary);
+}
+
+@media (max-width: 1400px) {
+  .mainContent {
+    height: calc(100vh - 8rem); /* Adjust for mobile header/padding */
+    padding: 2rem;
+  }
+
+  .heading {
+    font-size: 40px;
+  }
+
+  .message {
+    font-size: 1.8rem;
+  }
+
+  .link {
+    font-size: 1.8rem;
+  }
+}

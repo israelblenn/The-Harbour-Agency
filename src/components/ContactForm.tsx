@@ -4,7 +4,12 @@ import { useState } from 'react'
 import SendButton from './SendButton'
 
 export default function ContactForm() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+    honeypot: '',
+  })
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -26,7 +31,7 @@ export default function ContactForm() {
 
       if (res.ok) {
         setStatus('success')
-        setFormData({ name: '', email: '', message: '' })
+        setFormData({ name: '', email: '', message: '', honeypot: '' })
       } else {
         setStatus('error')
       }
@@ -45,6 +50,23 @@ export default function ContactForm() {
       <input type="email" name="email" value={formData.email} onChange={handleChange} required />
       <label>Message</label>
       <textarea name="message" value={formData.message} onChange={handleChange} required />
+
+      <input
+        type="text"
+        name="honeypot"
+        value={formData.honeypot}
+        onChange={handleChange}
+        tabIndex={-1}
+        autoComplete="off"
+        style={{
+          display: 'none',
+          position: 'absolute',
+          left: '-5000px',
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
+      />
+
       <SendButton isSubmitting={isSubmitting} isSuccess={status === 'success'} />
       {status === 'error' && <p>Something went wrong. Please try again.</p>}
     </form>

@@ -27,7 +27,7 @@ export const Contact: GlobalConfig = {
       ],
     },
     {
-      name: 'adresses',
+      name: 'addresses',
       type: 'array',
       fields: [
         {

@@ -397,7 +397,7 @@ export interface Contact {
         id?: string | null;
       }[]
     | null;
-  adresses?:
+  addresses?:
     | {
         label: string;
         content: string;
@@ -470,7 +470,7 @@ export interface ContactSelect<T extends boolean = true> {
         content?: T;
         id?: T;
       };
-  adresses?:
+  addresses?:
     | T
     | {
         label?: T;

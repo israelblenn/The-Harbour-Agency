@@ -24,7 +24,7 @@ export default async function Contact() {
             ))}
           </tbody>
           <tbody>
-            {contact.adresses?.map(({ id, label, content }) => (
+            {contact.addresses?.map(({ id, label, content }) => (
               <tr key={id}>
                 <td>{label}</td>
                 <td>{content}</td>

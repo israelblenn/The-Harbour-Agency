@@ -34,7 +34,7 @@ export default buildConfig({
   sharp,
   plugins: [payloadCloudPlugin()],
   email: resendAdapter({
-    defaultFromAddress: 'no-reply@mail.israelblennerhassett.com', //!! Regsiter THA domain with Resend and replace this with registed domain
+    defaultFromAddress: process.env.SEND_FROM_ADDRESS || '',
     defaultFromName: 'Contact Form',
     apiKey: process.env.RESEND_API_KEY || '',
   }),
