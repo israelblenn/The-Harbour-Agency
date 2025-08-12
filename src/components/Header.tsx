@@ -100,7 +100,7 @@ export default function Header({ brandingData }: HeaderProps) {
     <header className={`${scrolled ? 'shrunk' : ''}`}>
       <nav>
         <TransLink href="/" className={styles.logo}>
-          {logoUrl && <Image priority src={logoUrl} alt="The Harbour Agency Logo" width={0} height={0} />}
+          {logoUrl && <Image priority src={logoUrl} alt="The Harbour Agency Logo" width={200} height={60} />}
         </TransLink>
 
         <div className={styles.navLinks} ref={navRef} onMouseLeave={onLeave}>
