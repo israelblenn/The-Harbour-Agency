@@ -1,47 +1,72 @@
 import type { About, Contact, Branding, Act, Media, Legal } from '@/payload-types'
+import { getPayload } from 'payload'
+import config from '@payload-config'
+
+// Helper to get a Payload instance
+async function getPayloadClient() {
+  return await getPayload({ config })
+}
 
 export async function fetchActById(id: string): Promise<Act> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts/${id}`)
-  if (!res.ok) throw new Error(`Failed to fetch act with id ${id}`)
-  return await res.json()
+  const payload = await getPayloadClient()
+  const act = await payload.findByID({
+    collection: 'acts',
+    id,
+  })
+  if (!act) throw new Error(`Failed to fetch act with id ${id}`)
+  return act
 }
 
 export async function fetchAllActs(): Promise<Act[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/acts?limit=9999&sort=name`)
-  if (!res.ok) throw new Error('Failed to fetch acts')
-  const data = await res.json()
-  return data.docs
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'acts',
+    limit: 9999,
+    sort: 'name',
+  })
+  return result.docs
 }
 
 export async function fetchAbout(): Promise<About> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/about`)
-  if (!res.ok) throw new Error('Failed to fetch About global')
-  return await res.json()
+  const payload = await getPayloadClient()
+  const about = await payload.findGlobal({ slug: 'about' })
+  if (!about) throw new Error('Failed to fetch About global')
+  return about as About
 }
 
 export async function fetchContact(): Promise<Contact> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/contact`)
-  if (!res.ok) throw new Error('Failed to fetch Contact global')
-  return await res.json()
+  const payload = await getPayloadClient()
+  const contact = await payload.findGlobal({ slug: 'contact' })
+  if (!contact) throw new Error('Failed to fetch Contact global')
+  return contact as Contact
 }
 
 export async function fetchBranding(): Promise<Branding> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/branding`)
-  if (!res.ok) throw new Error('Failed to fetch Branding global')
-  return await res.json()
+  const payload = await getPayloadClient()
+  const branding = await payload.findGlobal({ slug: 'branding' })
+  if (!branding) throw new Error('Failed to fetch Branding global')
+  return branding as Branding
 }
 
 export async function fetchLegal(): Promise<Legal> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/legal`)
-  if (!res.ok) throw new Error('Failed to fetch Legal global')
-  return await res.json()
+  const payload = await getPayloadClient()
+  const legal = await payload.findGlobal({ slug: 'legal' })
+  if (!legal) throw new Error('Failed to fetch Legal global')
+  return legal as Legal
 }
 
 export async function fetchVaultMedia(): Promise<Media[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/media?limit=9999&where[vault][equals]=true`)
-  if (!res.ok) throw new Error('Failed to fetch vault media')
-  const data = await res.json()
-  return data.docs
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'media',
+    limit: 9999,
+    where: {
+      vault: {
+        equals: true,
+      },
+    },
+  })
+  return result.docs
 }
 
 export async function safeFetch<T>(fn: () => Promise<T>): Promise<T | null> {

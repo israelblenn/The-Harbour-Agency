@@ -12,8 +12,7 @@ import { ListItemNode, ListNode } from '@lexical/list'
 import { AutoLinkNode, LinkNode } from '@lexical/link'
 import { HeadingNode, QuoteNode } from '@lexical/rich-text'
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table'
-
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary'
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
 
 interface PayloadRichTextData {
   root: {
