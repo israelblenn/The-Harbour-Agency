@@ -12,6 +12,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    unoptimized: true, // !! optimization doesn't work with current host
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     domains: [process.env.NEXT_PUBLIC_SITE_URL],
