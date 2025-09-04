@@ -11,12 +11,13 @@ const baseConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true, // Set our preference here
+    unoptimized: true, // disable sharp completely
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     domains: [process.env.NEXT_PUBLIC_SITE_URL],
   },
   webpack: (config) => {
+    // Aliases
     config.resolve.alias['@'] = path.resolve(__dirname, 'src')
     config.resolve.alias['@payload-config'] = path.resolve(__dirname, 'src/payload.config.ts')
 
@@ -31,13 +32,12 @@ const baseConfig = {
   },
 }
 
-// Let withPayload do its thing
+// Wrap with Payload
 const finalConfig = withPayload(baseConfig, {
   devBundleServerPackages: false,
 })
 
-// IMPORTANT: Force unoptimized images AFTER withPayload has run,
-// overriding any changes it might have made.
+// Force unoptimized after withPayload
 finalConfig.images.unoptimized = true
 
 export default finalConfig
