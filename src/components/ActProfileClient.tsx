@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import Open from '@/assets/Open'
+// import Open from '@/assets/Open' !!
 import { useSelectedAct } from '@/contexts/SelectedActContext'
 import styles from '@/styles/ActProfile.module.css'
 import type { Act } from '@/payload-types'
@@ -36,7 +36,7 @@ export default function ActProfileClient({ actDetails }: ActProfileClientProps) 
       className={styles.link}
     >
       {actDetails.link.replace(/^https?:\/\//, '')}
-      <Open />
+      {/* <Open /> !! */}
     </a>
   ) : null
 
