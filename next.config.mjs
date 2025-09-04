@@ -6,13 +6,12 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const baseConfig = {
   typescript: {
-    // added to bypass persistent tyoe error in .next/types/app/(frontend)/(grid)/[id]/page.ts
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true, // !! optimization doesn't work with current host
+    unoptimized: true, // Set our preference here
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     domains: [process.env.NEXT_PUBLIC_SITE_URL],
@@ -24,6 +23,13 @@ const nextConfig = {
   },
 }
 
-export default withPayload(nextConfig, {
+// Let withPayload do its thing
+const finalConfig = withPayload(baseConfig, {
   devBundleServerPackages: false,
 })
+
+// IMPORTANT: Force unoptimized images AFTER withPayload has run,
+// overriding any changes it might have made.
+finalConfig.images.unoptimized = true
+
+export default finalConfig
