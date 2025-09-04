@@ -19,6 +19,14 @@ const baseConfig = {
   webpack: (config) => {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src')
     config.resolve.alias['@payload-config'] = path.resolve(__dirname, 'src/payload.config.ts')
+
+    // Bypass next-image-loader for Payload UI assets
+    config.module.rules.unshift({
+      test: /\.(png|jpe?g|webp|gif|svg)$/i,
+      include: [path.resolve(__dirname, 'node_modules/@payloadcms/ui/dist/assets')],
+      type: 'asset/resource', // just emit the file, no blur/sharp
+    })
+
     return config
   },
 }
