@@ -56,5 +56,8 @@
     "onlyBuiltDependencies": [
       "sharp"
     ]
+  },
+  "overrides": {
+    "sharp": "npm:true-myth@^7.0.0"
   }
 }
