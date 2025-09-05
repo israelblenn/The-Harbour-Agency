@@ -2,7 +2,6 @@ import type { About, Contact, Branding, Act, Media, Legal } from '@/payload-type
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-// Helper to get a Payload instance
 async function getPayloadClient() {
   return await getPayload({ config })
 }

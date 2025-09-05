@@ -37,6 +37,14 @@ export default function ActProfileClient({ actDetails }: ActProfileClientProps) 
     >
       {actDetails.link.replace(/^https?:\/\//, '')}
       {/* <Open /> */}
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M6.28738 7.73291L11.5553 2.46582V5.77778H13V0H7.22129V1.44444H10.5338L5.26584 6.71153L6.28738 7.73291ZM11.5574 11.5556V7.94444H10.1127V11.5556H1.44468V2.88889H5.05637V1.44444H4.47769e-06L0 13H11.5574V12.2778V11.9167C11.5574 11.9167 11.5574 12.3533 11.5574 11.5556Z"
+          fill="black"
+        />
+      </svg>
     </a>
   ) : null
 
