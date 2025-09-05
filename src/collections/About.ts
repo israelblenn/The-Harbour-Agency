@@ -1,40 +1,10 @@
 import { GlobalConfig } from 'payload'
-import type { Payload } from 'payload'
-
-type QueuedPayload = Payload & {
-  queue?: (fn: () => void | Promise<void>) => void
-}
+import { revalidate } from '@/hooks/revalidate'
 
 export const About: GlobalConfig = {
   slug: 'about',
   access: { read: () => true },
-  hooks: {
-    //!! we need to test that this revalidation hook actually works in production
-    afterChange: [
-      async ({ req }) => {
-        const queuedPayload = req.payload as QueuedPayload
-
-        if (typeof queuedPayload.queue === 'function') {
-          queuedPayload.queue(() => {
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                tag: 'about',
-                secret: process.env.REVALIDATE_SECRET,
-              }),
-            }).catch((err) => {
-              console.error('Revalidation failed:', err)
-            })
-          })
-        } else {
-          console.warn('Payload queue function not available')
-        }
-      },
-    ],
-  },
+  hooks: { afterChange: [() => revalidate(['/'])] },
   fields: [
     {
       name: 'gallery',
