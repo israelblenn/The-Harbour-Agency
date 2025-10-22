@@ -6,6 +6,9 @@ import type { About, Media } from '@/payload-types'
 import styles from '@/styles/About.module.css'
 import { fetchAbout, safeFetch } from '@/lib/api/payload-cms'
 
+// Cache About page for 1 hour
+export const revalidate = 3600
+
 export default async function About() {
   const about = await safeFetch(fetchAbout)
   if (!about) return <div>Failed to load content</div>

@@ -4,6 +4,16 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import payloadConfig from '@/payload.config'
 
+// Singleton pattern for Payload client in API routes
+let apiPayloadClient: any = null
+
+async function getApiPayloadClient() {
+  if (!apiPayloadClient) {
+    apiPayloadClient = await getPayload({ config: payloadConfig })
+  }
+  return apiPayloadClient
+}
+
 const ipRequestTimestamps = new Map<string, number[]>()
 const RATE_LIMIT_WINDOW_MS = 60000
 const RATE_LIMIT_MAX_REQUESTS = 5
@@ -33,7 +43,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
   }
 
-  const payload = await getPayload({ config: payloadConfig })
+  const payload = await getApiPayloadClient()
   const body = await req.json()
   const { name, email, message, honeypot } = body
 

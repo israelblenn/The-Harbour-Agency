@@ -4,6 +4,9 @@ import styles from '@/styles/Contact.module.css'
 import ContactForm from '@/components/ContactForm'
 import { fetchContact, safeFetch } from '@/lib/api/payload-cms'
 
+// Cache Contact page for 1 hour
+export const revalidate = 3600
+
 export default async function Contact() {
   const contact = await safeFetch(fetchContact)
   if (!contact) return <div>Sorry, something went wrong loading this data.</div>

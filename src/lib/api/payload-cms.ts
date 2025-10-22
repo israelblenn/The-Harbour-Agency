@@ -2,8 +2,14 @@ import type { About, Contact, Branding, Act, Media, Legal } from '@/payload-type
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
+// Singleton pattern to reuse Payload client
+let payloadClient: any = null
+
 async function getPayloadClient() {
-  return await getPayload({ config })
+  if (!payloadClient) {
+    payloadClient = await getPayload({ config })
+  }
+  return payloadClient
 }
 
 export async function fetchActById(id: string): Promise<Act> {

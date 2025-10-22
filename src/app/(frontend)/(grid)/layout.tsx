@@ -7,6 +7,9 @@ import Header from '@/components/Header'
 import type { Media } from '@/payload-types'
 import React from 'react'
 
+// Cache static data for 1 hour
+export const revalidate = 3600
+
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const acts = await fetchAllActs()
   const branding = await fetchBranding()
