@@ -1,8 +1,12 @@
 import { GlobalConfig } from 'payload'
+import { revalidate } from '@/hooks/revalidate'
 
 export const Branding: GlobalConfig = {
   slug: 'branding',
   access: { read: () => true },
+  hooks: { 
+    afterChange: [() => revalidate(['/'])] 
+  },
   fields: [
     {
       name: 'logo',
