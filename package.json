@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "3.39.1",
-    "@payloadcms/email-resend": "3.39.1",
+    "@payloadcms/email-resend": "3.47.0",
     "@payloadcms/next": "3.39.1",
     "@payloadcms/payload-cloud": "3.39.1",
     "@payloadcms/richtext-lexical": "3.39.1",
