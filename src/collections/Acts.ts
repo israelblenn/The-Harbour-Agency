@@ -30,7 +30,7 @@ export const Acts: CollectionConfig = {
     {
       name: 'link',
       type: 'text',
-      required: true,
+      required: false,
     },
   ],
 }

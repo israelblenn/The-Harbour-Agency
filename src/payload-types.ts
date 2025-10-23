@@ -134,7 +134,7 @@ export interface Act {
   photo: string | Media;
   name: string;
   bio: string;
-  link: string;
+  link?: string | null;
   updatedAt: string;
   createdAt: string;
 }
