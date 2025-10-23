@@ -1,9 +1,14 @@
 import { CollectionConfig } from 'payload'
+import { revalidate } from '@/hooks/revalidate'
 
 export const Acts: CollectionConfig = {
   slug: 'acts',
   access: { read: () => true },
   admin: { useAsTitle: 'name' },
+  hooks: {
+    afterChange: [() => revalidate(['/'])],
+    afterDelete: [() => revalidate(['/'])],
+  },
   fields: [
     {
       name: 'photo',
