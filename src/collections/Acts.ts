@@ -32,5 +32,11 @@ export const Acts: CollectionConfig = {
       type: 'text',
       required: false,
     },
+    {
+      name: 'eLive',
+      type: 'checkbox',
+      label: 'E-Live',
+      required: false,
+    },
   ],
 }

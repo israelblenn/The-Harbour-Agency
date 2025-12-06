@@ -16,13 +16,34 @@ export function useScrollSelection(
     if (!list) return
 
     const scrollTop = list.scrollTop
-    const items = Array.from(list.children).slice(0, -1)
+    const items = Array.from(list.children).slice(0, -1) // Exclude spacer
     if (items.length === 0) return
 
-    const itemHeight = items[0].clientHeight
-    const index = Math.round(scrollTop / itemHeight)
-    const act = filteredActs[index]
+    // Calculate which act is at the scroll position by summing heights
+    let cumulativeHeight = 0
+    let actIndex = 0
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i] as HTMLLIElement
+      const isSeparator = item.getAttribute('data-separator') === 'true'
+      const isTitle = item.getAttribute('data-title') === 'true'
+      
+      if (isSeparator || isTitle) {
+        cumulativeHeight += item.clientHeight
+      } else {
+        const itemTop = cumulativeHeight
+        const itemBottom = cumulativeHeight + item.clientHeight
+        
+        if (scrollTop >= itemTop && scrollTop < itemBottom) {
+          // Found the act at this scroll position
+          break
+        }
+        cumulativeHeight += item.clientHeight
+        actIndex++
+      }
+    }
 
+    const act = filteredActs[actIndex]
     if (act) {
       isProgrammaticScrollRef.current = true
       setSelectedActId(act.id)
@@ -65,11 +86,29 @@ export function useScrollSelection(
     const index = filteredActs.findIndex((act) => act.id === selectedActId)
     if (index === -1) return
 
-    const items = Array.from(list.children).slice(0, -1)
+    const items = Array.from(list.children).slice(0, -1) // Exclude spacer
     if (items.length === 0) return
 
-    const itemHeight = items[0].clientHeight
-    const expectedScrollTop = index * itemHeight
+    // Calculate scroll position accounting for separator
+    // Find the separator and add its height if the selected act is after it
+    let expectedScrollTop = 0
+    let actItemIndex = 0
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i] as HTMLLIElement
+      const isSeparator = item.getAttribute('data-separator') === 'true'
+      const isTitle = item.getAttribute('data-title') === 'true'
+      
+      if (isSeparator || isTitle) {
+        expectedScrollTop += item.clientHeight
+      } else {
+        if (actItemIndex === index) {
+          break
+        }
+        expectedScrollTop += item.clientHeight
+        actItemIndex++
+      }
+    }
 
     if (Math.abs(list.scrollTop - expectedScrollTop) < 4) return
 

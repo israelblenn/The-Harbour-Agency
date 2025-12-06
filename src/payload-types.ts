@@ -135,6 +135,7 @@ export interface Act {
   name: string;
   bio: string;
   link?: string | null;
+  eLive?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -245,6 +246,7 @@ export interface ActsSelect<T extends boolean = true> {
   name?: T;
   bio?: T;
   link?: T;
+  eLive?: T;
   updatedAt?: T;
   createdAt?: T;
 }

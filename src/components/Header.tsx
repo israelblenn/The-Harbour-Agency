@@ -34,6 +34,7 @@ export default function Header({ brandingData }: HeaderProps) {
     { href: '/', label: 'About' },
     { href: '/artists', label: 'Artists' },
     { href: '/contact', label: 'Contact' },
+    // { href: '/E-Live', label: 'E-Live' },
   ]
   const isNavPath = navLinks.some((l) => l.href === pathname)
   useEffect(() => {

@@ -19,6 +19,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     logoUrl = logoMedia.url ?? null
   }
 
+  // Separate acts into regular and E-Live acts for the grid
+  const regularActs = acts.filter((act) => !act.eLive)
+  const eLiveActs = acts.filter((act) => act.eLive === true)
+  const sortedActsForGrid = [...regularActs, ...eLiveActs]
+
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) return React.cloneElement(child, { acts } as { acts: typeof acts })
     return child
@@ -35,7 +40,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
           </div>
           <div className="desktop-only">
             <ActGrid
-              initialActs={acts.map((act) => ({
+              initialActs={sortedActsForGrid.map((act) => ({
                 id: act.id,
                 name: act.name,
                 photo:

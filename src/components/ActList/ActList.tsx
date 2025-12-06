@@ -13,6 +13,7 @@ import ActListOverflowEffect from './ActListOverflowEffect'
 interface Act {
   id: string
   name: string
+  eLive?: boolean | null
 }
 
 interface ActListProps {
@@ -27,11 +28,38 @@ export default function ActList({ Acts }: ActListProps) {
 
   const inputRef = useRef<HTMLInputElement>(null)
   const contentRefs = useRef<Record<string, HTMLSpanElement | null>>({})
+  const separatorRef = useRef<HTMLLIElement | null>(null)
 
-  const filteredActs = useMemo(() => {
-    if (!Acts) return []
-    if (!searchQuery) return Acts
-    return search(searchQuery, Acts, { keySelector: (act) => act.name })
+  const { filteredActs, eLiveStartIndex } = useMemo(() => {
+    if (!Acts) return { filteredActs: [], eLiveStartIndex: -1 }
+    
+    // Separate acts into regular and E-Live acts
+    const regularActs = Acts.filter((act) => !act.eLive)
+    const eLiveActs = Acts.filter((act) => act.eLive === true)
+    
+    let filteredRegular: Act[]
+    let filteredELive: Act[]
+    
+    if (!searchQuery) {
+      // No search: show regular acts first, then E-Live acts at the bottom
+      filteredRegular = regularActs
+      filteredELive = eLiveActs
+    } else {
+      // With search: search both groups separately
+      filteredRegular = search(searchQuery, regularActs, { keySelector: (act) => act.name })
+      filteredELive = search(searchQuery, eLiveActs, { keySelector: (act) => act.name })
+    }
+    
+    // Calculate where E-Live acts start (only if there are both regular and E-Live acts)
+    const eLiveStart = filteredRegular.length > 0 && filteredELive.length > 0 
+      ? filteredRegular.length 
+      : -1
+    
+    // Return regular acts first, then E-Live acts at the bottom
+    return {
+      filteredActs: [...filteredRegular, ...filteredELive],
+      eLiveStartIndex: eLiveStart
+    }
   }, [Acts, searchQuery])
 
   const {
@@ -49,6 +77,51 @@ export default function ActList({ Acts }: ActListProps) {
     },
     [originalHandleItemClick],
   )
+
+  const handleELiveTitleClick = useCallback(() => {
+    if (scrollRef.current && eLiveStartIndex >= 0 && filteredActs.length > eLiveStartIndex) {
+      isProgrammaticScrollRef.current = true
+      const container = scrollRef.current
+      const items = Array.from(container.children).slice(0, -1) // Exclude spacer
+      if (items.length === 0) return
+      
+      // Find the first E-Live act in the DOM
+      const firstELiveAct = filteredActs[eLiveStartIndex]
+      if (!firstELiveAct) return
+      
+      // Select the first E-Live act
+      setSelectedActId(firstELiveAct.id)
+      
+      // Calculate scroll position by summing heights up to the first E-Live act
+      // This includes: regular acts + gap + title + line
+      let scrollTop = 0
+      let actItemIndex = 0
+      
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i] as HTMLLIElement
+        const isSeparator = item.getAttribute('data-separator') === 'true'
+        const isTitle = item.getAttribute('data-title') === 'true'
+        
+        if (isSeparator || isTitle) {
+          // Include separator elements (gap, line) and title in the scroll calculation
+          scrollTop += item.clientHeight
+        } else {
+          // This is an act item
+          if (actItemIndex === eLiveStartIndex) {
+            // Found the first E-Live act, scroll to it
+            break
+          }
+          scrollTop += item.clientHeight
+          actItemIndex++
+        }
+      }
+      
+      container.scrollTo({ top: scrollTop, behavior: 'smooth' })
+      setTimeout(() => {
+        isProgrammaticScrollRef.current = false
+      }, 500)
+    }
+  }, [scrollRef, eLiveStartIndex, filteredActs, setSelectedActId])
 
   const debouncedUpdateSelected = useCallback(
     (_event: React.UIEvent<HTMLUListElement>) => {
@@ -84,6 +157,53 @@ export default function ActList({ Acts }: ActListProps) {
     return () => clearTimeout(resetTimer)
   }, [filteredActs, searchQuery, selectedActId, setSelectedActId])
 
+  // Handle keyboard navigation to skip the E-Live title
+  useEffect(() => {
+    if (eLiveStartIndex === -1) return // No E-Live section, no special handling needed
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isArrowKey = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+      if (!isArrowKey || !selectedActId) return
+
+      const currentIndex = filteredActs.findIndex((act) => act.id === selectedActId)
+      if (currentIndex === -1) return
+
+      const isGoingDown = e.key === 'ArrowDown' || e.key === 'ArrowRight'
+      const isGoingUp = e.key === 'ArrowUp' || e.key === 'ArrowLeft'
+
+      // Check if we're at the boundary where we need to skip the title
+      const isLastRegularAct = currentIndex === eLiveStartIndex - 1
+      const isFirstELiveAct = currentIndex === eLiveStartIndex
+
+      if (isGoingDown && isLastRegularAct) {
+        // Skip from last regular act directly to first E-Live act
+        e.preventDefault()
+        e.stopPropagation()
+        const firstELiveAct = filteredActs[eLiveStartIndex]
+        if (firstELiveAct) {
+          isProgrammaticScrollRef.current = true
+          isUserInteractingWithSelection.current = true
+          setSelectedActId(firstELiveAct.id)
+          // Scroll will be handled by the useScrollSelection hook
+        }
+      } else if (isGoingUp && isFirstELiveAct) {
+        // Skip from first E-Live act directly to last regular act
+        e.preventDefault()
+        e.stopPropagation()
+        const lastRegularAct = filteredActs[eLiveStartIndex - 1]
+        if (lastRegularAct) {
+          isProgrammaticScrollRef.current = true
+          isUserInteractingWithSelection.current = true
+          setSelectedActId(lastRegularAct.id)
+          // Scroll will be handled by the useScrollSelection hook
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedActId, filteredActs, eLiveStartIndex, setSelectedActId, isProgrammaticScrollRef])
+
   return (
     <div className={styles.container}>
       <div className={styles.barCropper} />
@@ -106,6 +226,10 @@ export default function ActList({ Acts }: ActListProps) {
           onItemClick={handleItemClick}
           isDragging={isDragging}
           contentRefs={contentRefs}
+          eLiveStartIndex={eLiveStartIndex}
+          separatorRef={separatorRef}
+          onELiveTitleClick={handleELiveTitleClick}
+          scrollRef={scrollRef}
         />
       </ActListScroll>
 
