@@ -21,6 +21,8 @@ const nextConfig = {
       },
     ],
   },
+  // Ensure sharp works correctly on Vercel (Linux)
+  serverExternalPackages: ['sharp'],
   // Turbopack is default in Next.js 15.6+; empty config silences webpack migration warning
   turbopack: {},
   webpack: (config) => {
