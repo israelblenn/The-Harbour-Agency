@@ -63,6 +63,11 @@ export function useScrollSelection(
       // Cancel any existing pending selection
       cancelPendingScrollSelection()
 
+      // Don't do anything if this act is already selected (e.g., from a grid click)
+      if (act.id === selectedActId) {
+        return
+      }
+
       // If this is from arrow key scrolling, select immediately (no delay)
       if (isArrowKeyScrollRef.current) {
         isProgrammaticScrollRef.current = true
@@ -102,7 +107,7 @@ export function useScrollSelection(
         }, 1500)
       }
     }
-  }, [filteredActs, setSelectedActId, cancelPendingScrollSelection])
+  }, [filteredActs, selectedActId, setSelectedActId, cancelPendingScrollSelection])
 
   // Debounce scroll updates - only trigger after scrolling has stopped
   // This ensures the indicator only appears when an act is "landed on" (snapped to)
