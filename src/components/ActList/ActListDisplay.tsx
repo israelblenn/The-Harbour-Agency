@@ -18,6 +18,7 @@ interface ActListDisplayProps {
   separatorRef?: React.Ref<HTMLLIElement | null>
   onELiveTitleClick?: () => void
   scrollRef?: React.RefObject<HTMLUListElement | null>
+  pendingActId?: string | null
 }
 
 function ActListDisplay({
@@ -30,6 +31,7 @@ function ActListDisplay({
   separatorRef,
   onELiveTitleClick,
   scrollRef,
+  pendingActId = null,
 }: ActListDisplayProps) {
   const titleRef = useRef<HTMLLIElement | null>(null)
   const [isStuck, setIsStuck] = useState(false)
@@ -71,6 +73,7 @@ function ActListDisplay({
       ) : (
         acts.map((act, index) => {
           const isSelected = act.id === selectedActId
+          const hasPendingSelection = act.id === pendingActId
           const showSeparator = eLiveStartIndex !== -1 && index === eLiveStartIndex
           
           return (

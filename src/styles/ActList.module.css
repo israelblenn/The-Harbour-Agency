@@ -24,6 +24,8 @@
   scroll-snap-align: start;
   white-space: nowrap;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 
   &:hover::before {
     content: '';
@@ -38,6 +40,50 @@
 .itemContent {
   display: inline-block;
   white-space: nowrap;
+}
+
+@property --dial-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.loadingIndicator {
+  position: absolute;
+  margin-top: 6.5px;
+  left: 6rem;
+  width: 9px;
+  height: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  animation: indicatorFadeIn 0s linear 0.5s forwards;
+}
+
+@keyframes indicatorFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.dialFill {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  --dial-angle: 0deg;
+  background: conic-gradient(from 0deg, var(--secondary) var(--dial-angle), var(--primary) var(--dial-angle));
+  animation: dialFillAnimation 1.5s linear 0.5s forwards;
+}
+
+@keyframes dialFillAnimation {
+  0% {
+    --dial-angle: 0deg;
+  }
+  100% {
+    --dial-angle: 360deg;
+  }
 }
 
 :is(.itemContent.selected, .item:hover .itemContent)[data-overflowing='true'] {
@@ -138,6 +184,7 @@
   margin-top: 4.5rem;
   z-index: 1;
   left: 0;
+  overflow: visible;
 }
 
 .barCropper {
@@ -170,8 +217,6 @@
 }
 
 .eLiveButton {
-
-
   display: none;
 
   width: 32rem;
@@ -188,8 +233,6 @@
   text-align: left;
   /* transition: opacity 0.2s; */
   /* color: var(--tertiary); */
-
-
 
   /* &:hover {
     opacity: 0.6;

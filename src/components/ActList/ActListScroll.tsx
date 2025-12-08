@@ -11,6 +11,7 @@ interface ActListScrollProps {
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>
   onScroll: (event: React.UIEvent<HTMLUListElement>) => void
   children: React.ReactNode
+  isArrowKeyScrollRef: React.RefObject<boolean>
 }
 
 export default function ActListScroll({
@@ -21,6 +22,7 @@ export default function ActListScroll({
   setIsDragging,
   onScroll,
   children,
+  isArrowKeyScrollRef,
 }: ActListScrollProps) {
   const isDraggingRef = useRef(false)
   const startYRef = useRef(0)
@@ -96,6 +98,7 @@ export default function ActListScroll({
         e.preventDefault()
         isProgrammaticScrollRef.current = true
         isUserInteractingWithSelection.current = true
+        isArrowKeyScrollRef.current = true // Mark that this scroll is from arrow keys
         current.scrollBy({ top: delta, behavior: 'smooth' })
         requestAnimationFrame(() => {
           isProgrammaticScrollRef.current = false
@@ -105,7 +108,64 @@ export default function ActListScroll({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [scrollRef, isProgrammaticScrollRef, isUserInteractingWithSelection])
+  }, [scrollRef, isProgrammaticScrollRef, isUserInteractingWithSelection, isArrowKeyScrollRef])
+
+  // Dynamic scroll-snap management: disable during wheel events, re-enable immediately when scrolling stops
+  useEffect(() => {
+    const current = scrollRef.current
+    if (!current) return
+
+    let scrollTimeout: number | null = null
+    let isScrollSnapDisabled = false
+
+    const handleWheel = (_e: WheelEvent) => {
+      if (!isProgrammaticScrollRef.current) {
+        // Disable scroll-snap on first wheel event to allow smooth scrolling
+        if (!isScrollSnapDisabled) {
+          current.style.scrollSnapType = 'none'
+          isScrollSnapDisabled = true
+        }
+
+        // Clear any existing timeout
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout)
+        }
+
+        // Re-enable scroll-snap quickly after wheel events stop
+        scrollTimeout = window.setTimeout(() => {
+          current.style.scrollSnapType = 'y mandatory'
+          isScrollSnapDisabled = false
+          scrollTimeout = null
+        }, 50)
+      }
+    }
+
+    const handleScroll = () => {
+      // Additional check: if scroll stopped (no more scroll events), ensure snap is re-enabled
+      if (isScrollSnapDisabled) {
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout)
+        }
+
+        scrollTimeout = window.setTimeout(() => {
+          current.style.scrollSnapType = 'y mandatory'
+          isScrollSnapDisabled = false
+          scrollTimeout = null
+        }, 50)
+      }
+    }
+
+    current.addEventListener('wheel', handleWheel, { passive: true })
+    current.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      current.removeEventListener('wheel', handleWheel)
+      current.removeEventListener('scroll', handleScroll)
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
+      }
+    }
+  }, [scrollRef, isProgrammaticScrollRef])
 
   return (
     <ul ref={scrollRef} className={`scrollable ${styles.list}`} onScroll={onScroll}>
