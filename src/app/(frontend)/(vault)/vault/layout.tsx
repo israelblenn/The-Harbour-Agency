@@ -4,6 +4,8 @@ import styles from '@/styles/Header.module.css'
 import { fetchBranding } from '@/lib/api/payload-cms'
 import type { Media } from '@/payload-types'
 
+export const revalidate = 3600
+
 export default async function VaultRootLayout(props: { children: React.ReactNode }) {
   const { children } = props
   const branding = await fetchBranding()

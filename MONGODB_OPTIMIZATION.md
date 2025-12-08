@@ -3,11 +3,13 @@
 ## Changes Made
 
 ### 1. Payload Client Singleton Pattern
+
 - **File**: `src/lib/api/payload-cms.ts`
 - **Change**: Implemented singleton pattern to reuse Payload client across function calls
 - **Impact**: Reduces connection creation from every function call to once per serverless function lifecycle
 
 ### 2. Mongoose Connection Pooling
+
 - **File**: `src/payload.config.ts`
 - **Change**: Added connection pooling configuration optimized for M0 cluster
 - **Settings**:
@@ -18,11 +20,13 @@
   - `socketTimeoutMS: 45000` - Closes connections after 45s of inactivity
 
 ### 3. Page-Level Caching
+
 - **Files**: All page components
 - **Change**: Added `export const revalidate = 3600` (1 hour cache)
 - **Impact**: Reduces database calls for static content
 
 ### 4. API Route Optimization
+
 - **File**: `src/app/api/contact/route.ts`
 - **Change**: Implemented singleton pattern for API routes
 - **Impact**: Reuses Payload client across API calls

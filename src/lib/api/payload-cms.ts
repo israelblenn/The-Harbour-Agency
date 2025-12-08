@@ -1,6 +1,7 @@
 import type { About, Contact, Branding, Act, Media, Legal } from '@/payload-types'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { cache } from 'react'
 
 // Singleton pattern to reuse Payload client
 let payloadClient: any = null
@@ -12,7 +13,7 @@ async function getPayloadClient() {
   return payloadClient
 }
 
-export async function fetchActById(id: string): Promise<Act> {
+export const fetchActById = cache(async (id: string): Promise<Act> => {
   const payload = await getPayloadClient()
   const act = await payload.findByID({
     collection: 'acts',
@@ -20,7 +21,7 @@ export async function fetchActById(id: string): Promise<Act> {
   })
   if (!act) throw new Error(`Failed to fetch act with id ${id}`)
   return act
-}
+})
 
 export async function fetchAllActs(): Promise<Act[]> {
   const payload = await getPayloadClient()
@@ -46,12 +47,13 @@ export async function fetchContact(): Promise<Contact> {
   return contact as Contact
 }
 
-export async function fetchBranding(): Promise<Branding> {
+// Wrapped with React cache() to deduplicate calls within same request
+export const fetchBranding = cache(async (): Promise<Branding> => {
   const payload = await getPayloadClient()
   const branding = await payload.findGlobal({ slug: 'branding' })
   if (!branding) throw new Error('Failed to fetch Branding global')
   return branding as Branding
-}
+})
 
 export async function fetchLegal(): Promise<Legal> {
   const payload = await getPayloadClient()
@@ -81,4 +83,14 @@ export async function safeFetch<T>(fn: () => Promise<T>): Promise<T | null> {
     console.error('safeFetch error:', err)
     return null
   }
+}
+
+// Batched fetch for layout data to reduce connection overhead
+export async function fetchLayoutData(): Promise<{ acts: Act[]; branding: Branding }> {
+  const payload = await getPayloadClient()
+  const [actsResult, branding] = await Promise.all([
+    payload.find({ collection: 'acts', limit: 9999, sort: 'name' }),
+    payload.findGlobal({ slug: 'branding' }),
+  ])
+  return { acts: actsResult.docs, branding: branding as Branding }
 }

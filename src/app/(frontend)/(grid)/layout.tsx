@@ -1,5 +1,5 @@
 import '@/app/(frontend)/styles.css'
-import { fetchAllActs, fetchBranding } from '@/lib/api/payload-cms'
+import { fetchLayoutData } from '@/lib/api/payload-cms'
 import ActList from '@/components/ActList/ActList'
 import ActGrid from '@/components/ActGrid'
 import VaultRibbon from '@/components/VaultRibbon'
@@ -11,8 +11,8 @@ import React from 'react'
 export const revalidate = 3600
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  const acts = await fetchAllActs()
-  const branding = await fetchBranding()
+  // Batched fetch to reduce DB connections
+  const { acts, branding } = await fetchLayoutData()
   let logoUrl: string | null = null
   if (branding?.logo && typeof branding.logo !== 'string') {
     const logoMedia = branding.logo as Media
