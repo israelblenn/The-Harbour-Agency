@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react'
-import { motion, LayoutGroup, animate } from 'framer-motion'
+import { useEffect, useState, useRef, useMemo } from 'react'
+import { motion, animate } from 'framer-motion'
 import { useSelectedAct } from '@/contexts/SelectedActContext'
 import Image from 'next/image'
 import styles from '@/styles/ActGrid.module.css'
@@ -35,10 +35,10 @@ export default function ActGrid({ initialActs }: ActGridProps) {
 
   const layoutReady = numColumns > 0 && cellSize > 0
 
-  const positions = useMemo(() => {
-    if (!layoutReady) return []
+  const { positions, containerHeight } = useMemo(() => {
+    if (!layoutReady) return { positions: [], containerHeight: 0 }
     const maxSpan = Math.min(SPAN, numColumns)
-    const positions: { x: number; y: number; w: number; h: number }[] = []
+    const positions: { x: number; y: number; width: number; height: number; gridY: number }[] = []
     const grid: boolean[][] = []
 
     const isOccupied = (x: number, y: number) => grid[y]?.[x] ?? false
@@ -46,6 +46,8 @@ export default function ActGrid({ initialActs }: ActGridProps) {
       if (!grid[y]) grid[y] = []
       grid[y][x] = true
     }
+
+    let maxGridRow = 0
 
     for (let i = 0; i < acts.length; i++) {
       const act = acts[i]
@@ -74,7 +76,16 @@ export default function ActGrid({ initialActs }: ActGridProps) {
             }
           }
 
-          positions.push({ x: col, y: row, w: span, h: span })
+          // Convert grid units to pixel positions
+          const pixelX = col * (cellSize + GAP)
+          const pixelY = row * (cellSize + GAP)
+          const pixelWidth = span * cellSize + (span - 1) * GAP
+          const pixelHeight = span * cellSize + (span - 1) * GAP
+
+          positions.push({ x: pixelX, y: pixelY, width: pixelWidth, height: pixelHeight, gridY: row })
+
+          // Track the furthest row extent for container height
+          maxGridRow = Math.max(maxGridRow, row + span)
           placed = true
           break
         }
@@ -82,10 +93,13 @@ export default function ActGrid({ initialActs }: ActGridProps) {
       }
     }
 
-    return positions
-  }, [acts, selectedActId, numColumns, layoutReady])
+    // Calculate container height from max grid row
+    const containerHeight = maxGridRow * (cellSize + GAP) - GAP
 
-  useLayoutEffect(() => {
+    return { positions, containerHeight }
+  }, [acts, selectedActId, numColumns, cellSize, layoutReady])
+
+  useEffect(() => {
     if (!containerRef.current) return
     const observer = new ResizeObserver(([entry]) => setContainerWidth(entry.contentRect.width))
     observer.observe(containerRef.current)
@@ -98,9 +112,8 @@ export default function ActGrid({ initialActs }: ActGridProps) {
     const index = acts.findIndex((a) => a.id === selectedActId)
     if (index === -1 || index >= positions.length) return
 
-    const { y } = positions[index]
-    const rowHeight = cellSize + GAP
-    const itemTop = y * rowHeight
+    // Use the pixel y position directly
+    const itemTop = positions[index].y
 
     const animation = animate(container.scrollTop, itemTop, {
       ...SPRING,
@@ -121,7 +134,7 @@ export default function ActGrid({ initialActs }: ActGridProps) {
       container.removeEventListener('wheel', handleUserScroll)
       container.removeEventListener('touchstart', handleUserScroll)
     }
-  }, [selectedActId, acts, positions, cellSize])
+  }, [selectedActId, acts, positions])
 
   useEffect(() => {
     if (selectedActId === null && containerRef.current) {
@@ -153,44 +166,40 @@ export default function ActGrid({ initialActs }: ActGridProps) {
       <Polygon selectedActId={selectedActId} containerRef={containerRef} acts={acts} positions={positions} />
 
       <div ref={containerRef} className={`scrollable ${styles.container}`}>
-        <LayoutGroup>
-          {layoutReady && (
-            <div style={{ display: 'grid', gridAutoRows: cellSize, gap: GAP }}>
-              {acts.map((act, i) => {
-                const pos = positions[i]
-                if (!pos) return null
+        {layoutReady && (
+          <div style={{ position: 'relative', height: containerHeight }}>
+            {acts.map((act, i) => {
+              const pos = positions[i]
+              if (!pos) return null
 
-                const isSelected = act.id === selectedActId
+              const isSelected = act.id === selectedActId
 
-                return (
-                  <motion.div
-                    key={act.id}
-                    onClick={() => setSelectedActId(act.id)}
-                    transition={SPRING}
-                    layout
-                    className={styles.cell}
-                    style={{
-                      gridColumnStart: pos.x + 1,
-                      gridColumnEnd: `span ${pos.w}`,
-                      gridRowStart: pos.y + 1,
-                      gridRowEnd: `span ${pos.h}`,
-                      position: 'relative',
-                    }}
-                    data-selected={isSelected}
-                  >
-                    <Image
-                      src={act.photo.url}
-                      alt={act.name}
-                      fill
-                      sizes={`${Math.round(cellSize * pos.w)}px`}
-                      loading="lazy"
-                    />
-                  </motion.div>
-                )
-              })}
-            </div>
-          )}
-        </LayoutGroup>
+              return (
+                <motion.div
+                  key={act.id}
+                  onClick={() => setSelectedActId(act.id)}
+                  initial={false}
+                  animate={{
+                    x: pos.x,
+                    y: pos.y,
+                    width: pos.width,
+                    height: pos.height,
+                  }}
+                  transition={SPRING}
+                  className={styles.cell}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                  }}
+                  data-selected={isSelected}
+                >
+                  <Image src={act.photo.url} alt={act.name} fill sizes={`${Math.round(pos.width)}px`} loading="lazy" />
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
       </div>
     </div>
   )

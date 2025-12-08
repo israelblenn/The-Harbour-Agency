@@ -8,7 +8,7 @@ type PolygonProps = {
   selectedActId: string | null
   containerRef: React.RefObject<HTMLDivElement | null>
   acts: Array<{ id: string }>
-  positions: Array<{ x: number; y: number; w: number; h: number }>
+  positions: Array<{ x: number; y: number; width: number; height: number; gridY: number }>
 }
 
 // Fixed anchor position
