@@ -14,8 +14,15 @@ const nextConfig = {
   images: {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    domains: [process.env.NEXT_PUBLIC_SITE_URL],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: process.env.NEXT_PUBLIC_SITE_URL || '**',
+      },
+    ],
   },
+  // Turbopack is default in Next.js 15.6+; empty config silences webpack migration warning
+  turbopack: {},
   webpack: (config) => {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src')
     config.resolve.alias['@payload-config'] = path.resolve(__dirname, 'src/payload.config.ts')
