@@ -303,7 +303,7 @@ export default function ActList({ Acts }: ActListProps) {
           </div>
         )}
       </div>
-      <div className={`${styles.fade} desktop-only`} />
+      <div className={styles.fade} />
 
       <ActListSearch inputRef={inputRef} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 

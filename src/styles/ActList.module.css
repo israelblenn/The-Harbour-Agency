@@ -133,7 +133,7 @@
   display: flex;
   align-items: center;
   /* background: var(--primary); */
-  z-index: 10;
+  z-index: 9;
 }
 
 .skipToPrefix {
@@ -182,7 +182,7 @@
   mix-blend-mode: difference;
   pointer-events: none;
   margin-top: 4.5rem;
-  z-index: 1;
+  z-index: 10;
   left: 0;
   overflow: visible;
 }
@@ -194,7 +194,7 @@
   width: 40rem;
   left: 0;
   margin-top: 4rem;
-  z-index: 1;
+  z-index: 10;
 }
 
 .search {
@@ -225,34 +225,18 @@
   flex-shrink: 0;
   border: 0;
   background: transparent;
-  /* color: var(--secondary); */
   font-size: inherit;
   font-family: inherit;
   cursor: pointer;
   padding: 0;
   text-align: left;
-  /* transition: opacity 0.2s; */
-  /* color: var(--tertiary); */
-
-  /* &:hover {
-    opacity: 0.6;
-  } */
 
   &:focus {
     outline: none;
   }
-
-  /* &:active {
-    opacity: 0.4;
-  } */
 }
 
 @media (max-width: 1400px) {
-  .container {
-    height: calc(100vh - 8rem);
-    margin-bottom: -2rem;
-  }
-
   .item:hover::before {
     content: none;
   }
@@ -262,6 +246,11 @@
     width: 100%;
   }
 
+  .barCropper {
+    height: 1rem;
+    margin-top: 3.5rem;
+  }
+
   .search {
     margin: 0;
     width: 100%;
@@ -269,5 +258,33 @@
 
   .eLiveButton {
     width: 100%;
+  }
+
+  .loadingIndicator {
+    left: unset;
+    right: 2.5rem;
+  }
+
+  .eLiveTitle {
+    height: 8rem;
+    align-items: flex-end;
+    margin-bottom: -4rem;
+    translate: 0 -4rem;
+    padding-bottom: 6px;
+
+    background: var(--primary);
+    z-index: 2;
+    background: linear-gradient(180deg, transparent 0%, var(--primary) 50%);
+    bottom: -4rem;
+  }
+
+  .fade {
+    bottom: 0;
+    height: 8rem;
+    background: linear-gradient(180deg, transparent 0%, var(--primary) 75%);
+  }
+
+  .container {
+    height: calc(100vh - 8rem - 2rem);
   }
 }

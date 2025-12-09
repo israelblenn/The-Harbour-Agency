@@ -4,6 +4,7 @@
   right: 2rem;
   width: calc(50vw - 2rem);
   max-height: calc(100vh - 20rem);
+  z-index: 3;
 }
 
 .imageWrapper {
