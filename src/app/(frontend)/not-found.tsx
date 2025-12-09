@@ -9,7 +9,7 @@ export default async function NotFound() {
           flexDirection: 'column',
           margin: '0',
           width: '100vw',
-          height: '100vh',
+          height: '100svh',
           justifyContent: 'center',
           alignItems: 'center',
         }}

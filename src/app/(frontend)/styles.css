@@ -23,7 +23,7 @@ body {
 }
 
 main {
-  height: calc(100vh - 32rem);
+  height: calc(100svh - 32rem);
   width: calc(100vw - 16rem);
   display: grid;
   grid-template-columns: 32rem 1fr 64rem;
@@ -249,7 +249,7 @@ td:nth-child(1) {
   body {
     margin: 0;
     padding: 2rem;
-    min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
   }

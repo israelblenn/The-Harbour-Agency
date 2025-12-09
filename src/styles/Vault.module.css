@@ -25,7 +25,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -39,9 +39,9 @@
   display: block;
   object-fit: contain;
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   max-width: calc(100vw - 16rem);
-  max-height: calc(100vh - 16rem);
+  max-height: calc(100svh - 16rem);
   width: auto;
   height: auto;
 }
@@ -70,9 +70,9 @@
 @media (max-width: 1400px) {
   .modalImage {
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     max-width: calc(100vw - 4rem);
-    max-height: calc(100vh - 4rem);
+    max-height: calc(100svh - 4rem);
   }
 
   .vault {

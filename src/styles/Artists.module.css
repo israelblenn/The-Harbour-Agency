@@ -3,7 +3,7 @@
   bottom: 2rem;
   right: 2rem;
   width: calc(50vw - 2rem);
-  max-height: calc(100vh - 20rem);
+  max-height: calc(100svh - 20rem);
   z-index: 3;
 }
 

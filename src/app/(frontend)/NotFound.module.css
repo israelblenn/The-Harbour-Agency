@@ -1,7 +1,7 @@
 /* file: app/(frontend)/NotFound.module.css */
 
 .mainContent {
-  height: calc(100vh - 16rem); /* Adjust as needed based on your header/body margins */
+  height: calc(100svh - 16rem); /* Adjust as needed based on your header/body margins */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -36,7 +36,7 @@
 
 @media (max-width: 1400px) {
   .mainContent {
-    height: calc(100vh - 8rem); /* Adjust for mobile header/padding */
+    height: calc(100svh - 8rem); /* Adjust for mobile header/padding */
     padding: 2rem;
   }
 

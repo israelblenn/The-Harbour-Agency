@@ -1,5 +1,5 @@
 .container {
-  height: calc(100vh - 32rem);
+  height: calc(100svh - 32rem);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -285,6 +285,6 @@
   }
 
   .container {
-    height: calc(100vh - 8rem - 2rem);
+    height: calc(100svh - 8rem - 2rem);
   }
 }
