@@ -52,7 +52,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
               }))}
             />
           </div>
-          <div className="scrollShadow scrollable pageSegment">{childrenWithProps}</div>{' '}
+          <div className="scrollShadow scrollable pageSegment">{childrenWithProps}</div>
         </main>
       </body>
     </html>

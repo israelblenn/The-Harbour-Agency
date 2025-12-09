@@ -22,9 +22,14 @@ export default function Header({ brandingData }: HeaderProps) {
   const [isPressed, setIsPressed] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [prevPathname, setPrevPathname] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   const navRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (pathname !== prevPathname) setPrevPathname(pathname)
@@ -98,7 +103,7 @@ export default function Header({ brandingData }: HeaderProps) {
   const TransLink = prevPathname === '/vault' ? TransitionLink : Link
 
   return (
-    <header className={`${scrolled ? 'shrunk' : ''}`}>
+    <header className={`${mounted && scrolled ? 'shrunk' : ''}`}>
       <nav>
         <TransLink href="/" className={styles.logo}>
           {logoUrl && <Image priority src={logoUrl} alt="The Harbour Agency Logo" width={200} height={60} />}

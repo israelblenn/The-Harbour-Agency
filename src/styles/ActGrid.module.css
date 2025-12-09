@@ -10,6 +10,24 @@
   position: relative;
   cursor: pointer;
   box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  animation: placeholderPulse 1s ease-in-out infinite;
+}
+
+@keyframes placeholderPulse {
+  0%,
+  100% {
+    background: #c4c4c4;
+  }
+  50% {
+    background: var(--primary);
+  }
 }
 
 .polygon {

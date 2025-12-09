@@ -24,7 +24,12 @@ export default function ActGrid({ initialActs }: ActGridProps) {
   const [containerWidth, setContainerWidth] = useState(0)
   const { selectedActId, setSelectedActId } = useSelectedAct()
   const containerRef = useRef<HTMLDivElement>(null)
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set())
   const acts = initialActs
+
+  const handleImageLoad = (actId: string) => {
+    setLoadedImages((prev) => new Set(prev).add(actId))
+  }
 
   const { numColumns, cellSize } = useMemo(() => {
     if (containerWidth === 0) return { numColumns: 0, cellSize: 0 }
@@ -194,7 +199,16 @@ export default function ActGrid({ initialActs }: ActGridProps) {
                   }}
                   data-selected={isSelected}
                 >
-                  <Image src={act.photo.url} alt={act.name} fill sizes={`${Math.round(pos.width)}px`} loading="lazy" />
+                  {!loadedImages.has(act.id) && <div className={styles.placeholder} />}
+                  <Image
+                    src={act.photo.url}
+                    alt={act.name}
+                    fill
+                    sizes={`${Math.round(pos.width)}px`}
+                    loading="lazy"
+                    style={{ objectFit: 'cover' }}
+                    onLoad={() => handleImageLoad(act.id)}
+                  />
                 </motion.div>
               )
             })}

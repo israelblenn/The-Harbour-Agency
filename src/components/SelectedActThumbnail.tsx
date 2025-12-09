@@ -7,6 +7,7 @@ import { Link } from 'next-view-transitions'
 import styles from '@/styles/Artists.module.css'
 import Marquee from './Marquee'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import { useState, useEffect } from 'react'
 
 interface SelectedActThumbnailProps {
   acts: Act[]
@@ -16,6 +17,20 @@ export default function SelectedActThumbnail({ acts }: SelectedActThumbnailProps
   const { selectedActId } = useSelectedAct()
   const isMobile = useIsMobile()
   const selectedAct = acts.find((act) => act.id === selectedActId)
+  const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure consistent initial render to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Show loading state when selected act changes
+  useEffect(() => {
+    if (selectedActId) {
+      setIsLoading(true)
+    }
+  }, [selectedActId])
 
   if (!selectedAct || !selectedAct.photo) return null
 
@@ -41,13 +56,15 @@ export default function SelectedActThumbnail({ acts }: SelectedActThumbnailProps
       </Marquee>
       <div className={styles.expand} />
       <Link href={`/${selectedAct.id}`} className={styles.imageWrapper}>
+        {isLoading && <div className={styles.thumbnailPlaceholder} />}
         <Image
           src={imageUrl}
           alt={`${selectedAct.name} thumbnail`}
           fill
           sizes="64px"
           className={styles.thumbnailImage}
-          style={isMobile ? { viewTransitionName: transitionName } : {}}
+          style={mounted && isMobile ? { viewTransitionName: transitionName } : {}}
+          onLoad={() => setIsLoading(false)}
         />
       </Link>
     </div>
