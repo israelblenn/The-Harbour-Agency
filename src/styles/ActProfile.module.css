@@ -46,7 +46,8 @@
 
 .bio {
   margin-top: 0;
-  white-space-collapse: preserve;
+  white-space: pre-line;
+  hyphens: none;
 }
 
 @media (max-width: 1400px) {

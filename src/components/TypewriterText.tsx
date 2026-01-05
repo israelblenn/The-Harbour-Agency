@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, ReactNode } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface TypewriterTextProps {
   text: string
@@ -18,54 +18,70 @@ export default function TypewriterText({
   wordDelay,
   linkElement,
 }: TypewriterTextProps) {
-  const words = text.split(' ')
-  const totalItems = words.length + (linkElement ? 1 : 0)
-  const [displayedItemCount, setDisplayedItemCount] = useState(0)
-  const delayPerItem = wordDelay !== undefined ? wordDelay : totalItems > 0 ? animationDuration / totalItems : 0
+  // Split text while preserving whitespace (spaces and newlines)
+  const tokens = text.split(/(\s+)/)
+  const words = tokens.filter((token) => token.trim() !== '')
+  const [displayedWordCount, setDisplayedWordCount] = useState(0)
+  const [showLink, setShowLink] = useState(false)
+
+  const delayPerWord = wordDelay !== undefined ? wordDelay : words.length > 0 ? animationDuration / words.length : 0
 
   useEffect(() => {
-    if (totalItems === 0) return
-    let currentItemIndex = 0
+    if (words.length === 0) return
 
     const interval = setInterval(() => {
-      setDisplayedItemCount((prevCount) => {
-        currentItemIndex = prevCount + 1
-        if (currentItemIndex >= totalItems) {
+      setDisplayedWordCount((prev) => {
+        if (prev >= words.length) {
           clearInterval(interval)
-          return totalItems
+          return words.length
         }
-        return currentItemIndex
+        return prev + 1
       })
-    }, delayPerItem * 1000)
+    }, delayPerWord * 1000)
 
     return () => clearInterval(interval)
-  }, [totalItems, delayPerItem])
+  }, [words.length, delayPerWord])
+
+  useEffect(() => {
+    if (displayedWordCount >= words.length && linkElement) {
+      const timeout = setTimeout(() => setShowLink(true), 100)
+      return () => clearTimeout(timeout)
+    }
+  }, [displayedWordCount, words.length, linkElement])
+
+  // Rebuild displayed tokens preserving original whitespace
+  let wordIndex = 0
+  const displayedTokens = tokens.map((token, i) => {
+    if (token.trim() === '') {
+      // Whitespace token - only show if the previous word has been displayed
+      return wordIndex <= displayedWordCount ? token : null
+    }
+    wordIndex++
+    if (wordIndex <= displayedWordCount) {
+      return (
+        <motion.span key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+          {token}
+        </motion.span>
+      )
+    }
+    return null
+  })
 
   return (
     <div className={className}>
-      {words.slice(0, displayedItemCount).map((word, index) => (
-        <motion.span
-          key={`word-${index}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.1 }}
-          style={{ display: 'inline-block', marginRight: '0.25em' }}
-        >
-          {word}
-        </motion.span>
-      ))}
-
-      {linkElement && displayedItemCount > words.length && (
-        <motion.div
-          key="link-element"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-          style={{ display: 'block', marginTop: '1em' }}
-        >
-          {linkElement}
-        </motion.div>
-      )}
+      <p>{displayedTokens}</p>
+      <AnimatePresence>
+        {showLink && linkElement && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            style={{ marginTop: '1em' }}
+          >
+            {linkElement}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
