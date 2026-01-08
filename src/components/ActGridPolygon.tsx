@@ -24,7 +24,8 @@ export default function Polygon({ selectedActId, containerRef, acts, positions }
   const polygonBottom = useMotionValue('')
 
   useLayoutEffect(() => {
-    if (!selectedActId) {
+    // Don't set up polygon for null or e-live (not a real act in the grid)
+    if (!selectedActId || selectedActId === 'e-live') {
       polygonLeft.set('')
       polygonTop.set('')
       polygonBottom.set('')
@@ -64,7 +65,8 @@ export default function Polygon({ selectedActId, containerRef, acts, positions }
     }
   }, [selectedActId, acts, positions, polygonLeft, polygonTop, polygonBottom, containerRef])
 
-  if (!selectedActId) return null
+  // Hide polygon when no act selected or on e-live page (not a real act in the grid)
+  if (!selectedActId || selectedActId === 'e-live') return null
 
   return (
     <svg className={styles.polygon}>

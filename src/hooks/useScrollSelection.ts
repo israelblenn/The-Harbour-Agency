@@ -145,7 +145,7 @@ export function useScrollSelection(
       // Clear the flag after scroll animation completes
       setTimeout(() => {
         isUserClickOrKeyRef.current = false
-      }, 500)
+      }, 1000)
     }, 200)
   }
 
@@ -206,7 +206,19 @@ export function useScrollSelection(
     }
 
     isProgrammaticScrollRef.current = true
+
+    // For e-live, disable scroll-snap temporarily to prevent snapping to wrong position
+    if (selectedActId === 'e-live') {
+      const originalSnapType = list.style.scrollSnapType
+      list.style.scrollSnapType = 'none'
+      list.scrollTo({ top: expectedScrollTop, behavior: 'smooth' })
+      // Re-enable scroll-snap after smooth scroll animation completes
+      setTimeout(() => {
+        list.style.scrollSnapType = originalSnapType || ''
+      }, 600)
+    } else {
     list.scrollTo({ top: expectedScrollTop, behavior: scrollBehavior })
+    }
 
     if (scrollBehavior === 'auto') {
       queueMicrotask(() => {
@@ -252,5 +264,6 @@ export function useScrollSelection(
     isArrowKeyScrollRef,
     pendingActId,
     markUserScroll,
+    isUserClickOrKeyRef,
   }
 }

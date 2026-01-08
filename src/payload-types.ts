@@ -91,12 +91,14 @@ export interface Config {
     contact: Contact;
     branding: Branding;
     legal: Legal;
+    elive: Elive;
   };
   globalsSelect: {
     about: AboutSelect<false> | AboutSelect<true>;
     contact: ContactSelect<false> | ContactSelect<true>;
     branding: BrandingSelect<false> | BrandingSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
+    elive: EliveSelect<false> | EliveSelect<true>;
   };
   locale: null;
   user: User & {
@@ -448,6 +450,24 @@ export interface Legal {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "elive".
+ */
+export interface Elive {
+  id: string;
+  Title: string;
+  description?: string | null;
+  contacts?:
+    | {
+        label: string;
+        content: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about_select".
  */
 export interface AboutSelect<T extends boolean = true> {
@@ -502,6 +522,24 @@ export interface BrandingSelect<T extends boolean = true> {
  */
 export interface LegalSelect<T extends boolean = true> {
   PrivacyPolicy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "elive_select".
+ */
+export interface EliveSelect<T extends boolean = true> {
+  Title?: T;
+  description?: T;
+  contacts?:
+    | T
+    | {
+        label?: T;
+        content?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

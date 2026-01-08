@@ -1,4 +1,4 @@
-import type { About, Contact, Branding, Act, Media, Legal } from '@/payload-types'
+import type { About, Contact, Branding, Act, Media, Legal, Elive } from '@/payload-types'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { cache } from 'react'
@@ -60,6 +60,13 @@ export async function fetchLegal(): Promise<Legal> {
   const legal = await payload.findGlobal({ slug: 'legal' })
   if (!legal) throw new Error('Failed to fetch Legal global')
   return legal as Legal
+}
+
+export async function fetchELive(): Promise<Elive> {
+  const payload = await getPayloadClient()
+  const elive = await payload.findGlobal({ slug: 'elive' })
+  if (!elive) throw new Error('Failed to fetch ELive global')
+  return elive as Elive
 }
 
 export async function fetchVaultMedia(): Promise<Media[]> {

@@ -125,7 +125,8 @@
   position: sticky;
   bottom: 0px;
   height: 4rem;
-  scroll-snap-align: none;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   white-space: nowrap;
   overflow: hidden;
   pointer-events: auto;
@@ -163,6 +164,30 @@
 
 .skipToHidden + .eLiveText {
   transform: translateX(-56.39px);
+}
+
+.eLiveArrowVisible {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.eLiveArrowHidden {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.eLiveInfoIcon {
+  opacity: 0.3;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.eLiveTitle:hover .eLiveInfoIcon:not(.eLiveArrowHidden),
+.eLiveTitleSelected .eLiveInfoIcon:not(.eLiveArrowHidden) {
+  opacity: 1;
+}
+
+.eLiveInfoIcon.eLiveArrowHidden {
+  opacity: 0;
 }
 
 .fade {
@@ -280,6 +305,16 @@
       background: linear-gradient(180deg, transparent 0%, var(--primary) 50%);
       z-index: 0;
       translate: 0 8px;
+    }
+
+    &:hover::before {
+      content: none;
+    }
+  }
+
+  .eLiveTitleSelected {
+    &::before {
+      content: none;
     }
   }
 

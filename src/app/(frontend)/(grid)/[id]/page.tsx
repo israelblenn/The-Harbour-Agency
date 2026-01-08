@@ -1,5 +1,6 @@
-import { fetchActById, fetchAllActs, safeFetch } from '@/lib/api/payload-cms'
+import { fetchActById, fetchAllActs, fetchELive, safeFetch } from '@/lib/api/payload-cms'
 import ActProfileClient from '@/components/ActProfileClient'
+import ELiveSection from '@/components/ELiveSection'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -13,13 +14,25 @@ export async function generateStaticParams() {
   const acts = await safeFetch(fetchAllActs)
   if (!acts) return []
 
-  return acts.map((act) => ({
-    id: act.id,
-  }))
+  return [
+    ...acts.map((act) => ({
+      id: act.id,
+    })),
+    { id: 'e-live' },
+  ]
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
+  
+  if (id === 'e-live') {
+    const elive = await safeFetch(fetchELive)
+    return {
+      title: `${elive?.Title || 'E-Live'} | The Harbour Agency`,
+      description: elive?.description || 'E-Live artists at The Harbour Agency',
+    }
+  }
+  
   const act = await safeFetch(() => fetchActById(id))
   if (!act) return { title: 'The Harbour Agency' }
   return {
@@ -30,6 +43,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ActProfilePage({ params }: PageProps) {
   const { id } = await params
+  
+  if (id === 'e-live') {
+    const elive = await safeFetch(fetchELive)
+    if (!elive) notFound()
+    return <ELiveSection elive={elive} />
+  }
+  
   const actDetails = await safeFetch(() => fetchActById(id))
 
   if (!actDetails) notFound()

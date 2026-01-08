@@ -15,6 +15,7 @@ import { Acts } from '@/collections/Acts'
 import { Contact } from '@/collections/Contact'
 import { Branding } from '@/collections/Branding'
 import { Legal } from '@/collections/Legal'
+import { ELive } from '@/collections/ELive'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -26,7 +27,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  globals: [About, Contact, Branding, Legal],
+  globals: [About, Contact, Branding, Legal, ELive],
   collections: [Acts, Media, Users],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

@@ -30,8 +30,8 @@ export default function ActList({ Acts }: ActListProps) {
   const contentRefs = useRef<Record<string, HTMLSpanElement | null>>({})
   const separatorRef = useRef<HTMLLIElement | null>(null)
 
-  const { filteredActs, eLiveStartIndex } = useMemo(() => {
-    if (!Acts) return { filteredActs: [], eLiveStartIndex: -1 }
+  const { filteredActs, eLiveTitleIndex } = useMemo(() => {
+    if (!Acts) return { filteredActs: [], eLiveTitleIndex: -1 }
 
     // Separate acts into regular and E-Live acts
     const regularActs = Acts.filter((act) => !act.eLive)
@@ -50,13 +50,19 @@ export default function ActList({ Acts }: ActListProps) {
       filteredELive = search(searchQuery, eLiveActs, { keySelector: (act) => act.name })
     }
 
-    // Calculate where E-Live acts start (only if there are both regular and E-Live acts)
-    const eLiveStart = filteredRegular.length > 0 && filteredELive.length > 0 ? filteredRegular.length : -1
+    // If there are both regular and E-Live acts, insert the E-Live title as a virtual selectable item
+    if (filteredRegular.length > 0 && filteredELive.length > 0) {
+      const eLiveTitleItem: Act = { id: 'e-live', name: 'E-Live' }
+      return {
+        filteredActs: [...filteredRegular, eLiveTitleItem, ...filteredELive],
+        eLiveTitleIndex: filteredRegular.length,
+      }
+    }
 
-    // Return regular acts first, then E-Live acts at the bottom
+    // Return regular acts first, then E-Live acts at the bottom (no title needed if one group is empty)
     return {
       filteredActs: [...filteredRegular, ...filteredELive],
-      eLiveStartIndex: eLiveStart,
+      eLiveTitleIndex: -1,
     }
   }, [Acts, searchQuery])
 
@@ -70,62 +76,72 @@ export default function ActList({ Acts }: ActListProps) {
     isArrowKeyScrollRef,
     pendingActId,
     markUserScroll,
+    isUserClickOrKeyRef,
   } = useScrollSelection(filteredActs, selectedActId, setSelectedActId)
 
   const handleItemClick = useCallback(
     (id: string, e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       isUserInteractingWithSelection.current = true
-      originalHandleItemClick(id, e)
-    },
-    [originalHandleItemClick],
-  )
 
-  const handleELiveTitleClick = useCallback(() => {
-    if (scrollRef.current && eLiveStartIndex >= 0 && filteredActs.length > eLiveStartIndex) {
+      // Special handling for E-Live title click (sticky element - scrollIntoView doesn't work correctly)
+      if (id === 'e-live' && scrollRef.current) {
+        // DO NOT call originalHandleItemClick - scrollIntoView on sticky elements scrolls to wrong position!
+        // Instead, manually handle everything:
+        cancelPendingScrollSelection()
       isProgrammaticScrollRef.current = true
+        isUserClickOrKeyRef.current = true // Block scroll-based selection
+        setSelectedActId(id)
+
+        // Calculate and scroll to the E-Live title position
       const container = scrollRef.current
       const items = Array.from(container.children).slice(0, -1) // Exclude spacer
-      if (items.length === 0) return
+        const eLiveIndex = filteredActs.findIndex((act) => act.id === 'e-live')
 
-      // Find the first E-Live act in the DOM
-      const firstELiveAct = filteredActs[eLiveStartIndex]
-      if (!firstELiveAct) return
-
-      // Cancel any pending scroll-based selection since this is an instant click
-      cancelPendingScrollSelection()
-      // Select the first E-Live act
-      setSelectedActId(firstELiveAct.id)
-
-      // Calculate scroll position by summing heights up to the first E-Live act
-      // This includes: regular acts + gap + title + line
       let scrollTop = 0
-      let actItemIndex = 0
+        let actIndex = 0
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i] as HTMLLIElement
         const isSeparator = item.getAttribute('data-separator') === 'true'
-        const isTitle = item.getAttribute('data-title') === 'true'
 
-        if (isSeparator || isTitle) {
-          // Include separator elements (gap, line) and title in the scroll calculation
+          if (isSeparator) {
           scrollTop += item.clientHeight
         } else {
-          // This is an act item
-          if (actItemIndex === eLiveStartIndex) {
-            // Found the first E-Live act, scroll to it
-            break
-          }
+            if (actIndex === eLiveIndex) break
           scrollTop += item.clientHeight
-          actItemIndex++
+            actIndex++
         }
       }
 
+        // Temporarily disable scroll-snap to prevent it from snapping to wrong position
+        const originalSnapType = container.style.scrollSnapType
+        container.style.scrollSnapType = 'none'
+
+        // Scroll with smooth animation
       container.scrollTo({ top: scrollTop, behavior: 'smooth' })
+
+        // Re-enable scroll-snap after smooth scroll animation completes (~500ms)
       setTimeout(() => {
+          container.style.scrollSnapType = originalSnapType || ''
         isProgrammaticScrollRef.current = false
+          setTimeout(() => {
+            isUserClickOrKeyRef.current = false
       }, 500)
+        }, 600)
+      } else {
+        originalHandleItemClick(id, e)
     }
-  }, [scrollRef, eLiveStartIndex, filteredActs, setSelectedActId, cancelPendingScrollSelection])
+    },
+    [
+      originalHandleItemClick,
+      scrollRef,
+      filteredActs,
+      cancelPendingScrollSelection,
+      isProgrammaticScrollRef,
+      isUserClickOrKeyRef,
+      setSelectedActId,
+    ],
+  )
 
   const debouncedUpdateSelected = useCallback(
     (_event: React.UIEvent<HTMLUListElement>) => {
@@ -168,64 +184,6 @@ export default function ActList({ Acts }: ActListProps) {
     return () => clearTimeout(resetTimer)
   }, [filteredActs, searchQuery, selectedActId, setSelectedActId, cancelPendingScrollSelection])
 
-  // Handle keyboard navigation to skip the E-Live title
-  useEffect(() => {
-    if (eLiveStartIndex === -1) return // No E-Live section, no special handling needed
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isArrowKey = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)
-      if (!isArrowKey || !selectedActId) return
-
-      const currentIndex = filteredActs.findIndex((act) => act.id === selectedActId)
-      if (currentIndex === -1) return
-
-      const isGoingDown = e.key === 'ArrowDown' || e.key === 'ArrowRight'
-      const isGoingUp = e.key === 'ArrowUp' || e.key === 'ArrowLeft'
-
-      // Check if we're at the boundary where we need to skip the title
-      const isLastRegularAct = currentIndex === eLiveStartIndex - 1
-      const isFirstELiveAct = currentIndex === eLiveStartIndex
-
-      if (isGoingDown && isLastRegularAct) {
-        // Skip from last regular act directly to first E-Live act
-        e.preventDefault()
-        e.stopPropagation()
-        const firstELiveAct = filteredActs[eLiveStartIndex]
-        if (firstELiveAct) {
-          // Cancel any pending scroll-based selection since this is an instant arrow key selection
-          cancelPendingScrollSelection()
-          isProgrammaticScrollRef.current = true
-          isUserInteractingWithSelection.current = true
-          setSelectedActId(firstELiveAct.id)
-          // Scroll will be handled by the useScrollSelection hook
-        }
-      } else if (isGoingUp && isFirstELiveAct) {
-        // Skip from first E-Live act directly to last regular act
-        e.preventDefault()
-        e.stopPropagation()
-        const lastRegularAct = filteredActs[eLiveStartIndex - 1]
-        if (lastRegularAct) {
-          // Cancel any pending scroll-based selection since this is an instant arrow key selection
-          cancelPendingScrollSelection()
-          isProgrammaticScrollRef.current = true
-          isUserInteractingWithSelection.current = true
-          setSelectedActId(lastRegularAct.id)
-          // Scroll will be handled by the useScrollSelection hook
-        }
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [
-    selectedActId,
-    filteredActs,
-    eLiveStartIndex,
-    setSelectedActId,
-    isProgrammaticScrollRef,
-    cancelPendingScrollSelection,
-  ])
-
   // Track scroll position to position the loading indicator
   const [scrollTop, setScrollTop] = useState(0)
 
@@ -256,7 +214,6 @@ export default function ActList({ Acts }: ActListProps) {
 
     // Find the first visible act item at the top
     let cumulativeHeight = 0
-    let actIndex = 0
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i] as HTMLLIElement
@@ -270,23 +227,22 @@ export default function ActList({ Acts }: ActListProps) {
         const itemBottom = cumulativeHeight + item.clientHeight
 
         // Check if this item is visible at or near the top of the scroll container
-        if (list.scrollTop <= itemBottom && list.scrollTop >= itemTop - item.clientHeight) {
+        if (scrollTop <= itemBottom && scrollTop >= itemTop - item.clientHeight) {
           // Calculate position relative to the bar
           // Bar starts at 4.5rem (72px) from container top
           // Item's position relative to scroll container top
-          const itemRelativeToScrollTop = itemTop - list.scrollTop
+          const itemRelativeToScrollTop = itemTop - scrollTop
           // Position relative to bar (bar is 72px from container top, so subtract that)
           const positionInBar = itemRelativeToScrollTop - 72
           // Center vertically within the item (item is 64px tall, indicator is 16px)
           return Math.max(0, positionInBar + (64 - 16) / 2)
         }
         cumulativeHeight += item.clientHeight
-        actIndex++
       }
     }
 
     return null
-  }, [scrollRef, filteredActs, scrollTop, pendingActId])
+  }, [scrollRef, pendingActId, scrollTop])
 
   return (
     <div className={styles.container}>
@@ -322,9 +278,8 @@ export default function ActList({ Acts }: ActListProps) {
           onItemClick={handleItemClick}
           isDragging={isDragging}
           contentRefs={contentRefs}
-          eLiveStartIndex={eLiveStartIndex}
+          eLiveTitleIndex={eLiveTitleIndex}
           separatorRef={separatorRef}
-          onELiveTitleClick={handleELiveTitleClick}
           scrollRef={scrollRef}
           pendingActId={pendingActId}
         />
