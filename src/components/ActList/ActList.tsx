@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import styles from '@/styles/ActList.module.css'
 import { useSelectedAct } from '@/contexts/SelectedActContext'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { search } from 'fast-fuzzy'
 import { useScrollSelection } from '@/hooks/useScrollSelection'
 import ActListSearch from './ActListSearch'
@@ -18,24 +19,50 @@ interface Act {
 
 interface ActListProps {
   Acts: Act[] | undefined
+  hideSearch?: boolean
+  fillHeight?: boolean
+  hideELiveOnMobile?: boolean
+  clearSelectionOnMount?: boolean
 }
 
-export default function ActList({ Acts }: ActListProps) {
+export default function ActList({
+  Acts,
+  hideSearch = false,
+  fillHeight = false,
+  hideELiveOnMobile = false,
+  clearSelectionOnMount = false,
+}: ActListProps) {
   const { selectedActId, setSelectedActId } = useSelectedAct()
   const [isDragging, setIsDragging] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const isUserInteractingWithSelection = useRef(false)
+  const isMobile = useIsMobile()
+  const hasClearedSelection = useRef(false)
+  const blockScrollSelectionUntil = useRef(0)
+
+  // Clear selection on mount if requested
+  useEffect(() => {
+    if (clearSelectionOnMount && !hasClearedSelection.current) {
+      setSelectedActId(null)
+      hasClearedSelection.current = true
+      // Block scroll-based selection for 2 seconds after clearing
+      blockScrollSelectionUntil.current = Date.now() + 2000
+    }
+  }, [clearSelectionOnMount, setSelectedActId])
 
   const inputRef = useRef<HTMLInputElement>(null)
   const contentRefs = useRef<Record<string, HTMLSpanElement | null>>({})
   const separatorRef = useRef<HTMLLIElement | null>(null)
+
+  // Determine if we should hide E-Live acts
+  const shouldHideELive = hideELiveOnMobile && isMobile
 
   const { filteredActs, eLiveTitleIndex } = useMemo(() => {
     if (!Acts) return { filteredActs: [], eLiveTitleIndex: -1 }
 
     // Separate acts into regular and E-Live acts
     const regularActs = Acts.filter((act) => !act.eLive)
-    const eLiveActs = Acts.filter((act) => act.eLive === true)
+    const eLiveActs = shouldHideELive ? [] : Acts.filter((act) => act.eLive === true)
 
     let filteredRegular: Act[]
     let filteredELive: Act[]
@@ -64,7 +91,7 @@ export default function ActList({ Acts }: ActListProps) {
       filteredActs: [...filteredRegular, ...filteredELive],
       eLiveTitleIndex: -1,
     }
-  }, [Acts, searchQuery])
+  }, [Acts, searchQuery, shouldHideELive])
 
   const {
     scrollRef,
@@ -79,6 +106,13 @@ export default function ActList({ Acts }: ActListProps) {
     isUserClickOrKeyRef,
   } = useScrollSelection(filteredActs, selectedActId, setSelectedActId)
 
+  // Reset scroll position to top after selection is cleared
+  useEffect(() => {
+    if (clearSelectionOnMount && hasClearedSelection.current && scrollRef.current && selectedActId === null) {
+      scrollRef.current.scrollTop = 0
+    }
+  }, [clearSelectionOnMount, selectedActId, scrollRef])
+
   const handleItemClick = useCallback(
     (id: string, e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       isUserInteractingWithSelection.current = true
@@ -88,49 +122,49 @@ export default function ActList({ Acts }: ActListProps) {
         // DO NOT call originalHandleItemClick - scrollIntoView on sticky elements scrolls to wrong position!
         // Instead, manually handle everything:
         cancelPendingScrollSelection()
-      isProgrammaticScrollRef.current = true
+        isProgrammaticScrollRef.current = true
         isUserClickOrKeyRef.current = true // Block scroll-based selection
         setSelectedActId(id)
 
         // Calculate and scroll to the E-Live title position
-      const container = scrollRef.current
-      const items = Array.from(container.children).slice(0, -1) // Exclude spacer
+        const container = scrollRef.current
+        const items = Array.from(container.children).slice(0, -1) // Exclude spacer
         const eLiveIndex = filteredActs.findIndex((act) => act.id === 'e-live')
 
-      let scrollTop = 0
+        let scrollTop = 0
         let actIndex = 0
 
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i] as HTMLLIElement
-        const isSeparator = item.getAttribute('data-separator') === 'true'
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i] as HTMLLIElement
+          const isSeparator = item.getAttribute('data-separator') === 'true'
 
           if (isSeparator) {
-          scrollTop += item.clientHeight
-        } else {
+            scrollTop += item.clientHeight
+          } else {
             if (actIndex === eLiveIndex) break
-          scrollTop += item.clientHeight
+            scrollTop += item.clientHeight
             actIndex++
+          }
         }
-      }
 
         // Temporarily disable scroll-snap to prevent it from snapping to wrong position
         const originalSnapType = container.style.scrollSnapType
         container.style.scrollSnapType = 'none'
 
         // Scroll with smooth animation
-      container.scrollTo({ top: scrollTop, behavior: 'smooth' })
+        container.scrollTo({ top: scrollTop, behavior: 'smooth' })
 
         // Re-enable scroll-snap after smooth scroll animation completes (~500ms)
-      setTimeout(() => {
+        setTimeout(() => {
           container.style.scrollSnapType = originalSnapType || ''
-        isProgrammaticScrollRef.current = false
+          isProgrammaticScrollRef.current = false
           setTimeout(() => {
             isUserClickOrKeyRef.current = false
-      }, 500)
+          }, 500)
         }, 600)
       } else {
         originalHandleItemClick(id, e)
-    }
+      }
     },
     [
       originalHandleItemClick,
@@ -145,6 +179,11 @@ export default function ActList({ Acts }: ActListProps) {
 
   const debouncedUpdateSelected = useCallback(
     (_event: React.UIEvent<HTMLUListElement>) => {
+      // Skip scroll-based selection if we're in the blocked period after clearing
+      if (Date.now() < blockScrollSelectionUntil.current) {
+        return
+      }
+
       // Mark that user is scrolling (unless it's a programmatic scroll)
       if (!isProgrammaticScrollRef.current) {
         markUserScroll()
@@ -245,9 +284,9 @@ export default function ActList({ Acts }: ActListProps) {
   }, [scrollRef, pendingActId, scrollTop])
 
   return (
-    <div className={styles.container}>
-      <div className={styles.barCropper} />
-      <div className={styles.bar}>
+    <div className={styles.container} style={fillHeight ? { height: 'auto', flexGrow: 1 } : undefined}>
+      <div className={styles.barCropper} style={hideSearch ? { marginTop: 0 } : undefined} />
+      <div className={styles.bar} style={hideSearch ? { marginTop: '0.5rem' } : undefined}>
         {pendingActId && indicatorTop !== null && (
           <div
             key={pendingActId}
@@ -261,7 +300,7 @@ export default function ActList({ Acts }: ActListProps) {
       </div>
       <div className={styles.fade} />
 
-      <ActListSearch inputRef={inputRef} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      {!hideSearch && <ActListSearch inputRef={inputRef} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />}
 
       <ActListScroll
         scrollRef={scrollRef}

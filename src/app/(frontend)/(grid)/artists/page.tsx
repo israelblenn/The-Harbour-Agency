@@ -11,7 +11,7 @@ export default async function Artists() {
 
   return (
     <>
-      <ActList Acts={acts} />
+      <ActList Acts={acts} hideELiveOnMobile clearSelectionOnMount />
       <SelectedActThumbnail acts={acts} />
     </>
   )

@@ -38,8 +38,8 @@ export default function Header({ brandingData }: HeaderProps) {
   const navLinks = [
     { href: '/', label: 'About' },
     { href: '/artists', label: 'Artists' },
+    { href: '/e-live', label: 'E-Live', mobileOnly: true },
     { href: '/contact', label: 'Contact' },
-    // { href: '/E-Live', label: 'E-Live' },
   ]
   const isNavPath = navLinks.some((l) => l.href === pathname)
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function Header({ brandingData }: HeaderProps) {
                 onMouseEnter={onEnter}
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
-                className={link.href === '/artists' ? 'mobile-only' : ''}
+                className={link.href === '/artists' || link.mobileOnly ? 'mobile-only' : ''}
               >
                 {link.label}
               </TransLink>
