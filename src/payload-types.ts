@@ -138,6 +138,7 @@ export interface Act {
   bio: string;
   link?: string | null;
   eLive?: boolean | null;
+  internationalGuestTours?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -249,6 +250,7 @@ export interface ActsSelect<T extends boolean = true> {
   bio?: T;
   link?: T;
   eLive?: T;
+  internationalGuestTours?: T;
   updatedAt?: T;
   createdAt?: T;
 }

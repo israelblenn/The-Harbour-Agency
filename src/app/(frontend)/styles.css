@@ -36,6 +36,7 @@ p {
 
 a {
   color: var(--secondary);
+  text-decoration: none;
 }
 
 ul {

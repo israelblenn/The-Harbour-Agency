@@ -15,6 +15,7 @@ interface Act {
   id: string
   name: string
   eLive?: boolean | null
+  internationalGuestTours?: boolean | null
 }
 
 interface ActListProps {
@@ -57,39 +58,57 @@ export default function ActList({
   // Determine if we should hide E-Live acts
   const shouldHideELive = hideELiveOnMobile && isMobile
 
-  const { filteredActs, eLiveTitleIndex } = useMemo(() => {
-    if (!Acts) return { filteredActs: [], eLiveTitleIndex: -1 }
+  const { filteredActs, eLiveTitleIndex, internationalTitleIndex } = useMemo(() => {
+    if (!Acts) return { filteredActs: [], eLiveTitleIndex: -1, internationalTitleIndex: -1 }
 
-    // Separate acts into regular and E-Live acts
-    const regularActs = Acts.filter((act) => !act.eLive)
+    // Separate acts into regular, E-Live, and International Guest Tours acts
+    const regularActs = Acts.filter((act) => !act.eLive && !act.internationalGuestTours)
     const eLiveActs = shouldHideELive ? [] : Acts.filter((act) => act.eLive === true)
+    const internationalActs = Acts.filter((act) => act.internationalGuestTours === true)
 
     let filteredRegular: Act[]
     let filteredELive: Act[]
+    let filteredInternational: Act[]
 
     if (!searchQuery) {
-      // No search: show regular acts first, then E-Live acts at the bottom
+      // No search: show regular acts first, then E-Live, then International Guest Tours
       filteredRegular = regularActs
       filteredELive = eLiveActs
+      filteredInternational = internationalActs
     } else {
-      // With search: search both groups separately
+      // With search: search all groups separately
       filteredRegular = search(searchQuery, regularActs, { keySelector: (act) => act.name })
       filteredELive = search(searchQuery, eLiveActs, { keySelector: (act) => act.name })
+      filteredInternational = search(searchQuery, internationalActs, { keySelector: (act) => act.name })
     }
 
-    // If there are both regular and E-Live acts, insert the E-Live title as a virtual selectable item
-    if (filteredRegular.length > 0 && filteredELive.length > 0) {
-      const eLiveTitleItem: Act = { id: 'e-live', name: 'E-Live' }
-      return {
-        filteredActs: [...filteredRegular, eLiveTitleItem, ...filteredELive],
-        eLiveTitleIndex: filteredRegular.length,
+    // Build the combined list with section titles
+    const result: Act[] = [...filteredRegular]
+    let eLiveIdx = -1
+    let internationalIdx = -1
+
+    // Add E-Live section if there are E-Live acts
+    if (filteredELive.length > 0) {
+      if (filteredRegular.length > 0 || filteredInternational.length > 0) {
+        eLiveIdx = result.length
+        result.push({ id: 'e-live', name: 'E-Live' })
       }
+      result.push(...filteredELive)
     }
 
-    // Return regular acts first, then E-Live acts at the bottom (no title needed if one group is empty)
+    // Add International Guest Tours section if there are international acts
+    if (filteredInternational.length > 0) {
+      if (filteredRegular.length > 0 || filteredELive.length > 0) {
+        internationalIdx = result.length
+        result.push({ id: 'international-guest-tours', name: 'International Guest Tours' })
+      }
+      result.push(...filteredInternational)
+    }
+
     return {
-      filteredActs: [...filteredRegular, ...filteredELive],
-      eLiveTitleIndex: -1,
+      filteredActs: result,
+      eLiveTitleIndex: eLiveIdx,
+      internationalTitleIndex: internationalIdx,
     }
   }, [Acts, searchQuery, shouldHideELive])
 
@@ -126,10 +145,10 @@ export default function ActList({
         isUserClickOrKeyRef.current = true // Block scroll-based selection
         setSelectedActId(id)
 
-        // Calculate and scroll to the E-Live title position
+        // Calculate and scroll to the section title position
         const container = scrollRef.current
         const items = Array.from(container.children).slice(0, -1) // Exclude spacer
-        const eLiveIndex = filteredActs.findIndex((act) => act.id === 'e-live')
+        const titleIndex = filteredActs.findIndex((act) => act.id === id)
 
         let scrollTop = 0
         let actIndex = 0
@@ -141,7 +160,7 @@ export default function ActList({
           if (isSeparator) {
             scrollTop += item.clientHeight
           } else {
-            if (actIndex === eLiveIndex) break
+            if (actIndex === titleIndex) break
             scrollTop += item.clientHeight
             actIndex++
           }
@@ -318,6 +337,7 @@ export default function ActList({
           isDragging={isDragging}
           contentRefs={contentRefs}
           eLiveTitleIndex={eLiveTitleIndex}
+          internationalTitleIndex={internationalTitleIndex}
           separatorRef={separatorRef}
           scrollRef={scrollRef}
           pendingActId={pendingActId}

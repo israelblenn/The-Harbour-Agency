@@ -28,9 +28,9 @@ export async function fetchAllActs(): Promise<Act[]> {
   const result = await payload.find({
     collection: 'acts',
     limit: 9999,
-    sort: 'name',
   })
-  return result.docs
+  // Sort case-insensitively to avoid uppercase names sorting before lowercase
+  return result.docs.sort((a: Act, b: Act) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
 }
 
 export async function fetchAbout(): Promise<About> {
@@ -96,8 +96,10 @@ export async function safeFetch<T>(fn: () => Promise<T>): Promise<T | null> {
 export async function fetchLayoutData(): Promise<{ acts: Act[]; branding: Branding }> {
   const payload = await getPayloadClient()
   const [actsResult, branding] = await Promise.all([
-    payload.find({ collection: 'acts', limit: 9999, sort: 'name' }),
+    payload.find({ collection: 'acts', limit: 9999 }),
     payload.findGlobal({ slug: 'branding' }),
   ])
-  return { acts: actsResult.docs, branding: branding as Branding }
+  // Sort case-insensitively to avoid uppercase names sorting before lowercase
+  const sortedActs = actsResult.docs.sort((a: Act, b: Act) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+  return { acts: sortedActs, branding: branding as Branding }
 }

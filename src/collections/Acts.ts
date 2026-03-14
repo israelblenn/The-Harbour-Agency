@@ -38,5 +38,11 @@ export const Acts: CollectionConfig = {
       label: 'E-Live',
       required: false,
     },
+    {
+      name: 'internationalGuestTours',
+      type: 'checkbox',
+      label: 'International Guest Tours',
+      required: false,
+    },
   ],
 }

@@ -53,8 +53,8 @@ export default function ActProfileClient({ actDetails }: ActProfileClientProps) 
       <h1 className="desktop-only">{actDetails.name}</h1>
 
       <div className="mobile-only">
-        <Link href={actDetails.eLive ? '/e-live' : '/artists'} className={styles.back}>
-          &lt;- {actDetails.eLive ? 'E-Live' : 'All artists'}
+        <Link href={actDetails.eLive || actDetails.internationalGuestTours ? '/e-live' : '/artists'} className={styles.back}>
+          &lt;- {actDetails.eLive || actDetails.internationalGuestTours ? 'All acts' : 'All artists'}
         </Link>
         <div className={styles.bar} />
         <span>{actDetails.name}</span>

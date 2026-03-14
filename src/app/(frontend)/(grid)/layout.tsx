@@ -19,10 +19,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     logoUrl = logoMedia.url ?? null
   }
 
-  // Separate acts into regular and E-Live acts for the grid
-  const regularActs = acts.filter((act) => !act.eLive)
+  // Separate acts into regular, E-Live, and International Guest Tours acts for the grid
+  const regularActs = acts.filter((act) => !act.eLive && !act.internationalGuestTours)
   const eLiveActs = acts.filter((act) => act.eLive === true)
-  const sortedActsForGrid = [...regularActs, ...eLiveActs]
+  const internationalGuestToursActs = acts.filter((act) => act.internationalGuestTours === true)
+  const sortedActsForGrid = [...regularActs, ...eLiveActs, ...internationalGuestToursActs]
 
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) return React.cloneElement(child, { acts } as { acts: typeof acts })

@@ -37,6 +37,7 @@ export function useScrollSelection(
     // Calculate which act is at the scroll position by summing heights
     let cumulativeHeight = 0
     let actIndex = 0
+    let foundItem = false
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i] as HTMLLIElement
@@ -44,6 +45,15 @@ export function useScrollSelection(
       const isTitle = item.getAttribute('data-title') === 'true'
 
       if (isSeparator || isTitle) {
+        const itemTop = cumulativeHeight
+        const itemBottom = cumulativeHeight + item.clientHeight
+
+        // If scrollTop lands inside a visible separator/title, do not select anything
+        if (item.clientHeight > 0 && scrollTop >= itemTop && scrollTop < itemBottom) {
+          cancelPendingScrollSelection()
+          return
+        }
+
         cumulativeHeight += item.clientHeight
       } else {
         const itemTop = cumulativeHeight
@@ -51,6 +61,7 @@ export function useScrollSelection(
 
         if (scrollTop >= itemTop && scrollTop < itemBottom) {
           // Found the act at this scroll position
+          foundItem = true
           break
         }
         cumulativeHeight += item.clientHeight
@@ -58,7 +69,27 @@ export function useScrollSelection(
       }
     }
 
-    const act = filteredActs[actIndex]
+    // scrollTop didn't land on any selectable item (e.g. before the first act)
+    if (!foundItem) {
+      cancelPendingScrollSelection()
+      return
+    }
+
+    let act = filteredActs[actIndex]
+
+    // The E-Live title is a real DOM item (non-separator) but should not be scroll-selected
+    if (act?.id === 'e-live') {
+      cancelPendingScrollSelection()
+      return
+    }
+
+    // The International Guest Tours title is a DOM separator, which means filteredActs
+    // index gets offset by 1 for all subsequent acts. Advance past it here.
+    while (act?.id === 'international-guest-tours') {
+      actIndex++
+      act = filteredActs[actIndex]
+    }
+
     if (act) {
       // Cancel any existing pending selection
       cancelPendingScrollSelection()
@@ -207,7 +238,7 @@ export function useScrollSelection(
 
     isProgrammaticScrollRef.current = true
 
-    // For e-live, disable scroll-snap temporarily to prevent snapping to wrong position
+    // For E-Live title, disable scroll-snap temporarily to prevent snapping to wrong position
     if (selectedActId === 'e-live') {
       const originalSnapType = list.style.scrollSnapType
       list.style.scrollSnapType = 'none'
@@ -217,7 +248,7 @@ export function useScrollSelection(
         list.style.scrollSnapType = originalSnapType || ''
       }, 600)
     } else {
-    list.scrollTo({ top: expectedScrollTop, behavior: scrollBehavior })
+      list.scrollTo({ top: expectedScrollTop, behavior: scrollBehavior })
     }
 
     if (scrollBehavior === 'auto') {

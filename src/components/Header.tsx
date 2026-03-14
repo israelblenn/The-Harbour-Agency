@@ -38,7 +38,7 @@ export default function Header({ brandingData }: HeaderProps) {
   const navLinks = [
     { href: '/', label: 'About' },
     { href: '/artists', label: 'Artists' },
-    { href: '/e-live', label: 'E-Live', mobileOnly: true },
+    { href: '/e-live', label: 'Acts', mobileOnly: true },
     { href: '/contact', label: 'Contact' },
   ]
   const isNavPath = navLinks.some((l) => l.href === pathname)

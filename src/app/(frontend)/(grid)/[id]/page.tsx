@@ -51,7 +51,8 @@ export default async function ActProfilePage({ params }: PageProps) {
     ])
     if (!elive) notFound()
     const eLiveActs = (allActs || []).filter((act) => act.eLive === true)
-    return <ELiveSection elive={elive} eLiveActs={eLiveActs} />
+    const internationalActs = (allActs || []).filter((act) => act.internationalGuestTours === true)
+    return <ELiveSection elive={elive} eLiveActs={eLiveActs} internationalActs={internationalActs} />
   }
   
   const actDetails = await safeFetch(() => fetchActById(id))

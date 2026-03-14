@@ -106,6 +106,13 @@
   pointer-events: none;
 }
 
+.mobileStartSpacer {
+  display: none;
+  height: 4rem;
+  pointer-events: none;
+  scroll-snap-align: start;
+}
+
 .separatorGap {
   height: 4rem;
   pointer-events: none;
@@ -135,6 +142,17 @@
   align-items: center;
   /* background: var(--primary); */
   z-index: 9;
+}
+
+.sectionTitle {
+  height: 4rem;
+  scroll-snap-align: start;
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: auto;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
 }
 
 .skipToPrefix {
@@ -292,22 +310,15 @@
   }
 
   .eLiveTitle {
-    align-items: flex-end;
-    padding-bottom: 6px;
+    position: static;
+    align-items: center;
+    padding-bottom: 0;
     z-index: 2;
-    overflow: visible;
+    overflow: hidden;
+    pointer-events: none;
+    cursor: default;
 
     &::before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 8rem;
-      background: linear-gradient(180deg, transparent 0%, var(--primary) 50%);
-      z-index: 0;
-      translate: 0 8px;
-    }
-
-    &:hover::before {
       content: none;
     }
   }
@@ -316,6 +327,35 @@
     &::before {
       content: none;
     }
+  }
+
+  /* Hide skip-to elements and info icon on mobile */
+  .skipToPrefix,
+  .eLiveArrowVisible,
+  .eLiveArrowHidden,
+  .eLiveInfoIcon {
+    display: none;
+  }
+
+  /* Remove transform on E-Live text since skip-to is hidden */
+  .skipToHidden + .eLiveText {
+    transform: none;
+  }
+
+  /* Make section titles consistent on mobile */
+  .sectionTitle {
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /* Remove top margin/gap before E-Live title on mobile, but keep it for other sections */
+  .separatorGap:not(.sectionSeparatorGap) {
+    height: 0;
+  }
+
+  /* Show the starting spacer on mobile for resting selection bar */
+  .mobileStartSpacer {
+    display: block;
   }
 
   .fade {
