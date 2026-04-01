@@ -23,6 +23,7 @@ interface ActListProps {
   hideSearch?: boolean
   fillHeight?: boolean
   hideELiveOnMobile?: boolean
+  hideInternationalOnMobile?: boolean
   clearSelectionOnMount?: boolean
 }
 
@@ -31,6 +32,7 @@ export default function ActList({
   hideSearch = false,
   fillHeight = false,
   hideELiveOnMobile = false,
+  hideInternationalOnMobile = false,
   clearSelectionOnMount = false,
 }: ActListProps) {
   const { selectedActId, setSelectedActId } = useSelectedAct()
@@ -57,6 +59,7 @@ export default function ActList({
 
   // Determine if we should hide E-Live acts
   const shouldHideELive = hideELiveOnMobile && isMobile
+  const shouldHideInternational = hideInternationalOnMobile && isMobile
 
   const { filteredActs, eLiveTitleIndex, internationalTitleIndex } = useMemo(() => {
     if (!Acts) return { filteredActs: [], eLiveTitleIndex: -1, internationalTitleIndex: -1 }
@@ -64,7 +67,7 @@ export default function ActList({
     // Separate acts into regular, E-Live, and International Guest Tours acts
     const regularActs = Acts.filter((act) => !act.eLive && !act.internationalGuestTours)
     const eLiveActs = shouldHideELive ? [] : Acts.filter((act) => act.eLive === true)
-    const internationalActs = Acts.filter((act) => act.internationalGuestTours === true)
+    const internationalActs = shouldHideInternational ? [] : Acts.filter((act) => act.internationalGuestTours === true)
 
     let filteredRegular: Act[]
     let filteredELive: Act[]
@@ -110,7 +113,7 @@ export default function ActList({
       eLiveTitleIndex: eLiveIdx,
       internationalTitleIndex: internationalIdx,
     }
-  }, [Acts, searchQuery, shouldHideELive])
+  }, [Acts, searchQuery, shouldHideELive, shouldHideInternational])
 
   const {
     scrollRef,
