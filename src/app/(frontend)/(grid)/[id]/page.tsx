@@ -4,6 +4,8 @@ import ELiveSection from '@/components/ELiveSection'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
+export const revalidate = 3600
+
 type PageProps = {
   params: {
     id: string

@@ -3,6 +3,8 @@ import SelectedActThumbnail from '@/components/SelectedActThumbnail'
 import { fetchAllActs } from '@/lib/api/payload-cms'
 import type { Act } from '@/payload-types'
 
+export const revalidate = 3600
+
 export default async function Artists() {
   const acts: Act[] = await fetchAllActs()
   if (!acts || acts.length === 0) {

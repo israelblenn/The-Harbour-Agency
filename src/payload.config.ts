@@ -34,13 +34,15 @@ export default buildConfig({
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
-    // Optimize connection pooling for M0 cluster
+    // Aggressive serverless pooling for shared Atlas tiers.
     connectOptions: {
-      maxPoolSize: 5, // Limit concurrent connections
-      minPoolSize: 1, // Maintain at least 1 connection
-      maxIdleTimeMS: 30000, // Close idle connections after 30s
-      serverSelectionTimeoutMS: 5000, // Fail fast if can't connect
-      socketTimeoutMS: 45000, // Close connections after 45s of inactivity
+      maxPoolSize: 2, // Keep per-instance pool very small on Vercel.
+      minPoolSize: 0, // Do not hold idle baseline connections.
+      maxIdleTimeMS: 15000, // Prune idle sockets quickly.
+      maxConnecting: 1, // Prevent burst connection storms.
+      waitQueueTimeoutMS: 2500, // Fail fast if pool is saturated.
+      serverSelectionTimeoutMS: 5000, // Fail fast if cluster is unreachable.
+      socketTimeoutMS: 45000, // Keep existing operation timeout behavior.
     },
   }),
   sharp,
