@@ -15,6 +15,11 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
+    "@lexical/link": "^0.28.0",
+    "@lexical/list": "^0.28.0",
+    "@lexical/react": "^0.28.0",
+    "@lexical/rich-text": "^0.28.0",
+    "@lexical/table": "^0.28.0",
     "@payloadcms/db-mongodb": "3.39.1",
     "@payloadcms/email-resend": "3.39.1",
     "@payloadcms/next": "3.39.1",
@@ -28,6 +33,7 @@
     "flubber": "^0.4.2",
     "framer-motion": "^12.17.0",
     "graphql": "^16.8.1",
+    "lexical": "^0.28.0",
     "next": "^15.6.0-canary.60",
     "next-view-transitions": "^0.3.4",
     "payload": "3.39.1",
