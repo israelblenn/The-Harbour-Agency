@@ -8,6 +8,8 @@ import type { Media } from '@/payload-types'
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata(): Promise<Metadata> {
   const branding = await safeFetch(fetchBranding)
 

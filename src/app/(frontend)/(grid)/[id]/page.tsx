@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 type PageProps = {
   params: {
@@ -12,17 +13,9 @@ type PageProps = {
   }
 }
 
-export async function generateStaticParams() {
-  const acts = await safeFetch(fetchAllActs)
-  if (!acts) return []
-
-  return [
-    ...acts.map((act) => ({
-      id: act.id,
-    })),
-    { id: 'e-live' },
-  ]
-}
+// NOTE: We intentionally do not pre-render every act page at build time.
+// Next build can parallelize prerenders which can exhaust a small Mongo pool and fail builds.
+// Pages are rendered on-demand with ISR via `revalidate`.
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params

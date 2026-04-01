@@ -5,6 +5,7 @@ import { fetchBranding } from '@/lib/api/payload-cms'
 import type { Media } from '@/payload-types'
 
 export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function VaultRootLayout(props: { children: React.ReactNode }) {
   const { children } = props

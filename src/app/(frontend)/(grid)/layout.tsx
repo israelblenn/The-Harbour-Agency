@@ -9,6 +9,7 @@ import React from 'react'
 
 // Cache static data for 1 hour
 export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   // Batched fetch to reduce DB connections

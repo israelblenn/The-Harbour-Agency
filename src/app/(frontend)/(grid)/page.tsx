@@ -8,6 +8,7 @@ import { fetchAbout, safeFetch } from '@/lib/api/payload-cms'
 
 // Cache About page for 1 hour
 export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function About() {
   const about = await safeFetch(fetchAbout)
