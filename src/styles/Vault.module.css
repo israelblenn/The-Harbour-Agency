@@ -14,8 +14,7 @@
 .gridImage {
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
   display: block;
-  max-width: 100%;
-  width: auto;
+  width: 100%;
   height: auto;
   transition: opacity 0.4s ease-in-out;
 }

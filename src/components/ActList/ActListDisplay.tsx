@@ -35,7 +35,7 @@ function ActListDisplay({
   pendingActId = null,
 }: ActListDisplayProps) {
   const titleRef = useRef<HTMLLIElement | null>(null)
-  const [isStuck, setIsStuck] = useState(false)
+  const [isStuck, setIsStuck] = useState(true) // Default to true to prevent "skip to" flicker on page load
   const { setHoveredActId } = useSelectedAct()
 
   useEffect(() => {
