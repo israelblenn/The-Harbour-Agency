@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 // import Open from '@/assets/Open'
-import { useSelectedAct } from '@/contexts/SelectedActContext'
+import { useSelectedAct, isDeselectionLocked } from '@/contexts/SelectedActContext'
 import styles from '@/styles/ActProfile.module.css'
 import type { Act } from '@/payload-types'
 import Image from 'next/image'
@@ -20,9 +20,15 @@ export default function ActProfileClient({ actDetails }: ActProfileClientProps) 
   const isMobile = useIsMobile()
 
   useEffect(() => {
-    if (!hasSetInitialActId.current && actDetails.id && !selectedActId) {
-      setSelectedActId(actDetails.id)
-      hasSetInitialActId.current = true
+    if (!hasSetInitialActId.current && actDetails.id) {
+      if (selectedActId) {
+        // Act was already selected (e.g. via grid click) — just mark as initialized
+        hasSetInitialActId.current = true
+      } else if (!isDeselectionLocked()) {
+        // No act selected and not intentionally deselecting — set the initial selection
+        setSelectedActId(actDetails.id)
+        hasSetInitialActId.current = true
+      }
     }
   }, [actDetails.id, selectedActId, setSelectedActId])
 

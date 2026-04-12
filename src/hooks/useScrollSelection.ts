@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { isDeselectionLocked } from '@/contexts/SelectedActContext'
 
 export function useScrollSelection(
   filteredActs: Array<{ id: string; name: string }>,
@@ -27,6 +28,9 @@ export function useScrollSelection(
   }, [])
 
   const updateSelected = useCallback(() => {
+    // Synchronous check: don't re-select if we just deselected
+    if (isDeselectionLocked()) return
+
     const list = scrollRef.current
     if (!list) return
 
@@ -155,8 +159,8 @@ export function useScrollSelection(
       timeoutId = window.setTimeout(() => {
         timeoutId = null
 
-        // Don't set pending selection if this is from programmatic scroll or user click/key
-        if (!isProgrammaticScrollRef.current && !isUserClickOrKeyRef.current) {
+        // Don't set pending selection if this is from programmatic scroll, user click/key, or deselection lock
+        if (!isProgrammaticScrollRef.current && !isUserClickOrKeyRef.current && !isDeselectionLocked()) {
           updateSelected()
         }
       }, 100)

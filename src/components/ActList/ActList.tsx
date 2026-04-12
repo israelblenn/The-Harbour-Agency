@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import styles from '@/styles/ActList.module.css'
-import { useSelectedAct } from '@/contexts/SelectedActContext'
+import { useSelectedAct, lockDeselection } from '@/contexts/SelectedActContext'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { search } from 'fast-fuzzy'
 import { useScrollSelection } from '@/hooks/useScrollSelection'
@@ -10,6 +10,7 @@ import ActListSearch from './ActListSearch'
 import ActListScroll from './ActListScroll'
 import ActListDisplay from './ActListDisplay'
 import ActListOverflowEffect from './ActListOverflowEffect'
+import { useRouter } from 'next/navigation'
 
 interface Act {
   id: string
@@ -36,6 +37,7 @@ export default function ActList({
   clearSelectionOnMount = false,
 }: ActListProps) {
   const { selectedActId, setSelectedActId } = useSelectedAct()
+  const router = useRouter()
   const [isDragging, setIsDragging] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const isUserInteractingWithSelection = useRef(false)
@@ -139,6 +141,15 @@ export default function ActList({
     (id: string, e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       isUserInteractingWithSelection.current = true
 
+      // Deselect the act and return to home if clicking the already selected act on desktop
+      if (id === selectedActId && window.innerWidth >= 1400) {
+        cancelPendingScrollSelection()
+        lockDeselection()
+        setSelectedActId(null)
+        router.push('/')
+        return
+      }
+
       // Special handling for E-Live title click (sticky element - scrollIntoView doesn't work correctly)
       if (id === 'e-live' && scrollRef.current) {
         // DO NOT call originalHandleItemClick - scrollIntoView on sticky elements scrolls to wrong position!
@@ -196,6 +207,8 @@ export default function ActList({
       isProgrammaticScrollRef,
       isUserClickOrKeyRef,
       setSelectedActId,
+      selectedActId,
+      router,
     ],
   )
 

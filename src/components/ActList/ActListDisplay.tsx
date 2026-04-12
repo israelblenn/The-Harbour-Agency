@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import styles from '@/styles/ActList.module.css'
+import { useSelectedAct } from '@/contexts/SelectedActContext'
 
 interface Act {
   id: string
@@ -35,6 +36,7 @@ function ActListDisplay({
 }: ActListDisplayProps) {
   const titleRef = useRef<HTMLLIElement | null>(null)
   const [isStuck, setIsStuck] = useState(false)
+  const { setHoveredActId } = useSelectedAct()
 
   useEffect(() => {
     if (!titleRef.current || !scrollRef?.current || eLiveTitleIndex === -1) return
@@ -89,6 +91,8 @@ function ActListDisplay({
                   className={`${styles.eLiveTitle} ${isSelected ? styles.eLiveTitleSelected : ''}`}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={(e) => onItemClick(act.id, e)}
+                  onMouseEnter={() => setHoveredActId(act.id)}
+                  onMouseLeave={() => setHoveredActId(null)}
                   style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
                 >
                   <span
@@ -162,6 +166,8 @@ function ActListDisplay({
               <li
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={(e) => onItemClick(act.id, e)}
+                onMouseEnter={() => setHoveredActId(act.id)}
+                onMouseLeave={() => setHoveredActId(null)}
                 className={styles.item}
                 style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
               >

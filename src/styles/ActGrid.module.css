@@ -13,6 +13,22 @@
   overflow: hidden;
 }
 
+.baseImage {
+  /* Sits underneath */
+}
+
+.filteredImage {
+  filter: url('#red-pass-filter');
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.cell:hover .filteredImage,
+.cell[data-hovered="true"] .filteredImage,
+.cell[data-selected="true"] .filteredImage {
+  opacity: 0;
+}
+
 .placeholder {
   position: absolute;
   inset: 0;

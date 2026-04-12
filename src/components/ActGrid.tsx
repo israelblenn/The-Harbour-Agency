@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { motion, animate } from 'framer-motion'
-import { useSelectedAct } from '@/contexts/SelectedActContext'
+import { useSelectedAct, lockDeselection } from '@/contexts/SelectedActContext'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import styles from '@/styles/ActGrid.module.css'
 import Polygon from './ActGridPolygon'
@@ -22,7 +23,8 @@ interface ActGridProps {
 
 export default function ActGrid({ initialActs }: ActGridProps) {
   const [containerWidth, setContainerWidth] = useState(0)
-  const { selectedActId, setSelectedActId } = useSelectedAct()
+  const { selectedActId, setSelectedActId, hoveredActId } = useSelectedAct()
+  const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set())
   const acts = initialActs
@@ -141,33 +143,26 @@ export default function ActGrid({ initialActs }: ActGridProps) {
     }
   }, [selectedActId, acts, positions])
 
-  useEffect(() => {
-    if (selectedActId === null && containerRef.current) {
-      const container = containerRef.current
-      const animation = animate(container.scrollTop, 0, {
-        ...SPRING,
-        onUpdate: (value) => {
-          if (container) {
-            container.scrollTop = value
-          }
-        },
-      })
-
-      const handleUserScroll = () => animation.stop()
-
-      container.addEventListener('wheel', handleUserScroll, { passive: true })
-      container.addEventListener('touchstart', handleUserScroll, { passive: true })
-
-      return () => {
-        animation.stop()
-        container.removeEventListener('wheel', handleUserScroll)
-        container.removeEventListener('touchstart', handleUserScroll)
-      }
-    }
-  }, [selectedActId])
-
   return (
     <div>
+      <svg xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
+        <filter id="red-pass-filter" colorInterpolationFilters="sRGB">
+          <feColorMatrix in="SourceGraphic" type="saturate" values="0.1" result="grayscale" />
+          <feColorMatrix
+            in="SourceGraphic"
+            type="matrix"
+            values="
+            0 0 0 0 0
+            0 0 0 0 0
+            0 0 0 0 0
+            0.8 -0.4 -0.4 0 0
+          "
+            result="mask"
+          />
+          <feComposite in="SourceGraphic" in2="mask" operator="in" result="isolated_red" />
+          <feComposite in="isolated_red" in2="grayscale" operator="over" />
+        </filter>
+      </svg>
       <Polygon selectedActId={selectedActId} containerRef={containerRef} acts={acts} positions={positions} />
 
       <div ref={containerRef} className={`scrollable ${styles.container}`}>
@@ -182,7 +177,15 @@ export default function ActGrid({ initialActs }: ActGridProps) {
               return (
                 <motion.div
                   key={act.id}
-                  onClick={() => setSelectedActId(act.id)}
+                  onClick={() => {
+                    if (isSelected && window.innerWidth >= 1400) {
+                      lockDeselection()
+                      setSelectedActId(null)
+                      router.push('/')
+                    } else {
+                      setSelectedActId(act.id)
+                    }
+                  }}
                   initial={false}
                   animate={{
                     x: pos.x,
@@ -198,6 +201,7 @@ export default function ActGrid({ initialActs }: ActGridProps) {
                     left: 0,
                   }}
                   data-selected={isSelected}
+                  data-hovered={act.id === hoveredActId}
                 >
                   {!loadedImages.has(act.id) && <div className={styles.placeholder} />}
                   <Image
@@ -207,7 +211,17 @@ export default function ActGrid({ initialActs }: ActGridProps) {
                     sizes={`${Math.round(pos.width)}px`}
                     loading="lazy"
                     style={{ objectFit: 'cover' }}
+                    className={styles.baseImage}
                     onLoad={() => handleImageLoad(act.id)}
+                  />
+                  <Image
+                    src={act.photo.url}
+                    alt={act.name}
+                    fill
+                    sizes={`${Math.round(pos.width)}px`}
+                    loading="lazy"
+                    style={{ objectFit: 'cover' }}
+                    className={styles.filteredImage}
                   />
                 </motion.div>
               )
