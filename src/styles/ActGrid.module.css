@@ -18,14 +18,14 @@
 }
 
 .filteredImage {
-  filter: url('#red-pass-filter');
+  filter: saturate(70%);
   opacity: 1;
   transition: opacity 0.3s ease;
 }
 
 .cell:hover .filteredImage,
-.cell[data-hovered="true"] .filteredImage,
-.cell[data-selected="true"] .filteredImage {
+.cell[data-hovered='true'] .filteredImage,
+.cell[data-selected='true'] .filteredImage {
   opacity: 0;
 }
 

@@ -145,24 +145,6 @@ export default function ActGrid({ initialActs }: ActGridProps) {
 
   return (
     <div>
-      <svg xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
-        <filter id="red-pass-filter" colorInterpolationFilters="sRGB">
-          <feColorMatrix in="SourceGraphic" type="saturate" values="0.1" result="grayscale" />
-          <feColorMatrix
-            in="SourceGraphic"
-            type="matrix"
-            values="
-            0 0 0 0 0
-            0 0 0 0 0
-            0 0 0 0 0
-            0.8 -0.4 -0.4 0 0
-          "
-            result="mask"
-          />
-          <feComposite in="SourceGraphic" in2="mask" operator="in" result="isolated_red" />
-          <feComposite in="isolated_red" in2="grayscale" operator="over" />
-        </filter>
-      </svg>
       <Polygon selectedActId={selectedActId} containerRef={containerRef} acts={acts} positions={positions} />
 
       <div ref={containerRef} className={`scrollable ${styles.container}`}>
