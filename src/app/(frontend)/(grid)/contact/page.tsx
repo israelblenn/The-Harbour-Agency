@@ -6,10 +6,12 @@ import { fetchContact, safeFetch } from '@/lib/api/payload-cms'
 
 // Cache Contact page for 1 hour
 export const revalidate = 3600
-export const dynamic = 'force-dynamic'
 
 export default async function Contact() {
-  const contact = await safeFetch(fetchContact)
+  const contact = await safeFetch(fetchContact, {
+    label: 'fetchContact',
+    route: '/contact',
+  })
   if (!contact) return <div>Sorry, something went wrong loading this data.</div>
 
   return (

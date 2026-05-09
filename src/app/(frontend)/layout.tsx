@@ -1,17 +1,17 @@
 import '@/app/(frontend)/styles.css'
-import { Inter } from 'next/font/google'
 import { SelectedActProvider } from '@/contexts/SelectedActContext'
 import { ViewTransitions } from 'next-view-transitions'
 import { fetchBranding, safeFetch } from '@/lib/api/payload-cms'
 import type { Metadata } from 'next'
 import type { Media } from '@/payload-types'
 
-const inter = Inter({ subsets: ['latin'], display: 'swap' })
-
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export async function generateMetadata(): Promise<Metadata> {
-  const branding = await safeFetch(fetchBranding)
+  const branding = await safeFetch(fetchBranding, {
+    label: 'fetchBranding',
+    route: '/(frontend)/layout-metadata',
+  })
 
   let ogImageUrl: string | undefined
 

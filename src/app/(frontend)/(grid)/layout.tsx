@@ -1,4 +1,5 @@
 import '@/app/(frontend)/styles.css'
+import { inter } from '@/app/(frontend)/fonts'
 import { fetchLayoutData } from '@/lib/api/payload-cms'
 import ActList from '@/components/ActList/ActList'
 import ActGrid from '@/components/ActGrid'
@@ -7,9 +8,8 @@ import Header from '@/components/Header'
 import type { Media } from '@/payload-types'
 import React from 'react'
 
-// Cache static data for 1 hour
+// Prefer ISR with on-demand revalidation for stable load and fresh content updates.
 export const revalidate = 3600
-export const dynamic = 'force-dynamic'
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   // Batched fetch to reduce DB connections
@@ -32,7 +32,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   })
 
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body>
         <Header brandingData={{ logoUrl }} />
         <main>

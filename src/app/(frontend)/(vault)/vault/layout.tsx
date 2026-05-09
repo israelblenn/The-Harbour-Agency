@@ -1,11 +1,11 @@
 import '@/app/(frontend)/styles.css'
+import { inter } from '@/app/(frontend)/fonts'
 import Header from '@/components/Header'
 import styles from '@/styles/Header.module.css'
 import { fetchBranding } from '@/lib/api/payload-cms'
 import type { Media } from '@/payload-types'
 
 export const revalidate = 3600
-export const dynamic = 'force-dynamic'
 
 export default async function VaultRootLayout(props: { children: React.ReactNode }) {
   const { children } = props
@@ -17,7 +17,7 @@ export default async function VaultRootLayout(props: { children: React.ReactNode
   }
 
   return (
-    <html lang="en" className={styles.vault}>
+    <html lang="en" className={`${styles.vault} ${inter.variable}`}>
       <body className="scrollable" style={{ scrollbarWidth: 'auto' }}>
         <Header brandingData={{ logoUrl }} />
         {children}

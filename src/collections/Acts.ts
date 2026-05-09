@@ -1,13 +1,22 @@
 import { CollectionConfig } from 'payload'
 import { revalidate } from '@/hooks/revalidate'
+import { buildActRevalidationTargets } from '@/lib/revalidation-paths'
 
 export const Acts: CollectionConfig = {
   slug: 'acts',
   access: { read: () => true },
   admin: { useAsTitle: 'name' },
   hooks: {
-    afterChange: [() => revalidate(['/'])],
-    afterDelete: [() => revalidate(['/'])],
+    afterChange: [
+      async ({ doc }) => {
+        await revalidate(buildActRevalidationTargets(doc?.id))
+      },
+    ],
+    afterDelete: [
+      async ({ id, doc }) => {
+        await revalidate(buildActRevalidationTargets(doc?.id ?? id))
+      },
+    ],
   },
   fields: [
     {

@@ -5,7 +5,6 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 export const revalidate = 3600
-export const dynamic = 'force-dynamic'
 
 type PageProps = {
   params: {
@@ -13,22 +12,27 @@ type PageProps = {
   }
 }
 
-// NOTE: We intentionally do not pre-render every act page at build time.
-// Next build can parallelize prerenders which can exhaust a small Mongo pool and fail builds.
-// Pages are rendered on-demand with ISR via `revalidate`.
+// NOTE: We intentionally avoid pre-rendering every act page at build time.
+// Dynamic pages are generated on-demand and refreshed by ISR/on-demand revalidation.
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
   
   if (id === 'e-live') {
-    const elive = await safeFetch(fetchELive)
+    const elive = await safeFetch(fetchELive, {
+      label: 'fetchELive',
+      route: '/e-live',
+    })
     return {
       title: `${elive?.Title || 'E-Live'} | The Harbour Agency`,
       description: elive?.description || 'E-Live artists at The Harbour Agency',
     }
   }
   
-  const act = await safeFetch(() => fetchActById(id))
+  const act = await safeFetch(() => fetchActById(id), {
+    label: 'fetchActById',
+    route: `/${id}`,
+  })
   if (!act) return { title: 'The Harbour Agency' }
   return {
     title: `${act.name} | The Harbour Agency`,
@@ -41,8 +45,14 @@ export default async function ActProfilePage({ params }: PageProps) {
   
   if (id === 'e-live') {
     const [elive, allActs] = await Promise.all([
-      safeFetch(fetchELive),
-      safeFetch(fetchAllActs),
+      safeFetch(fetchELive, {
+        label: 'fetchELive',
+        route: '/e-live',
+      }),
+      safeFetch(fetchAllActs, {
+        label: 'fetchAllActs',
+        route: '/e-live',
+      }),
     ])
     if (!elive) notFound()
     const eLiveActs = (allActs || []).filter((act) => act.eLive === true)
@@ -50,7 +60,10 @@ export default async function ActProfilePage({ params }: PageProps) {
     return <ELiveSection elive={elive} eLiveActs={eLiveActs} internationalActs={internationalActs} />
   }
   
-  const actDetails = await safeFetch(() => fetchActById(id))
+  const actDetails = await safeFetch(() => fetchActById(id), {
+    label: 'fetchActById',
+    route: `/${id}`,
+  })
 
   if (!actDetails) notFound()
 

@@ -72,11 +72,33 @@ export const fetchVaultMedia = cache(async (): Promise<Media[]> => {
   return result.docs
 })
 
-export async function safeFetch<T>(fn: () => Promise<T>): Promise<T | null> {
+export async function safeFetch<T>(
+  fn: () => Promise<T>,
+  context: { label?: string; route?: string } = {},
+): Promise<T | null> {
+  const startedAt = Date.now()
   try {
-    return await fn()
+    const result = await fn()
+    console.log(
+      '[safeFetch] Success',
+      JSON.stringify({
+        label: context.label ?? 'unknown',
+        route: context.route ?? 'unknown',
+        durationMs: Date.now() - startedAt,
+      }),
+    )
+    return result
   } catch (err) {
-    console.error('safeFetch error:', err)
+    console.error(
+      '[safeFetch] Error',
+      JSON.stringify({
+        label: context.label ?? 'unknown',
+        route: context.route ?? 'unknown',
+        durationMs: Date.now() - startedAt,
+        errorMessage: err instanceof Error ? err.message : String(err),
+        errorName: err instanceof Error ? err.name : 'UnknownError',
+      }),
+    )
     return null
   }
 }

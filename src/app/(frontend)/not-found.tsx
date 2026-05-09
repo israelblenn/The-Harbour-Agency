@@ -1,8 +1,9 @@
 import Link from 'next/link'
+import { inter } from '@/app/(frontend)/fonts'
 
 export default async function NotFound() {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body
         style={{
           display: 'flex',

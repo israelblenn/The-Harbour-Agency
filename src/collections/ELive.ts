@@ -1,10 +1,17 @@
 import { GlobalConfig } from 'payload'
 import { revalidate } from '@/hooks/revalidate'
+import { REVALIDATION_PATHS } from '@/lib/revalidation-paths'
 
 export const ELive: GlobalConfig = {
   slug: 'elive',
   access: { read: () => true },
-  hooks: { afterChange: [() => revalidate(['/'])] },
+  hooks: {
+    afterChange: [
+      async () => {
+        await revalidate(REVALIDATION_PATHS.frontendBase)
+      },
+    ],
+  },
   fields: [
     {
       name: 'Title',

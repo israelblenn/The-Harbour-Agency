@@ -8,10 +8,12 @@ import { fetchAbout, safeFetch } from '@/lib/api/payload-cms'
 
 // Cache About page for 1 hour
 export const revalidate = 3600
-export const dynamic = 'force-dynamic'
 
 export default async function About() {
-  const about = await safeFetch(fetchAbout)
+  const about = await safeFetch(fetchAbout, {
+    label: 'fetchAbout',
+    route: '/',
+  })
   if (!about) return <div>Failed to load content</div>
 
   const validGalleryImages = (about.gallery || []).filter(
