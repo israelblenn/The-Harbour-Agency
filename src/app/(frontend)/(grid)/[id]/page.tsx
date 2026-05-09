@@ -1,4 +1,10 @@
-import { fetchActById, fetchAllActs, fetchELive, safeFetch } from '@/lib/api/payload-cms'
+import {
+  fetchActById,
+  fetchAllActs,
+  fetchELive,
+  isMongoObjectIdString,
+  safeFetch,
+} from '@/lib/api/payload-cms'
 import ActProfileClient from '@/components/ActProfileClient'
 import ELiveSection from '@/components/ELiveSection'
 import type { Metadata } from 'next'
@@ -17,7 +23,11 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  
+
+  if (id !== 'e-live' && !isMongoObjectIdString(id)) {
+    return { title: 'The Harbour Agency' }
+  }
+
   if (id === 'e-live') {
     const elive = await safeFetch(fetchELive, {
       label: 'fetchELive',
@@ -42,7 +52,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ActProfilePage({ params }: PageProps) {
   const { id } = await params
-  
+
+  if (id !== 'e-live' && !isMongoObjectIdString(id)) {
+    notFound()
+  }
+
   if (id === 'e-live') {
     const [elive, allActs] = await Promise.all([
       safeFetch(fetchELive, {

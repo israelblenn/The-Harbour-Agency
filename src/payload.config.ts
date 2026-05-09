@@ -2,9 +2,11 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { resendAdapter } from '@payloadcms/email-resend'
+import { NodeHttpHandler } from '@smithy/node-http-handler'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { s3Storage } from '@payloadcms/storage-s3'
+import https from 'node:https'
 import sharp from 'sharp'
 import path from 'path'
 
@@ -19,6 +21,21 @@ import { ELive } from '@/collections/ELive'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const s3MaxSocketsRaw = Number(process.env.AWS_S3_MAX_SOCKETS ?? 256)
+const s3MaxSockets =
+  Number.isFinite(s3MaxSocketsRaw) && s3MaxSocketsRaw > 0 ? s3MaxSocketsRaw : 256
+
+const s3HttpsAgent = new https.Agent({
+  keepAlive: true,
+  maxSockets: s3MaxSockets,
+})
+
+const s3RequestHandler = new NodeHttpHandler({
+  httpsAgent: s3HttpsAgent,
+  // Default is aggressive; raising reduces false-positive saturation warnings under burst media traffic.
+  socketAcquisitionWarningTimeout: 30_000,
+})
 
 export default buildConfig({
   admin: {
@@ -60,6 +77,7 @@ export default buildConfig({
         },
         region: 'auto',
         endpoint: process.env.S3_ENDPOINT || '',
+        requestHandler: s3RequestHandler,
       },
     }),
   ],

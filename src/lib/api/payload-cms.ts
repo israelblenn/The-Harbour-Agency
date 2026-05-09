@@ -2,6 +2,15 @@ import type { About, Contact, Branding, Act, Media, Legal, Elive } from '@/paylo
 import { getPayloadClient } from '@/lib/payload-client'
 import { cache } from 'react'
 
+/** Default MongoDB ObjectId string; avoids noisy 404s for garbage paths like `/kj`. */
+export const isMongoObjectIdString = (value: string): boolean => /^[a-f\d]{24}$/i.test(value)
+
+const getErrorHttpStatus = (err: unknown): number | undefined => {
+  if (typeof err !== 'object' || err === null || !('status' in err)) return undefined
+  const status = (err as { status?: unknown }).status
+  return typeof status === 'number' ? status : undefined
+}
+
 export const fetchActById = cache(async (id: string): Promise<Act> => {
   const payload = await getPayloadClient()
   const act = await payload.findByID({
@@ -78,27 +87,22 @@ export async function safeFetch<T>(
 ): Promise<T | null> {
   const startedAt = Date.now()
   try {
-    const result = await fn()
-    console.log(
-      '[safeFetch] Success',
-      JSON.stringify({
-        label: context.label ?? 'unknown',
-        route: context.route ?? 'unknown',
-        durationMs: Date.now() - startedAt,
-      }),
-    )
-    return result
+    return await fn()
   } catch (err) {
-    console.error(
-      '[safeFetch] Error',
-      JSON.stringify({
-        label: context.label ?? 'unknown',
-        route: context.route ?? 'unknown',
-        durationMs: Date.now() - startedAt,
-        errorMessage: err instanceof Error ? err.message : String(err),
-        errorName: err instanceof Error ? err.name : 'UnknownError',
-      }),
-    )
+    const status = getErrorHttpStatus(err)
+    const payload = {
+      label: context.label ?? 'unknown',
+      route: context.route ?? 'unknown',
+      durationMs: Date.now() - startedAt,
+      errorMessage: err instanceof Error ? err.message : String(err),
+      errorName: err instanceof Error ? err.name : 'UnknownError',
+      status,
+    }
+    if (status === 404) {
+      console.warn('[safeFetch] NotFound', JSON.stringify(payload))
+    } else {
+      console.error('[safeFetch] Error', JSON.stringify(payload))
+    }
     return null
   }
 }
