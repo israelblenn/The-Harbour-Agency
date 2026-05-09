@@ -8,7 +8,9 @@ import Header from '@/components/Header'
 import type { Media } from '@/payload-types'
 import React from 'react'
 
-// Prefer ISR with on-demand revalidation for stable load and fresh content updates.
+// `force-dynamic` avoids `next build` statically prerendering this tree. Parallel prerenders
+// share a small Mongo pool (see payload.config) and routinely hit MongoWaitQueueTimeoutError.
+export const dynamic = 'force-dynamic'
 export const revalidate = 3600
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
