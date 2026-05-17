@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isDeselectionLocked } from '@/contexts/SelectedActContext'
 
+const SECTION_TITLE_IDS = new Set(['e-live', 'international-guest-tours'])
+
+function getFirstActId(acts: Array<{ id: string; name: string }>): string | null {
+  return acts.find((act) => !SECTION_TITLE_IDS.has(act.id))?.id ?? null
+}
+
 export function useScrollSelection(
   filteredActs: Array<{ id: string; name: string }>,
   selectedActId: string | null,
@@ -17,6 +23,7 @@ export function useScrollSelection(
   const lastUserScrollTimeRef = useRef(0)
   const programmaticScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [pendingActId, setPendingActId] = useState<string | null>(null)
+  const firstActId = useMemo(() => getFirstActId(filteredActs), [filteredActs])
 
   // Cancel any pending scroll-based selection
   const cancelPendingScrollSelection = useCallback(() => {
@@ -87,6 +94,12 @@ export function useScrollSelection(
       return
     }
 
+    // The first act in the list should not be scroll-selected (click/keyboard still work)
+    if (firstActId && act?.id === firstActId) {
+      cancelPendingScrollSelection()
+      return
+    }
+
     // The International Guest Tours title is a DOM separator, which means filteredActs
     // index gets offset by 1 for all subsequent acts. Advance past it here.
     while (act?.id === 'international-guest-tours') {
@@ -142,7 +155,7 @@ export function useScrollSelection(
         }, 1500)
       }
     }
-  }, [filteredActs, selectedActId, setSelectedActId, cancelPendingScrollSelection])
+  }, [filteredActs, firstActId, selectedActId, setSelectedActId, cancelPendingScrollSelection])
 
   // Debounce scroll updates - only trigger after scrolling has stopped
   // This ensures the indicator only appears when an act is "landed on" (snapped to)

@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useMotionValue } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useMotionTemplate, animate } from 'framer-motion'
 import { useLayoutEffect } from 'react'
 import styles from '@/styles/ActGrid.module.css'
 
@@ -19,16 +19,63 @@ const B = 252
 const lightness = 0
 
 export default function Polygon({ selectedActId, containerRef, acts, positions }: PolygonProps) {
-  const polygonLeft = useMotionValue('')
-  const polygonTop = useMotionValue('')
-  const polygonBottom = useMotionValue('')
+  const cLeft = useMotionValue(X)
+  const cTop = useMotionValue(T)
+  const cRight = useMotionValue(X)
+  const cBottom = useMotionValue(B)
+
+  const mLeftX = useMotionValue(X)
+  const mRightX = useMotionValue(X)
+  const mTopY = useMotionValue(T)
+  const mBottomY = useMotionValue(B)
+
+  const springConfig = { damping: 22, stiffness: 250, mass: 0.5 }
+
+  const midLeftX = useSpring(mLeftX, springConfig)
+  const midRightX = useSpring(mRightX, springConfig)
+  const midTopY = useSpring(mTopY, springConfig)
+  const midBottomY = useSpring(mBottomY, springConfig)
+
+  const pathLeft = useMotionTemplate`
+    M ${X},${T} 
+    L ${X},${B} 
+    C ${midLeftX},${B} ${midLeftX},${midBottomY} ${cLeft},${cBottom} 
+    L ${cLeft},${cTop} 
+    C ${midLeftX},${midTopY} ${midLeftX},${T} ${X},${T} 
+    Z
+  `
+
+  const pathTop = useMotionTemplate`
+    M ${X},${T} 
+    C ${midLeftX},${T} ${midLeftX},${midTopY} ${cLeft},${cTop} 
+    L ${cRight},${cTop} 
+    L ${cRight},${cBottom} 
+    C ${midRightX},${midBottomY} ${midRightX},${B} ${X},${B} 
+    Z
+  `
+
+  const pathBottom = useMotionTemplate`
+    M ${X},${B} 
+    C ${midLeftX},${B} ${midLeftX},${midBottomY} ${cLeft},${cBottom} 
+    L ${cRight},${cBottom} 
+    L ${cRight},${cTop} 
+    C ${midRightX},${midTopY} ${midRightX},${T} ${X},${T} 
+    Z
+  `
 
   useLayoutEffect(() => {
-    // Don't set up polygon for null or e-live (not a real act in the grid)
+    // Retract polygon when no act selected or on e-live page
     if (!selectedActId || selectedActId === 'e-live') {
-      polygonLeft.set('')
-      polygonTop.set('')
-      polygonBottom.set('')
+      animate(cLeft, X, springConfig)
+      animate(cTop, T, springConfig)
+      animate(cRight, X, springConfig)
+      animate(cBottom, B, springConfig)
+
+      mLeftX.set(X)
+      mRightX.set(X)
+      mTopY.set(T)
+      mBottomY.set(B)
+      
       return
     }
 
@@ -37,9 +84,15 @@ export default function Polygon({ selectedActId, containerRef, acts, positions }
       if (!selectedCell) return
       const C = selectedCell.getBoundingClientRect()
 
-      polygonLeft.set(`${X},${T} ${X},${B} ${C.left},${C.bottom} ${C.left},${C.top}`)
-      polygonTop.set(`${X},${T} ${C.left},${C.top} ${C.right},${C.top} ${C.right},${C.bottom} ${X},${B}`)
-      polygonBottom.set(`${X},${B} ${C.left},${C.bottom} ${C.right},${C.bottom} ${C.right},${C.top} ${X},${T}`)
+      cLeft.set(C.left)
+      cTop.set(C.top)
+      cRight.set(C.right)
+      cBottom.set(C.bottom)
+
+      mLeftX.set((X + C.left) / 2)
+      mRightX.set((X + C.right) / 2)
+      mTopY.set((T + C.top) / 2)
+      mBottomY.set((B + C.bottom) / 2)
     }
 
     updatePosition()
@@ -63,16 +116,13 @@ export default function Polygon({ selectedActId, containerRef, acts, positions }
       window.removeEventListener('resize', updatePosition)
       container?.removeEventListener('scroll', updatePosition)
     }
-  }, [selectedActId, acts, positions, polygonLeft, polygonTop, polygonBottom, containerRef])
-
-  // Hide polygon when no act selected or on e-live page (not a real act in the grid)
-  if (!selectedActId || selectedActId === 'e-live') return null
+  }, [selectedActId, acts, positions, containerRef, cLeft, cTop, cRight, cBottom, mLeftX, mRightX, mTopY, mBottomY, springConfig])
 
   return (
     <svg className={styles.polygon}>
-      <motion.polygon points={polygonTop} fill={`hsl(0, 0%, ${lightness}%)`} />
-      <motion.polygon points={polygonBottom} fill={`hsl(0, 0%, ${lightness}%)`} />
-      <motion.polygon points={polygonLeft} fill="var(--secondary)" />
+      <motion.path d={pathTop} fill={`hsl(0, 0%, ${lightness}%)`} />
+      <motion.path d={pathBottom} fill={`hsl(0, 0%, ${lightness}%)`} />
+      <motion.path d={pathLeft} fill="var(--secondary)" />
     </svg>
   )
 }
