@@ -22,8 +22,8 @@ export default function Header({ brandingData }: HeaderProps) {
   const [isPressed, setIsPressed] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [prevPathname, setPrevPathname] = useState<string | null>(null)
-  const [mounted, setMounted] = useState(false)
   const [pendingPath, setPendingPath] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   const navRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
@@ -42,19 +42,16 @@ export default function Header({ brandingData }: HeaderProps) {
     { href: '/e-live', label: 'Acts', mobileOnly: true },
     { href: '/contact', label: 'Contact' },
   ]
-  const isNavPath = navLinks.some((l) => l.href === pathname)
 
-  useEffect(() => {
-    if (pendingPath && pathname === pendingPath) setPendingPath(null)
-  }, [pathname, pendingPath])
+  const restingPath = pendingPath ?? pathname
+  const isRestingNavPath = navLinks.some((l) => l.href === restingPath)
 
-  useEffect(() => {
-    if (pendingPath) return
-    if (!isNavPath) {
+  const snapToRestingPath = () => {
+    if (!isRestingNavPath) {
       setHighlight({ left: 0, width: 0, visible: false })
       return
     }
-    const active = navRef.current?.querySelector(`[data-path='${pathname}']`) as HTMLElement
+    const active = navRef.current?.querySelector(`[data-path='${restingPath}']`) as HTMLElement
     if (active) {
       const aRect = active.getBoundingClientRect()
       const navRect = navRef.current!.getBoundingClientRect()
@@ -64,11 +61,17 @@ export default function Header({ brandingData }: HeaderProps) {
         visible: true,
       })
     }
-  }, [pathname, isNavPath, pendingPath])
+  }
+
+  useEffect(() => {
+    snapToRestingPath()
+    if (pendingPath && pathname === pendingPath) {
+      setPendingPath(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, pendingPath, isRestingNavPath])
 
   const onEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const hoveredPath = e.currentTarget.getAttribute('data-path')
-    if (pendingPath && hoveredPath !== pendingPath) setPendingPath(null)
     const r = e.currentTarget.getBoundingClientRect()
     const nr = navRef.current!.getBoundingClientRect()
     setHighlight({
@@ -79,21 +82,11 @@ export default function Header({ brandingData }: HeaderProps) {
   }
 
   const onLeave = () => {
-    if (pendingPath) return
-    if (!isNavPath) {
-      setHighlight({ left: 0, width: 0, visible: false })
-    } else {
-      const active = navRef.current?.querySelector(`[data-path='${pathname}']`) as HTMLElement
-      if (active) {
-        const aRect = active.getBoundingClientRect()
-        const navRect = navRef.current!.getBoundingClientRect()
-        setHighlight({
-          left: aRect.left - navRect.left,
-          width: aRect.width,
-          visible: true,
-        })
-      }
-    }
+    snapToRestingPath()
+  }
+
+  const onNavLinkClick = (href: string) => () => {
+    if (href !== pathname) setPendingPath(href)
   }
 
   const onMouseDown = () => {
@@ -102,19 +95,6 @@ export default function Header({ brandingData }: HeaderProps) {
 
   const onMouseUp = () => {
     setIsPressed(false)
-  }
-
-  const onLinkClick = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    setIsPressed(false)
-    if (href === pathname) return
-    const r = e.currentTarget.getBoundingClientRect()
-    const nr = navRef.current!.getBoundingClientRect()
-    setHighlight({
-      left: r.left - nr.left,
-      width: r.width,
-      visible: true,
-    })
-    setPendingPath(href)
   }
 
   useEffect(() => {
@@ -166,7 +146,7 @@ export default function Header({ brandingData }: HeaderProps) {
                 onMouseEnter={onEnter}
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
-                onClick={onLinkClick(link.href)}
+                onClick={onNavLinkClick(link.href)}
                 className={link.href === '/artists' || link.mobileOnly ? 'mobile-only' : ''}
               >
                 {link.label}
