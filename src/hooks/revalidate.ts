@@ -6,6 +6,7 @@ import {
 const REQUEST_TIMEOUT_MS = 8_000
 const MAX_ATTEMPTS = 3
 const RETRY_DELAY_MS = 400
+const REVALIDATE_VERBOSE = process.env.REVALIDATE_VERBOSE === 'true'
 
 const sleep = async (ms: number): Promise<void> =>
   new Promise((resolve) => {
@@ -63,15 +64,17 @@ export const revalidate = async (
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
 
     try {
-      console.log(
-        '[revalidate] Attempting revalidation.',
-        JSON.stringify({
-          attempt,
-          maxAttempts: MAX_ATTEMPTS,
-          targetCount: normalizedTargets.length,
-          targets: normalizedTargets,
-        }),
-      )
+      if (REVALIDATE_VERBOSE) {
+        console.log(
+          '[revalidate] Attempting revalidation.',
+          JSON.stringify({
+            attempt,
+            maxAttempts: MAX_ATTEMPTS,
+            targetCount: normalizedTargets.length,
+            targets: normalizedTargets,
+          }),
+        )
+      }
 
       const response = await fetch(revalidationUrl, {
         method: 'POST',
@@ -89,16 +92,18 @@ export const revalidate = async (
         )
       }
 
-      const durationMs = Date.now() - startedAt
-      console.log(
-        '[revalidate] Revalidation succeeded.',
-        JSON.stringify({
-          attempt,
-          durationMs,
-          attemptDurationMs: Date.now() - attemptStartedAt,
-          targets: normalizedTargets,
-        }),
-      )
+      if (REVALIDATE_VERBOSE) {
+        const durationMs = Date.now() - startedAt
+        console.log(
+          '[revalidate] Revalidation succeeded.',
+          JSON.stringify({
+            attempt,
+            durationMs,
+            attemptDurationMs: Date.now() - attemptStartedAt,
+            targets: normalizedTargets,
+          }),
+        )
+      }
       return true
     } catch (error) {
       clearTimeout(timeout)

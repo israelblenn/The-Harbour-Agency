@@ -58,13 +58,15 @@ export async function POST(request: NextRequest) {
       revalidatePath(target.path, target.type)
     }
 
-    console.log(
-      '[api/revalidate] Revalidated targets.',
-      JSON.stringify({
-        targetCount: targets.length,
-        targets,
-      }),
-    )
+    if (process.env.REVALIDATE_VERBOSE === 'true') {
+      console.log(
+        '[api/revalidate] Revalidated targets.',
+        JSON.stringify({
+          targetCount: targets.length,
+          targets,
+        }),
+      )
+    }
 
     return NextResponse.json({
       revalidated: true,

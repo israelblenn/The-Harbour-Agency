@@ -1,0 +1,3 @@
+# Railway uses Nixpacks; pin Node 22 to silence AWS SDK NodeVersionSupportWarning.
+[variables]
+NODE_VERSION = "22"

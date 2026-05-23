@@ -47,6 +47,11 @@ const r2PublicBase = r2PublicBaseRaw
   : ''
 
 export default buildConfig({
+  // 404s are expected for bad/deleted IDs; keep them at info so prod minification
+  // does not turn them into ERROR (Payload matches on err.name, which terses away).
+  loggingLevels: {
+    NotFound: 'info',
+  },
   admin: {
     user: Users.slug,
     importMap: {
@@ -83,10 +88,13 @@ export default buildConfig({
           disablePayloadAccessControl: true,
           generateFileURL: ({ filename, prefix }) => {
             if (!r2PublicBase) return ''
-            const segments = [prefix, filename]
-              .filter((segment): segment is string => Boolean(segment))
-              .map((segment) => segment.replace(/^\/+|\/+$/g, ''))
-              .filter(Boolean)
+            const normalizedPrefix = (prefix ?? '').replace(/^\/+|\/+$/g, '')
+            const normalizedFilename = filename.replace(/^\/+|\/+$/g, '')
+            // Avoid /the-harbour-agency/the-harbour-agency/... when R2_PUBLIC_URL already includes the prefix.
+            if (normalizedPrefix && r2PublicBase.endsWith(`/${normalizedPrefix}`)) {
+              return `${r2PublicBase}/${normalizedFilename}`
+            }
+            const segments = [normalizedPrefix, normalizedFilename].filter(Boolean)
             return `${r2PublicBase}/${segments.join('/')}`
           },
         },

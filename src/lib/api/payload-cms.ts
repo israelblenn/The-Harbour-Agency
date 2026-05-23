@@ -11,14 +11,15 @@ const getErrorHttpStatus = (err: unknown): number | undefined => {
   return typeof status === 'number' ? status : undefined
 }
 
-export const fetchActById = cache(async (id: string): Promise<Act> => {
+export const fetchActById = cache(async (id: string): Promise<Act | null> => {
   const payload = await getPayloadClient()
-  const act = await payload.findByID({
+  const result = await payload.find({
     collection: 'acts',
-    id,
+    where: { id: { equals: id } },
+    limit: 1,
+    depth: 1,
   })
-  if (!act) throw new Error(`Failed to fetch act with id ${id}`)
-  return act
+  return result.docs[0] ?? null
 })
 
 export const fetchAllActs = cache(async (): Promise<Act[]> => {
