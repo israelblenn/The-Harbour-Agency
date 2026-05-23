@@ -23,6 +23,7 @@ export default function Header({ brandingData }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false)
   const [prevPathname, setPrevPathname] = useState<string | null>(null)
   const [pendingPath, setPendingPath] = useState<string | null>(null)
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
   const navRef = useRef<HTMLDivElement>(null)
@@ -43,7 +44,7 @@ export default function Header({ brandingData }: HeaderProps) {
     { href: '/contact', label: 'Contact' },
   ]
 
-  const restingPath = pendingPath ?? pathname
+  const restingPath = pendingPath ?? hoveredPath ?? pathname
   const isRestingNavPath = navLinks.some((l) => l.href === restingPath)
 
   const snapToRestingPath = () => {
@@ -69,9 +70,12 @@ export default function Header({ brandingData }: HeaderProps) {
       setPendingPath(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, pendingPath, isRestingNavPath])
+  }, [pathname, pendingPath, hoveredPath, isRestingNavPath])
 
   const onEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const href = e.currentTarget.dataset.path ?? null
+    setHoveredPath(href)
+    if (pendingPath) return
     const r = e.currentTarget.getBoundingClientRect()
     const nr = navRef.current!.getBoundingClientRect()
     setHighlight({
@@ -82,6 +86,7 @@ export default function Header({ brandingData }: HeaderProps) {
   }
 
   const onLeave = () => {
+    setHoveredPath(null)
     snapToRestingPath()
   }
 
