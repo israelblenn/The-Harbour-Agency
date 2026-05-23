@@ -37,6 +37,15 @@ const s3RequestHandler = new NodeHttpHandler({
   socketAcquisitionWarningTimeout: 30_000,
 })
 
+// Public R2 base URL (custom domain). Frontend reads go direct to Cloudflare,
+// so the AWS SDK is only used for admin uploads/deletes, not for image serving.
+const r2PublicBaseRaw = (process.env.R2_PUBLIC_URL || '').trim().replace(/\/+$/, '')
+const r2PublicBase = r2PublicBaseRaw
+  ? /^https?:\/\//i.test(r2PublicBaseRaw)
+    ? r2PublicBaseRaw
+    : `https://${r2PublicBaseRaw}`
+  : ''
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -67,7 +76,20 @@ export default buildConfig({
     payloadCloudPlugin(),
     s3Storage({
       collections: {
-        media: true,
+        media: {
+          // Stop Payload from proxying reads through /api/media/file/...
+          // Without this, every <img> hit becomes a server-side S3 GetObject
+          // via the AWS SDK, saturating the socket pool under load.
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => {
+            if (!r2PublicBase) return ''
+            const segments = [prefix, filename]
+              .filter((segment): segment is string => Boolean(segment))
+              .map((segment) => segment.replace(/^\/+|\/+$/g, ''))
+              .filter(Boolean)
+            return `${r2PublicBase}/${segments.join('/')}`
+          },
+        },
       },
       bucket: process.env.S3_BUCKET || '',
       config: {

@@ -19,6 +19,16 @@ const nextConfig = {
         protocol: 'https',
         hostname: process.env.NEXT_PUBLIC_SITE_URL || '**',
       },
+      ...(process.env.R2_PUBLIC_URL
+        ? [
+            {
+              protocol: 'https',
+              hostname: process.env.R2_PUBLIC_URL.replace(/^https?:\/\//i, '')
+                .replace(/\/.*$/, '')
+                .trim(),
+            },
+          ]
+        : []),
     ],
   },
   // Ensure sharp works correctly on Vercel (Linux)

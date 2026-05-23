@@ -13,20 +13,15 @@
   overflow: hidden;
 }
 
-.baseImage {
-  /* Sits underneath */
-}
-
-.filteredImage {
+.cellImage {
   filter: saturate(70%);
-  opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: filter 0.3s ease;
 }
 
-.cell:hover .filteredImage,
-.cell[data-hovered='true'] .filteredImage,
-.cell[data-selected='true'] .filteredImage {
-  opacity: 0;
+.cell:hover .cellImage,
+.cell[data-hovered='true'] .cellImage,
+.cell[data-selected='true'] .cellImage {
+  filter: saturate(100%);
 }
 
 .placeholder {

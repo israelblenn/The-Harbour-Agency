@@ -32,13 +32,6 @@ export default async function About() {
         <div className={styles.imageWrapper}>
           {validGalleryImages.length > 0 && (
             <div className={styles.imageContainer}>
-              <Image
-                src={validGalleryImages[0]?.url || ''}
-                alt={validGalleryImages[0]?.alt || 'Gallery image'}
-                fill
-                style={{ objectFit: 'cover' }}
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
               {validGalleryImages.map((image, index) => (
                 <div
                   key={image.id}
@@ -54,6 +47,7 @@ export default async function About() {
                     fill
                     style={{ objectFit: 'cover' }}
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    priority={index === 0}
                   />
                 </div>
               ))}

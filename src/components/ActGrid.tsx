@@ -193,17 +193,8 @@ export default function ActGrid({ initialActs }: ActGridProps) {
                     sizes={`${Math.round(pos.width)}px`}
                     loading="lazy"
                     style={{ objectFit: 'cover' }}
-                    className={styles.baseImage}
+                    className={styles.cellImage}
                     onLoad={() => handleImageLoad(act.id)}
-                  />
-                  <Image
-                    src={act.photo.url}
-                    alt={act.name}
-                    fill
-                    sizes={`${Math.round(pos.width)}px`}
-                    loading="lazy"
-                    style={{ objectFit: 'cover' }}
-                    className={styles.filteredImage}
                   />
                 </motion.div>
               )
