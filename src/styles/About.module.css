@@ -6,16 +6,24 @@
   /* z-index: -1; */
 }
 
-.crossfadeSlide {
+.crossfadeSlide,
+.staticSlide {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.crossfadeSlide {
   opacity: 0;
   animation-name: crossfade-z;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+}
+
+.staticSlide {
+  opacity: 1;
 }
 
 @keyframes crossfade-z {

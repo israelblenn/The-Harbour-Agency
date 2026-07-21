@@ -20,6 +20,7 @@ export default async function About() {
     (item): item is Media => typeof item !== 'string' && 'url' in item,
   )
 
+  const shouldCycle = validGalleryImages.length > 1
   const slideDuration = 10
   const totalDuration = slideDuration * validGalleryImages.length
 
@@ -35,11 +36,15 @@ export default async function About() {
               {validGalleryImages.map((image, index) => (
                 <div
                   key={image.id}
-                  className={styles.crossfadeSlide}
-                  style={{
-                    animationDelay: `${index * slideDuration}s`,
-                    animationDuration: `${totalDuration}s`,
-                  }}
+                  className={shouldCycle ? styles.crossfadeSlide : styles.staticSlide}
+                  style={
+                    shouldCycle
+                      ? {
+                          animationDelay: `${index * slideDuration}s`,
+                          animationDuration: `${totalDuration}s`,
+                        }
+                      : undefined
+                  }
                 >
                   <Image
                     src={image.url || ''}
