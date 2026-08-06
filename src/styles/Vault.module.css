@@ -11,6 +11,33 @@
   position: relative;
 }
 
+.placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.02);
+  animation:
+    placeholderFadeIn 0.5s ease-out forwards,
+    placeholderPulse 1s ease-in-out 0.5s infinite;
+}
+
+@keyframes placeholderFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes placeholderPulse {
+  0%,
+  100% {
+    background: rgba(0, 0, 0, 0.02);
+  }
+  50% {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
 .gridImage {
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
   display: block;
