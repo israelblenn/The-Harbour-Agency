@@ -40,7 +40,6 @@ export default function Header({ brandingData }: HeaderProps) {
   const navLinks = [
     { href: '/', label: 'About' },
     { href: '/artists', label: 'Artists' },
-    { href: '/e-live', label: 'Acts', mobileOnly: true },
     { href: '/contact', label: 'Contact' },
   ]
 
@@ -152,7 +151,7 @@ export default function Header({ brandingData }: HeaderProps) {
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
                 onClick={onNavLinkClick(link.href)}
-                className={link.href === '/artists' || link.mobileOnly ? 'mobile-only' : ''}
+                className={link.href === '/artists' ? 'mobile-only' : ''}
               >
                 {link.label}
               </TransLink>
