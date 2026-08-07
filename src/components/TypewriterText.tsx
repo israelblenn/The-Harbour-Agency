@@ -35,7 +35,7 @@ export default function TypewriterText({
           clearInterval(interval)
           return words.length
         }
-        return prev + 1
+        return Math.min(prev + 5, words.length)
       })
     }, delayPerWord * 1000)
 
