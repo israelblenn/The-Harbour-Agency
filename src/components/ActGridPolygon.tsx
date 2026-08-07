@@ -64,9 +64,6 @@ export default function Polygon({ selectedActId, containerRef, acts, positions }
   `
 
   useLayoutEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7537/ingest/29cc7403-aac1-4fdb-a3b3-c8158a4c3e0f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'e72563'},body:JSON.stringify({sessionId:'e72563',hypothesisId:'A,C,D',location:'ActGridPolygon.tsx:67',message:'effect entry',data:{selectedActId,branch:(!selectedActId||selectedActId==='e-live')?'retract':'expand',curCLeft:cLeft.get(),curCTop:cTop.get(),curCRight:cRight.get(),curCBottom:cBottom.get()},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     // Retract polygon when no act selected or on e-live page
     if (!selectedActId || selectedActId === 'e-live') {
       animate(cLeft, X, springConfig)
@@ -85,15 +82,9 @@ export default function Polygon({ selectedActId, containerRef, acts, positions }
     const updatePosition = () => {
       const selectedCell = containerRef.current?.querySelector('[data-selected="true"]')
       if (!selectedCell) {
-        // #region agent log
-        fetch('http://127.0.0.1:7537/ingest/29cc7403-aac1-4fdb-a3b3-c8158a4c3e0f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'e72563'},body:JSON.stringify({sessionId:'e72563',hypothesisId:'A',location:'ActGridPolygon.tsx:84',message:'updatePosition: no selected cell',data:{selectedActId},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         return
       }
       const C = selectedCell.getBoundingClientRect()
-      // #region agent log
-      fetch('http://127.0.0.1:7537/ingest/29cc7403-aac1-4fdb-a3b3-c8158a4c3e0f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'e72563'},body:JSON.stringify({sessionId:'e72563',hypothesisId:'A,B',location:'ActGridPolygon.tsx:86',message:'updatePosition: cell rect',data:{left:Math.round(C.left),top:Math.round(C.top),right:Math.round(C.right),bottom:Math.round(C.bottom),width:Math.round(C.width),height:Math.round(C.height),spanX:Math.round(C.right-X),spanY:Math.round(C.bottom-C.top)},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
 
       cLeft.set(C.left)
       cTop.set(C.top)
