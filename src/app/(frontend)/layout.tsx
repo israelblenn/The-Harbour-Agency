@@ -7,11 +7,19 @@ import type { Media } from '@/payload-types'
 
 export const revalidate = 3600
 
+const DEFAULT_TITLE = 'The Harbour Agency'
+const DEFAULT_DESCRIPTION =
+  "Australia's largest booking agency since 1978. Representing established, mid-level and developing talent across metropolitan and regional Australia."
+
 export async function generateMetadata(): Promise<Metadata> {
   const branding = await safeFetch(fetchBranding, {
     label: 'fetchBranding',
     route: '/(frontend)/layout-metadata',
   })
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  const title = branding?.title || DEFAULT_TITLE
+  const description = branding?.description || DEFAULT_DESCRIPTION
 
   let ogImageUrl: string | undefined
 
@@ -21,8 +29,9 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: branding?.title || 'The Harbour Agency',
-    description: branding?.description || 'POPULATE !!',
+    metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+    title,
+    description,
     icons: {
       icon:
         branding?.favicon && typeof branding.favicon !== 'string'
@@ -30,16 +39,16 @@ export async function generateMetadata(): Promise<Metadata> {
           : '/favicon.ico',
     },
     openGraph: {
-      title: branding?.title || 'The Harbour Agency',
-      description: branding?.description || 'POPULATE !!',
-      url: process.env.NEXT_PUBLIC_SITE_URL,
-      siteName: branding?.title || 'The Harbour Agency',
+      title,
+      description,
+      url: siteUrl,
+      siteName: title,
       images: ogImageUrl ? [{ url: ogImageUrl }] : [],
     },
     twitter: {
       card: 'summary_large_image',
-      title: branding?.title || 'The Harbour Agency',
-      description: branding?.description || 'POPULATE !!',
+      title,
+      description,
       images: ogImageUrl ? [ogImageUrl] : [],
     },
   }
